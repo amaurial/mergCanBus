@@ -43,6 +43,10 @@ class Message
         int getRTR(){return _RTR;};
         void setSession(unsigned int val) {_session=val;}
         unsigned int getSession(){return _session;}
+        void setDecoder(byte H,byte L){_decoderAddress[0]=H;_decoderAddress[1]=L;}
+        byte *getDecoder(){return _decoderAddress}
+        void setEngineParameter(byte param){_engineParameter=param;}
+        byte getEngineParameter (){return _engineParameter;}
         void clear();
     protected:
     private:
@@ -56,6 +60,8 @@ class Message
         unsigned int _numBytes;
         unsigned int _RTR;
         unsigned int _session;
+        byte _decoderAddress[2];
+        byte _engineParameter;
 
 
 };

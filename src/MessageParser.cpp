@@ -32,6 +32,13 @@ bool MessageParser::parse(Message *message,CANMessage *canMessage)
         return;
     }
     getDataSize();
+    if (_message->getNumBytes()>0){
+        getNodeNumber();
+        getEventNumber();
+    }
+
+
+
     //TODO:get the parameter from the message according to the message type
 
     //getPriority();
@@ -134,6 +141,40 @@ bool MessageParser::skipMessage(message_type msg){
             break;
         default:
             return true;
+    }
+
+
+}
+
+void MessageParser::getParamSpecific(){
+    unsigned int opc=0;
+    unsigned int msize=0;
+    byte *data;
+    switch (_message->getType()){
+    case DCC:
+        opc=_message->getOpc();
+        data=_message->getData();
+
+        if (opc>=OPC_KLOC && opc<=OPC_DKEEP){
+            //messages with session parameter
+            _message->setSession(_data[1]);
+        }else if(opc==OPC_RLOC){
+            //get the decoder address
+            _message->setDecoder(_data[1],data[2]);
+        }else if (opc>=OPC_STMOD && opc<=OPC_SSTAT){
+            _message->setSession(_data[1]);
+            _message->setEngineParameter(data[2]);
+        }
+        break;
+    case GENERAL:
+        break;
+    case ACCESSORY:
+        break;
+    case CONFIG:
+        break;
+    case RESERVED:
+        break;
+
     }
 
 
