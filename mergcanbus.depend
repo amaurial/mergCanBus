@@ -1,0 +1,37 @@
+# depslib dependency file v1.0
+1409568880 source:c:\users\amauri\mergcanbus\src\canmessage.cpp
+	"CANMessage.h"
+
+1409570188 c:\users\amauri\mergcanbus\include\canmessage.h
+
+1409568880 source:c:\users\amauri\mergcanbus\src\main_test.cpp
+	"Message.h"
+	"MessageReader.h"
+	"MergNodeIdentification.h"
+	"CANMessage.h"
+	"MessageParser.h"
+	<iostream>
+
+1409570250 c:\users\amauri\mergcanbus\include\message.h
+
+1409562403 c:\users\amauri\mergcanbus\include\messagereader.h
+	"CANMessage.h"
+
+1409477351 c:\users\amauri\mergcanbus\include\mergnodeidentification.h
+
+1409478690 source:c:\users\amauri\mergcanbus\src\mergnodeidentification.cpp
+	"MergNodeIdentification.h"
+
+1409568913 source:c:\users\amauri\mergcanbus\src\message.cpp
+	"Message.h"
+
+1409568880 source:c:\users\amauri\mergcanbus\src\messagereader.cpp
+	"MessageReader.h"
+
+1409565717 source:c:\users\amauri\mergcanbus\src\messageparser.cpp
+	"MessageParser.h"
+
+1409570284 c:\users\amauri\mergcanbus\include\messageparser.h
+	"CANMessage.h"
+	"Message.h"
+
