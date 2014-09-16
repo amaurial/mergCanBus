@@ -31,6 +31,8 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="MergNodeIdentification.cpp" />
+		<Unit filename="MergNodeIdentification.h" />
 		<Extensions>
 			<code_completion />
 			<debugger />
