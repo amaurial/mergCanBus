@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="mergCanBus" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/mergCanBus" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+					<Add directory="src/" />
+					<Add directory="src" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/mergCanBus" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add directory="src/" />
+					<Add directory="src" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add option="-fexceptions" />
+		</Compiler>
+		<Unit filename="include/AccessoryMessage.h" />
+		<Unit filename="include/CANMessage.h" />
+		<Unit filename="include/DCCMessage.h" />
+		<Unit filename="include/GeneralMessage.h" />
+		<Unit filename="include/MergNodeIdentification.h" />
+		<Unit filename="include/Message.h" />
+		<Unit filename="include/MessageParser.h" />
+		<Unit filename="include/MessageReader.h" />
+		<Unit filename="include/mcp_can.h" />
+		<Unit filename="include/mcp_can_dfs.h" />
+		<Unit filename="include/opcodes.h" />
+		<Unit filename="src/AccessoryMessage.cpp" />
+		<Unit filename="src/CANMessage.cpp" />
+		<Unit filename="src/ConfigMessage.cpp" />
+		<Unit filename="src/DCCMessage.cpp" />
+		<Unit filename="src/GeneralMessage.cpp" />
+		<Unit filename="src/MergNodeIdentification.cpp" />
+		<Unit filename="src/Message.cpp" />
+		<Unit filename="src/MessageParser.cpp" />
+		<Unit filename="src/MessageReader.cpp" />
+		<Unit filename="src/main_test.cpp" />
+		<Unit filename="src/mcp_can.cpp" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

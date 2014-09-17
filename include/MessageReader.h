@@ -4,6 +4,9 @@
 //#include "mcp_can.h"
 #include "CANMessage.h"
 
+#define HEADER_SIZE 2
+#define DATA_SIZE 8
+
 class MessageReader
 {
     public:
@@ -17,8 +20,8 @@ class MessageReader
         //The CAN is responsable for the low level interface with CAN bus
         //MCP_CAN *CAN;                       //reference to CAN object
         void createTestData();
-        char header[2];
-        char data[8];
+        char header[HEADER_SIZE];
+        char data[DATA_SIZE];
 };
 
 #endif // MESSAGEREADER_H

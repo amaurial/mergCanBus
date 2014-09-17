@@ -3,6 +3,13 @@
 
 #include <Message.h>
 
+#define DECODER_SIZE 2
+#define DCCPACK_SIZE 6
+#define CV_SIZE 2
+#define FUNC_BYTE_SIZE 3
+#define CS_REV_SIZE 2
+
+
 
 class DCCMessage : public Message
 {
@@ -11,7 +18,7 @@ class DCCMessage : public Message
     protected:
     private:
         unsigned int session;
-        byte decoderAddress[2];//is the MS and LS byte of the DCC address. For short addresses MS is set to 0.
+        byte decoderAddress[DECODER_SIZE];//is the MS and LS byte of the DCC address. For short addresses MS is set to 0.
         byte engineParameter;
         //0 or 1
         unsigned int speedMode;
@@ -36,18 +43,14 @@ class DCCMessage : public Message
         unsigned int functionRange;
         byte int engineFlags;//see message GLOC in developer guide
         unsigned int repetionPackages;//see message RDCC3 in developer guide
-        byte dccPackages[6];//see message RDCC3 RDCC4 RDCC5 RDCC6 in developer guide
-        byte CV[2];//CVHigh and CVLow
+        byte dccPackages[DCCPACK_SIZE];//see message RDCC3 RDCC4 RDCC5 RDCC6 in developer guide
+        byte CV[CV_SIZE];//CVHigh and CVLow
         byte cvValue;
-        byte functionByte[3];//see PLOC message inde developer guide
-        byte cs_revision[2];
-        byte cs_buildnumber;
-        byte cs_status;
-        byte
-
-
-
-
+        byte functionByte[FUNC_BYTE_SIZE];//see PLOC message inde developer guide
+        byte cs_revision[CS_REV_SIZE];//see STAT message
+        byte cs_buildnumber;//see STAT message
+        byte cs_status;//see STAT message
+        byte cs_flags;//see STAT message
 
 };
 

@@ -7,7 +7,7 @@ typedef char byte;
 #define MESSAGE_H
 
 
-#define DATA_SIZE 8
+#define CANDATA_SIZE 8
 
 enum message_type {RESERVED,DCC,CONFIG,ACCESSORY,GENERAL};
 
@@ -19,13 +19,13 @@ class Message
                  unsigned int opc,
                  unsigned int nodeNumber,
                  unsigned int eventNumber,
-                 byte data [DATA_SIZE] ,
+                 byte data [CANDATA_SIZE] ,
                  unsigned int priority);
         virtual ~Message();
-        unsigned int getCanId() { return _canId; }
-        void setCanId(unsigned int val) { _canId = val; }
-        unsigned int getOpc() { return _opc; }
-        void setOpc(unsigned int val) { _opc = val; }
+        byte getCanId() { return _canId; }
+        void setCanId(byte val) { _canId = val; }
+        byte getOpc() { return _opc; }
+        void setOpc(byte val) { _opc = val; }
         message_type getType() { return _type; }
         void setType(message_type val) { _type = val; }
         unsigned int getEventNumber() { return _eventNumber; }
@@ -33,16 +33,16 @@ class Message
         unsigned int getNodeNumber() { return _nodeNumber; }
         void setNodeNumber(unsigned int val) { _nodeNumber = val; }
         byte* getData() { return _data; }
-        void setData(byte val[DATA_SIZE]);
-        unsigned int getPriority() { return _priority; }
-        void setPriority(unsigned int val) { _priority = val; }
+        void setData(byte val[CANDATA_SIZE]);
+        byte getPriority() { return _priority; }
+        void setPriority(byte val) { _priority = val; }
         unsigned int getNumBytes() { return _numBytes; }
         void setNumBytes(unsigned int val) { _numBytes = val; }
         void setRTR() {_RTR=1;};
         void unsetRTR(){_RTR=0;};
         int getRTR(){return _RTR;};
-        void setSession(unsigned int val) {_session=val;}
-        unsigned int getSession(){return _session;}
+        void setSession(byte val) {_session=val;}
+        byte getSession(){return _session;}
         void setDecoder(byte H,byte L){_decoderAddress[0]=H;_decoderAddress[1]=L;}
         byte *getDecoder(){return _decoderAddress}
         void setEngineParameter(byte param){_engineParameter=param;}
@@ -50,16 +50,16 @@ class Message
         void clear();
     protected:
     private:
-        unsigned int _canId;
-        unsigned int _opc;
+        byte int _canId;
+        byte int _opc;
         message_type _type;
-        unsigned int _eventNumber;
-        unsigned int _nodeNumber;
-        byte _data[DATA_SIZE] ;
-        unsigned int _priority;
+        unsigned int _eventNumber;//2 bytes
+        unsigned int _nodeNumber;//2 bytes
+        byte _data[CANDATA_SIZE] ;
+        byte _priority;
         unsigned int _numBytes;
         unsigned int _RTR;
-        unsigned int _session;
+        byte _session;
         byte _decoderAddress[2];
         byte _engineParameter;
 
