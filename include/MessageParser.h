@@ -8,6 +8,11 @@ typedef char byte;
 
 #include "CANMessage.h"
 #include "Message.h"
+#include "DCCMessage.h"
+#include "AccessoryMessage.h"
+#include "ConfigMessage.h"
+#include "GeneralMessage.h"
+
 
 #define MSGSIZE 256
 
@@ -34,8 +39,8 @@ class MessageParser
     private:
         CANMessage *_canMessage;
         Message *_message;
-        bool getOpc();
-        bool getPriority();
+        byte getOpc();
+        byte getPriority();
         bool getDataSize();
         bool getCanId();
         bool getType();
@@ -49,6 +54,11 @@ class MessageParser
         bool _skipDCC;
         bool _skipACCESSORY;
         bool _skipGENERAL;
+        DCCMessage * _dccMessage;
+        GeneralMessage* _generalMessage;
+        ConfigMessage* _configMessage;
+        AccessoryMessage* _accMessage;
+
 
 };
 

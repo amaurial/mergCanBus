@@ -22,6 +22,9 @@ class CANMessage
         void unsetRTR(){_RTR=0;};
         int getRTR(){return _RTR;};
         void clear();                   //clear the buffers
+        byte getCanId();
+        byte getOpc();
+        byte getDataSize();
     protected:
     private:
         byte _data[DATA_SIZE];          //CANBUS Data

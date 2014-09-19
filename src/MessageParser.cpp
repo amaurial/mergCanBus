@@ -23,22 +23,40 @@ bool MessageParser::parse(Message *message,CANMessage *canMessage)
     if (_message->getRTR()==1){
         return true;
     }
-
     getOpc();
     _message->setType(messages[_message->getOpc()]);
-
     //skip message types
     if (skipMessage(_message->getType())){
-        return;
+        return true;
     }
+
     getDataSize();
+    if (_message->getNumBytes()==0){
+        //nothing to do
+        //all fields were set
+        return true;
+    }
+
+    switch (_message->getType()){
+        case message_type.RESERVED:
+            return true;
+            break;
+        case message_type.ACCESSORY:
+            break;
+        case message_type.DCC:
+            break;
+        case message_type.CONFIG:
+            break;
+        case message_type.GENERAL:
+            break;
+        }
+    }
+
+
     if (_message->getNumBytes()>0){
         getNodeNumber();
         getEventNumber();
     }
-
-
-
     //TODO:get the parameter from the message according to the message type
 
     //getPriority();
@@ -46,15 +64,13 @@ bool MessageParser::parse(Message *message,CANMessage *canMessage)
     return true;
 }
 
+int MessageParser::parseACCMessage(){
+
+}
+
 bool MessageParser::getCanId()
 {
-    //CAN id is the 7 lower bits of 11 bits
-    //the other 4 are the priority
-  int temp=0;
-  byte *header=_canMessage->get_header();
-  temp=(header[0]<<4)&0xF0;
-  temp=(temp)|(header[1]>>5);
-  _message->setCanId(temp);
+  _message->setCanId( _canMessage->getCanId());
   return true;
 }
 
@@ -65,10 +81,7 @@ bool MessageParser::getCanId()
 **/
 bool MessageParser::getDataSize()
 {
-
-    byte* data=_canMessage->getData();
-    byte n=data[0]>>5;
-    _message->setNumBytes(n);
+    _message->setNumBytes(_canMessage->getDataSize());
     return true;
 }
 /**
@@ -78,8 +91,7 @@ bool MessageParser::getDataSize()
 **/
 bool MessageParser::getOpc()
 {
-byte* data=_canMessage->getData();
-    _message->setOpc(data[0]);
+    _message->setOpc(_canMessage->getOpc());
     return true;
 }
 
@@ -92,7 +104,7 @@ bool MessageParser::getRTR()
 /**
 * bytes 1 and 2 from data buffer can be, depending on the message, the node number
 */
-bool MessageParser::getNodeNumber()
+bool MessageParser::getNodeNumber(Message *_msg)
 {
     int nn=0;
     byte* data;
