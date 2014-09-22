@@ -34,6 +34,7 @@ class MessageParser
         void skipGeneralMessage(){_skipGENERAL=true;};
         void processGeneralMessage(){_skipGENERAL=false;};
         bool skipMessage(message_type msg);
+        int parseACCMessage();
 
     protected:
     private:

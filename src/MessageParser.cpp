@@ -42,6 +42,7 @@ bool MessageParser::parse(Message *message,CANMessage *canMessage)
             return true;
             break;
         case message_type.ACCESSORY:
+            parseACCMessage();
             break;
         case message_type.DCC:
             break;
@@ -51,7 +52,6 @@ bool MessageParser::parse(Message *message,CANMessage *canMessage)
             break;
         }
     }
-
 
     if (_message->getNumBytes()>0){
         getNodeNumber();
@@ -65,7 +65,67 @@ bool MessageParser::parse(Message *message,CANMessage *canMessage)
 }
 
 int MessageParser::parseACCMessage(){
+    //[TODO: not robust enough. can break easily]
+    //the message types has to be transparent for the end user
+    _accMessage=(AccessoryMessage*)_message;
+    byte *data=_canMessage->getData();
+    byte opc=_accMessage->getOpc();
 
+    switch (opc){
+        case (OPC_FCLK):
+            _accMessage->setMinutes(data[1]);
+            _accMessage->setHours(data[2]);
+            _accMessage->setWdmon(data[3]);
+            _accMessage->setDiv(data[4]);
+            _accMessage->setMday(data[5]);
+            _accMessage->setTemperature(data[6]);
+        break;
+        default:
+            //messages with device number
+            if ((opc==OPC_ASON2)|| (opc==OPC_ASOF2)|| (opc==OPC_ARSON2)|| (opc==OPC_ARSOF2)||
+                (opc==OPC_ASON3)|| (opc==OPC_ASOF3)|| (opc==OPC_ARSON3)|| (opc==OPC_ARSOF3)||
+                (opc==OPC_DDES)|| (opc==OPC_DDRS)){
+
+                    if ((opc==OPC_DDES)|| (opc==OPC_DDRS)){
+                        _accMessage->setDeviceNumber(data[1],0);
+                        _accMessage->setDeviceNumber(data[2],1);
+                    }
+                    else {
+                        _accMessage->setDeviceNumber(data[3],0);
+                        _accMessage->setDeviceNumber(data[4],1);
+                    }
+            }
+
+            //messages with 2 bytes of data
+            if (_accMessage->getNumBytes()==6){
+                //all messages have NN NN EN EN d1 d2
+                _accMessage->setTotalAddBytes(2);
+                _accMessage->setAdditionalByte(data[5],0);
+                _accMessage->setAdditionalByte(data[6],1);
+            }
+
+            if (_accMessage->getNumBytes()==7){
+                 //messages with 5 bytes of data
+                if ((opc==OPC_ACDAT)|| (opc==OPC_ARDAT)|| (opc==OPC_ARSON2)|| (opc==OPC_ARSOF2)||
+                    (opc==OPC_DDES)|| (opc==OPC_DDRS)){
+                    _accMessage->setTotalAddBytes(5);
+                    _accMessage->setAdditionalByte(data[3],0);
+                    _accMessage->setAdditionalByte(data[4],1);
+                    _accMessage->setAdditionalByte(data[5],2);
+                    _accMessage->setAdditionalByte(data[6],3);
+                    _accMessage->setAdditionalByte(data[7],4);
+                }
+                 //messages with 3 bytes of data
+                else {
+                    //all messages have NN NN EN EN d1 d2
+                    _accMessage->setTotalAddBytes(3);
+                    _accMessage->setAdditionalByte(data[5],0);
+                    _accMessage->setAdditionalByte(data[6],1);
+                    _accMessage->setAdditionalByte(data[7],2);
+                }
+            }
+        break;
+    }
 }
 
 bool MessageParser::getCanId()

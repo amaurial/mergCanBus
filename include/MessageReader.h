@@ -7,6 +7,10 @@
 #define HEADER_SIZE 2
 #define DATA_SIZE 8
 
+/*
+Reads the message from the canbus device. can be shield or a mcp2551.
+*/
+
 class MessageReader
 {
     public:

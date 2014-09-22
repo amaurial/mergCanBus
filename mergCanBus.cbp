@@ -38,6 +38,7 @@
 		</Compiler>
 		<Unit filename="include/AccessoryMessage.h" />
 		<Unit filename="include/CANMessage.h" />
+		<Unit filename="include/ConfigMessage.h" />
 		<Unit filename="include/DCCMessage.h" />
 		<Unit filename="include/GeneralMessage.h" />
 		<Unit filename="include/MergNodeIdentification.h" />

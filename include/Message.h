@@ -59,9 +59,6 @@ class Message
         byte _priority;
         unsigned int _numBytes;
         unsigned int _RTR;
-        byte _session;
-        byte _decoderAddress[2];
-        byte _engineParameter;
 
 
 };
