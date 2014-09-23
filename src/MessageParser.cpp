@@ -157,7 +157,7 @@ bool MessageParser::getOpc()
 
 bool MessageParser::getRTR()
 {
-    if (_canMessage->getRTR()==1){_message->setRTR();}
+    if (_canMessage->getRTR()){_message->setRTR();}
     else{_message->unsetRTR();}
 }
 
