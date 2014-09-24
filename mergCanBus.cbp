@@ -41,9 +41,9 @@
 		<Unit filename="include/ConfigMessage.h" />
 		<Unit filename="include/DCCMessage.h" />
 		<Unit filename="include/GeneralMessage.h" />
+		<Unit filename="include/MergCanBus.h" />
 		<Unit filename="include/MergNodeIdentification.h" />
 		<Unit filename="include/Message.h" />
-		<Unit filename="include/MessageParser.h" />
 		<Unit filename="include/MessageReader.h" />
 		<Unit filename="include/mcp_can.h" />
 		<Unit filename="include/mcp_can_dfs.h" />
@@ -53,9 +53,9 @@
 		<Unit filename="src/ConfigMessage.cpp" />
 		<Unit filename="src/DCCMessage.cpp" />
 		<Unit filename="src/GeneralMessage.cpp" />
+		<Unit filename="src/MergCanBus.cpp" />
 		<Unit filename="src/MergNodeIdentification.cpp" />
 		<Unit filename="src/Message.cpp" />
-		<Unit filename="src/MessageParser.cpp" />
 		<Unit filename="src/MessageReader.cpp" />
 		<Unit filename="src/main_test.cpp" />
 		<Unit filename="src/mcp_can.cpp" />
