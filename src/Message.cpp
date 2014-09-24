@@ -69,9 +69,20 @@ unsigned int Message::setCanMessage(CANMessage *canMessage){
     return 0;
 }
 
+//used to get the data fields directly
+byte Message::getByte(byte pos){
+    if (pos>=CANDATA_SIZE){
+        return 0;
+    }
+    if (_canMessage==NULL){
+        return 0;
+    }
+    return _canMessage->getData()[pos];
+
+}
+
 unsigned int Message::getNodeNumber(){
     //node number is always at the position 1 and 2
-
     char* data=_canMessage->getData();
     unsigned int r=0;
     if (hasThisData(_opc,message_config_pos.NODE_NUMBER)){
@@ -134,7 +145,7 @@ unsigned int Message::getDecoder(){
 
     return r;
 }
-
+//CV#
 unsigned int Message::getCV(){
     //node number is always at the position 2 and 3
     char* data=_canMessage->getData();
@@ -145,6 +156,33 @@ unsigned int Message::getCV(){
 
     return r;
 }
+
+//CV Val
+unsigned int Message::getCVValue(){
+
+    char* data=_canMessage->getData();
+    byte r=0;
+    if (_opc==OPC_WCVO || _opc==OPC_WCVB || _opc==OPC_QCVS || _opc==OPC_PCVS){
+        return data[4];
+    }
+    else if (_opc==OPC_WCVS){
+        return data[5];
+    }
+    return r;
+}
+
+//CV Mode
+unsigned int Message::getCVMode(){
+    //node number is always at the position 2 and 3
+    char* data=_canMessage->getData();
+    byte r=0;
+    if (_opc==OPC_WCVS){
+        return data[4];
+    }
+    return r;
+}
+}
+
 
 byte Message::getConsist(){
     char* data=_canMessage->getData();
@@ -168,7 +206,40 @@ byte Message::getSpeedDir(){
 
 }
 
-byte Message::functionNumber(){
+byte Message::getEngineFlag(){
+    char* data=_canMessage->getData();
+    byte r=0;
+    if (_opc==OPC_DFLG ){
+        return data[2];
+    }
+    else if (_opc==OPC_GLOC){
+        return data[3];
+    }
+    return r;
+
+}
+//Space left to store events
+byte Message::getAvailableEventsLeft(){
+    char* data=_canMessage->getData();
+    byte r=0;
+    if (_opc==OPC_EVNLF ){
+        return data[3];
+    }
+    return r;
+
+}
+//Stored events
+byte Message::getStoredEvents(){
+    char* data=_canMessage->getData();
+    byte r=0;
+    if (_opc==OPC_NUMEV ){
+        return data[3];
+    }
+    return r;
+
+}
+//Fn
+byte Message::getFunctionNumber(){
     char* data=_canMessage->getData();
     byte r=0;
     if (_opc==OPC_DFNON||_opc==OPC_DFNOF||_opc==OPC_DFUN){
@@ -176,6 +247,7 @@ byte Message::functionNumber(){
     }
     return r;
 }
+//Fn value
 byte Message::functionValue(){
     char* data=_canMessage->getData();
     byte r=0;
@@ -185,15 +257,7 @@ byte Message::functionValue(){
     return r;
 }
 
-byte Message::getFunctionNumber(){
-    char* data=_canMessage->getData();
-    byte r=0;
-    if (_opc==OPC_DFNON||_opc==OPC_DFNOF){
-        return data[2];
-    }
-    return r;
-}
-
+//Status
 byte Message::getStatus(){
     char* data=_canMessage->getData();
     byte r=0;
@@ -202,6 +266,91 @@ byte Message::getStatus(){
     }
     return r;
 }
+//Para#
+byte Message::getParaIndex(){
+    char* data=_canMessage->getData();
+    byte r=0;
+    if (_opc==OPC_RQNP || _opc==OPC_NVSET || _opc==OPC_NVANS){
+        return data[3];
+    }
+    return r;
+}
+//Para
+byte Message::getParameter(){
+    char* data=_canMessage->getData();
+    byte r=0;
+    if (_opc==OPC_NVSET||_opc==OPC_NVANS){
+        return data[4];
+    }
+    return r;
+}
+//NV#
+byte Message::getNodeVariableIndex(){
+    char* data=_canMessage->getData();
+    byte r=0;
+    if (_opc==OPC_NVRD || _opc==OPC_NVSET || _opc==OPC_NVANS){
+        return data[3];
+    }
+    return r;
+}
+//NV
+byte Message::getNodeVariable(){
+    char* data=_canMessage->getData();
+    byte r=0;
+    if (_opc==OPC_NVSET||_opc==OPC_NVANS){
+        return data[4];
+    }
+    return r;
+}
+//EN#
+byte Message::getEventIndex(){
+    char* data=_canMessage->getData();
+    byte r=0;
+    if (_opc==OPC_NENRD || _opc==OPC_REVAL || _opc==OPC_NEVAL){
+        return data[3];
+    }
+    else if (_opc==OPC_EVLRNI){
+        return data[5];
+    }
+     else if (_opc==OPC_ENRSP){
+        return data[7];
+    }
+
+    return r;
+}
+//EV#
+byte Message::getEventVarIndex(){
+    char* data=_canMessage->getData();
+    byte r=0;
+    if ( _opc==OPC_REVAL || _opc==OPC_NEVAL){
+        return data[4];
+    }
+    else if (_opc==OPC_REQEV || _opc==OPC_EVLRN){
+        return data[5];
+    }
+     else if (_opc==OPC_EVLRNI){
+        return data[6];
+    }
+
+    return r;
+}
+//EV
+byte Message::getEventVar(){
+    char* data=_canMessage->getData();
+    byte r=0;
+    if ( _opc==OPC_NEVAL){
+        return data[5];
+    }
+     else if (_opc==OPC_EVLRN || _opc==OPC_EVANS){
+        return data[6];
+    }
+    else if (_opc==OPC_EVLRNI){
+        return data[7];
+    }
+
+    return r;
+}
+
 
 
 

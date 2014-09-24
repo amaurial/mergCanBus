@@ -9,7 +9,7 @@ typedef char byte;
 
 #define CANDATA_SIZE 8
 
-enum message_type {RESERVED,DCC,CONFIG,ACCESSORY,GENERAL};
+enum message_type {RESERVED=0,DCC=1,CONFIG=2,ACCESSORY=3,GENERAL=4};
 enum message_config_pos {NODE_NUMBER=0,DEVICE_NUMBER=1,EVENT_NUMBER=2,SESSION=3,DECODER=4,CV=5};
 
 class Message
@@ -24,6 +24,8 @@ class Message
                  unsigned int priority);
         virtual ~Message();
         unsigned int setCanMessage(CANMessage *canMessage);
+        CANMessage *getCanMessage(){return _canMessage;}
+        byte getByte(byte pos);
 
         byte getCanId() { return _canId; }
         void setCanId(byte val) { _canId = val; }
@@ -71,6 +73,22 @@ class Message
         void setEngineParameter(byte param){_engineParameter=param;}
         byte getEngineParameter (){return _engineParameter;}
 
+        unsigned int getCVValue();
+        byte getConsist();
+        byte getSpeedDir();
+        byte getEngineFlag();
+        byte getAvailableEventsLeft();
+        byte getStoredEvents();
+        byte getFunctionNumber();
+        byte functionValue();
+        byte getStatus();
+        byte getParaIndex();
+        byte getParameter();
+        byte getNodeVariableIndex();
+        byte getNodeVariable();
+        byte getEventIndex();
+        byte getEventVarIndex();
+        byte getEventVar();
         void clear();
     protected:
     private:
@@ -91,7 +109,6 @@ class Message
         message_type messages[MSGSIZE];//make an index of message types. opc is the array index
 
         unsigned int message_params[MSGSIZE];//use each bit to hold a true false information about the message
-
         bool hasThisData(byte opc, message_config_pos pos);
         void loadMessageConfig();
         void loadMessageType();
