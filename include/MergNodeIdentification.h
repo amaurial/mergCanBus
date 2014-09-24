@@ -8,18 +8,21 @@ class MergNodeIdentification
     public:
         MergNodeIdentification();
         virtual ~MergNodeIdentification();
-        public void setCanID(int canID);
-        public void setNodeNumber(int nodeNumber);
-        public void setNodeName(char[NAME_SIZE] nodeName);
-        public int getCanID();
-        public int getNodeNumber();
-        public const char[NAME_SIZE] getNodeName();
-
+        void setCanID(byte val){canID=val;};
+        void setNodeNumber(unsigned int val){nodeNumber=val;};
+        void setNodeName(char[NAME_SIZE] nodeName);
+        byte getCanID(){return canID;};
+        unsigned int getNodeNumber(){return nodeNumber;};
+        const char[NAME_SIZE] getNodeName();
+        void setDeviceNumber(unsigned int val){deviceNumber=val;};
+        unsigned int getDeviceNumber(){return deviceNumber;};
     protected:
     private:
-        int _canID;
-        int _nodeNumber;
-        char[NAME_SIZE] _nodeName;
+        byte canID;
+        unsigned int nodeNumber;
+        char[NAME_SIZE] nodeName;
+        unsigned int deviceNumber;
+
 };
 
 #endif // MERGNODEIDENTIFICATION_H

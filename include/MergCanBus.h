@@ -8,9 +8,12 @@ typedef char byte;
 
 #include "CANMessage.h"
 #include "Message.h"
+#include "MergNodeIdentification.h"
 
 
 #define MSGSIZE 256
+
+enum process_mode{AUTOMATIC,MANUAL};
 
 enum {}
 
@@ -19,27 +22,26 @@ class MergCanBus
     public:
         MessageParser();
         virtual ~MessageParser();
-        void skipConfigMessage(){setBitMessage (message_type.CONFIG,true);};
-        void processConfigMessage(){setBitMessage (message_type.CONFIG,false);};
-        void skipReservedMessage(){setBitMessage (message_type.RESERVED,true);};
-        void processReservedMessage(){_setBitMessage (message_type.RESERVED,false);};
-        void skipDCCMessage(){_setBitMessage (message_type.DCC,true);};
-        void processDCCMessage(){_setBitMessage (message_type.DCC,false);};
-        void skipAccessoryMessage(){_setBitMessage (message_type.ACCESSORY,true);};
-        void processAccessoryMessage(){_setBitMessage (message_type.ACCESSORY,false);};
-        void skipGeneralMessage(){_setBitMessage (message_type.GENERAL,true);};
-        void processGeneralMessage(){_setBitMessage (message_type.GENERAL,false);};
-        void skipMessage(message_type msg);
-        int parseACCMessage();
-
+        void skipMessage(message_type msg){setBitMessage (msg,true);};
+        void processMessage(message_type msg){setBitMessage (msg,false);};
+        bool run(process_mode mode);
+        bool hasMessageToHandle();
+        MergNodeIdentification *getNodeId(){return &nodeId;};
+        bool sendCanMessage(CANMessage *msg);
     protected:
     private:
         void setBitMessage(byte pos,bool val);
-        CANMessage *_canMessage;
-        Message *_message;
-        message_type messages[MSGSIZE];//make an index of message types. opc is the array index
-        void loadMessageType();
-        byte messagesToSkip;
+        CANMessage canMessage;
+        Message message;
+        MergNodeIdentification nodeId;
+        byte messageFilter;//bit filter about each message to handle. by default avoid reserved messages
+        process_mode runMode;
+        bool messageToHandle;
+        void readCanBus();
+        void sendCanMessage();
+        void storedEvents();//events that were learned
+        void storedIDs();//node number,canId,device Number
+
 
 };
 

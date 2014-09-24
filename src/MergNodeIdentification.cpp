@@ -11,22 +11,6 @@ MergNodeIdentification::~MergNodeIdentification()
 {
     //dtor
 }
-void MergNodeIdentification::setCanID(int canID)
-{
-    this._canID=canID;
-}
-int MergNodeIdentification::getCanID()
-{
-    return this._canID;
-}
-void MergNodeIdentification::setNodeNumber(int nodeNumber)
-{
-    this._nodeNumber=nodeNumber;
-}
-void MergNodeIdentification::getNodeNumber()
-{
-    return this._nodeNumber;
-}
 void MergNodeIdentification::setNodeName(char[NAME_SIZE] nodeName)
 {
     int i=0;
