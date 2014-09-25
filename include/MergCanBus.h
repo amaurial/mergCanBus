@@ -14,8 +14,8 @@ typedef char byte;
 #define MSGSIZE 256
 
 enum process_mode{AUTOMATIC,MANUAL};
-
-enum {}
+enum state {LEARN,UNLEARN,BOOT,NORMAL};
+enum can_error {OK=0,UNKNOWN_MSG_TYPE=1};
 
 class MergCanBus
 {
@@ -28,6 +28,9 @@ class MergCanBus
         bool hasMessageToHandle();
         MergNodeIdentification *getNodeId(){return &nodeId;};
         bool sendCanMessage(CANMessage *msg);
+        void setup();
+        //let the bus level lib public
+        MCP_CAN Can;
     protected:
     private:
         void setBitMessage(byte pos,bool val);
@@ -37,11 +40,17 @@ class MergCanBus
         byte messageFilter;//bit filter about each message to handle. by default avoid reserved messages
         process_mode runMode;
         bool messageToHandle;
-        void readCanBus();
+        bool readCanBus();
         void sendCanMessage();
-        void storedEvents();//events that were learned
-        void storedIDs();//node number,canId,device Number
-
+        void getStoredEvents();//events that were learned
+        void getStoredIDs();//node number,canId,device Number
+        bool matchEvent();//
+        unsigned int runAutomatic();
+        state state_mode;
+        void handleConfigMessages();
+        void handleDCCMessages();
+        void handleACCMessages();
+        void handleGeneralMessages();
 
 };
 
