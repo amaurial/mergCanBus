@@ -6,8 +6,17 @@ typedef char byte;
 #ifndef MESSAGE_H
 #define MESSAGE_H
 
+#define bitRead(val,pos){return 1;};
+#define bitSet(val,pos){return;};
+#define bitClear(val,pos){return;};
+
+
+#include "CANMessage.h"
+#include "opcodes.h"
+
 
 #define CANDATA_SIZE 8
+#define MSGSIZE 255
 
 enum message_type {RESERVED=0,DCC=1,CONFIG=2,ACCESSORY=3,GENERAL=4};
 enum message_config_pos {NODE_NUMBER=0,DEVICE_NUMBER=1,EVENT_NUMBER=2,SESSION=3,DECODER=4,CV=5};
@@ -27,11 +36,11 @@ class Message
         CANMessage *getCanMessage(){return _canMessage;}
         byte getByte(byte pos);
 
-        byte getCanId() { return _canId; }
-        void setCanId(byte val) { _canId = val; }
+        byte getCanId() { return canId; }
+        void setCanId(byte val) { canId = val; }
 
-        byte getOpc() { return _opc; }
-        void setOpc(byte val) { _opc = val; }
+        byte getOpc() { return opc; }
+        void setOpc(byte val) {opc = val; }
 
         message_type getType() { return _type; }
         void setType(message_type val) { _type = val; }
@@ -67,12 +76,7 @@ class Message
         unsigned int getCV();
         void setCV(unsigned int val) { _cv = val; }
 
-        void setDecoder(byte H,byte L){_decoderAddress[0]=H;_decoderAddress[1]=L;}
-        byte *getDecoder(){return _decoderAddress}
-
-        void setEngineParameter(byte param){_engineParameter=param;}
-        byte getEngineParameter (){return _engineParameter;}
-
+        unsigned int getCVMode();
         unsigned int getCVValue();
         byte getConsist();
         byte getSpeedDir();
@@ -92,8 +96,8 @@ class Message
         void clear();
     protected:
     private:
-        byte int _canId;
-        byte int _opc;
+        byte canId;
+        byte opc;
         message_type _type;
         unsigned int _eventNumber;//2 bytes
         unsigned int _nodeNumber;//2 bytes
@@ -112,7 +116,10 @@ class Message
         bool hasThisData(byte opc, message_config_pos pos);
         void loadMessageConfig();
         void loadMessageType();
+        //erase later
 
+        //void bitSet(unsigned int &val,unsigned int pos){return;};
+        //byte bitRead(unsigned int &val,unsigned int pos){return 1;};
 
 
 };

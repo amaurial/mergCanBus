@@ -10,17 +10,17 @@ class MergNodeIdentification
         virtual ~MergNodeIdentification();
         void setCanID(byte val){canID=val;};
         void setNodeNumber(unsigned int val){nodeNumber=val;};
-        void setNodeName(char[NAME_SIZE] nodeName);
+        void setNodeName(char* nodeName);
         byte getCanID(){return canID;};
         unsigned int getNodeNumber(){return nodeNumber;};
-        const char[NAME_SIZE] getNodeName();
+        const char* getNodeName();
         void setDeviceNumber(unsigned int val){deviceNumber=val;};
         unsigned int getDeviceNumber(){return deviceNumber;};
     protected:
     private:
         byte canID;
         unsigned int nodeNumber;
-        char[NAME_SIZE] nodeName;
+        char nodeName[NAME_SIZE];
         unsigned int deviceNumber;
 
 };

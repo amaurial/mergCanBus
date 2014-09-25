@@ -20,6 +20,7 @@ bool MessageReader::readMessage(CANMessage *canMessage)
 }
 void MessageReader::createTestData()
 {
+
     header[0]=0xB0;
     header[1]=0x20;
     data[0]=0x23;

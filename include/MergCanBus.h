@@ -9,9 +9,8 @@ typedef char byte;
 #include "CANMessage.h"
 #include "Message.h"
 #include "MergNodeIdentification.h"
+//#include "mcp_can.h"
 
-
-#define MSGSIZE 256
 
 enum process_mode{AUTOMATIC,MANUAL};
 enum state {LEARN,UNLEARN,BOOT,NORMAL};
@@ -20,8 +19,8 @@ enum can_error {OK=0,UNKNOWN_MSG_TYPE=1};
 class MergCanBus
 {
     public:
-        MessageParser();
-        virtual ~MessageParser();
+        MergCanBus();
+        virtual ~MergCanBus();
         void skipMessage(message_type msg){setBitMessage (msg,true);};
         void processMessage(message_type msg){setBitMessage (msg,false);};
         bool run(process_mode mode);
@@ -30,7 +29,7 @@ class MergCanBus
         bool sendCanMessage(CANMessage *msg);
         void setup();
         //let the bus level lib public
-        MCP_CAN Can;
+        //MCP_CAN Can;
     protected:
     private:
         void setBitMessage(byte pos,bool val);

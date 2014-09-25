@@ -1,12 +1,12 @@
-#include "MessageParser.h"
+#include "MergCanBus.h"
 
 
 
-MergCanBus::MessageParser()
+MergCanBus::MergCanBus()
 {
     //ctor
     messageFilter=0;
-    Can=MCP_CAN();
+    //Can=MCP_CAN();
     canMessage=CANMessage();
     nodeId=MergNodeIdentification();
 
@@ -14,7 +14,7 @@ MergCanBus::MessageParser()
     skipMessage(RESERVED);
 }
 
-MergCanBus::~MessageParser()
+MergCanBus::~MergCanBus()
 {
     //dtor
 }
@@ -32,13 +32,13 @@ unsigned int MergCanBus::runAutomatic(){
 
     if (!readCanBus()){
         //nothing to do
-        return can_error.OK;
+        return OK;
     }
 
     if (message.getRTR()){
         //we are a device with can id
         //we need to answer this message
-        if (nodeId.canID!=0){
+        if (nodeId.getCanID()!=0){
             //create the response message
             //TODO
             sendCanMessage(canMessage);
@@ -60,10 +60,10 @@ unsigned int MergCanBus::runAutomatic(){
             handleConfigMessages();
         break;
         default:
-            return can_error.UNKNOWN_MSG_TYPE;
+            return UNKNOWN_MSG_TYPE;
 
     }
-    return can_error.OK;
+    return OK;
 
 }
 

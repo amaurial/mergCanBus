@@ -15,6 +15,7 @@
 					<Add option="-g" />
 					<Add directory="src/" />
 					<Add directory="src" />
+					<Add directory="include" />
 				</Compiler>
 			</Target>
 			<Target title="Release">

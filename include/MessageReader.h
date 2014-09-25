@@ -3,6 +3,7 @@
 
 //#include "mcp_can.h"
 #include "CANMessage.h"
+#include <vector>
 
 #define HEADER_SIZE 2
 #define DATA_SIZE 8
@@ -10,6 +11,9 @@
 /*
 Reads the message from the canbus device. can be shield or a mcp2551.
 */
+
+struct bus {
+char data[DATA_SIZE]};
 
 class MessageReader
 {
@@ -26,6 +30,9 @@ class MessageReader
         void createTestData();
         char header[HEADER_SIZE];
         char data[DATA_SIZE];
+        std::vector<bus> buffer;
+
+
 };
 
 #endif // MESSAGEREADER_H

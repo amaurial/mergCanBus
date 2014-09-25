@@ -23,7 +23,7 @@ Message::Message(unsigned int canId,
     setEventNumber(eventNumber);
     setPriority(priority);
     int i=0;
-    for (int i=0;i<DATA_SIZE;i++){_data[i]=data[i];}
+    for (i=0;i<DATA_SIZE;i++){_data[i]=data[i];}
 }
 
 Message::~Message()
@@ -41,7 +41,7 @@ void Message::setData(byte val[DATA_SIZE] )
 void Message::clear(){
     setCanId(0);
     setOpc(0);
-    setType(message_type.RESERVED);
+    setType(RESERVED);
     setEventNumber(0);
     setNodeNumber(0);
     setData("00000000");
@@ -57,7 +57,9 @@ void Message::clear(){
 //return 0 if OK
 unsigned int Message::setCanMessage(CANMessage *canMessage){
     _canMessage=canMessage;
-    setRTR(_canMessage->getRTR());
+    if (_canMessage->getRTR()){
+        setRTR();
+    }
     if (getRTR()){
         return 0;
     }
@@ -74,7 +76,7 @@ byte Message::getByte(byte pos){
     if (pos>=CANDATA_SIZE){
         return 0;
     }
-    if (_canMessage==NULL){
+    if (_canMessage->getOpc()==0){
         return 0;
     }
     return _canMessage->getData()[pos];
@@ -85,21 +87,20 @@ unsigned int Message::getNodeNumber(){
     //node number is always at the position 1 and 2
     char* data=_canMessage->getData();
     unsigned int r=0;
-    if (hasThisData(_opc,message_config_pos.NODE_NUMBER)){
-
-
-            r=(unsigned int)word(data[1],data[2]);
+    if (hasThisData(opc,NODE_NUMBER)){
+            r=data[1];
+            r=r<<8;
+            r=r|data[2];
+            //r=(unsigned int)word(data[1],data[2]);
     }
-
     return r;
-
 }
 
 byte Message::getSession(){
     //session is always at the position 1
     char* data=_canMessage->getData();
     byte r=0;
-    if (hasThisData(_opc,message_config_pos.SESSION)){
+    if (hasThisData(opc,SESSION)){
             r=data[1];
     }
 
@@ -111,8 +112,11 @@ unsigned int Message::getEventNumber(){
     //node number is always at the position 3 and 4
     char* data=_canMessage->getData();
     unsigned int r=0;
-    if (hasThisData(_opc,message_config_pos.EVENT_NUMBER)){
-            r=(unsigned int)word(data[3],data[4]);
+    if (hasThisData(opc,EVENT_NUMBER)){
+            r=data[3];
+            r=r<<8;
+            r=r|data[4];
+            //r=(unsigned int)word(data[3],data[4]);
     }
 
     return r;
@@ -123,12 +127,18 @@ unsigned int Message::getDeviceNumber(){
     //OPC_DDRS OPC_DDES OPC_RQDDS
     char* data=_canMessage->getData();
     unsigned int r=0;
-    if (hasThisData(_opc,message_config_pos.DEVICE_NUMBER)){
+    if (hasThisData(opc,DEVICE_NUMBER)){
             if ((opc==OPC_DDRS) || (opc==OPC_DDES) || (opc==OPC_RQDDS)){
-                r=(unsigned int)word(data[1],data[2]);
+                r=data[1];
+                r=r<<8;
+                r=r|data[2];
+                //r=(unsigned int)word(data[1],data[2]);
             }
             else {
-                r=(unsigned int)word(data[3],data[4]);
+                //r=(unsigned int)word(data[3],data[4]);
+                r=data[3];
+                r=r<<8;
+                r=r|data[4];
             }
     }
 
@@ -139,8 +149,11 @@ unsigned int Message::getDecoder(){
     //node number is always at the position 2 and 3
     char* data=_canMessage->getData();
     unsigned int r=0;
-    if (hasThisData(_opc,message_config_pos.DECODER)){
-            r=(unsigned int)word(data[2],data[3]);
+    if (hasThisData(opc,DECODER)){
+            //r=(unsigned int)word(data[2],data[3]);
+            r=data[2];
+            r=r<<8;
+            r=r|data[3];
     }
 
     return r;
@@ -150,8 +163,11 @@ unsigned int Message::getCV(){
     //node number is always at the position 2 and 3
     char* data=_canMessage->getData();
     unsigned int r=0;
-    if (hasThisData(_opc,message_config_pos.CV)){
-            r=(unsigned int)word(data[2],data[3]);
+    if (hasThisData(opc,CV)){
+            //r=(unsigned int)word(data[2],data[3]);
+            r=data[2];
+            r=r<<8;
+            r=r|data[3];
     }
 
     return r;
@@ -162,10 +178,10 @@ unsigned int Message::getCVValue(){
 
     char* data=_canMessage->getData();
     byte r=0;
-    if (_opc==OPC_WCVO || _opc==OPC_WCVB || _opc==OPC_QCVS || _opc==OPC_PCVS){
+    if (opc==OPC_WCVO || opc==OPC_WCVB || opc==OPC_QCVS || opc==OPC_PCVS){
         return data[4];
     }
-    else if (_opc==OPC_WCVS){
+    else if (opc==OPC_WCVS){
         return data[5];
     }
     return r;
@@ -176,18 +192,18 @@ unsigned int Message::getCVMode(){
     //node number is always at the position 2 and 3
     char* data=_canMessage->getData();
     byte r=0;
-    if (_opc==OPC_WCVS){
+    if (opc==OPC_WCVS){
         return data[4];
     }
     return r;
 }
-}
+
 
 
 byte Message::getConsist(){
     char* data=_canMessage->getData();
     byte r=0;
-    if (_opc==OPC_PCON || _opc==OPC_KCON){
+    if (opc==OPC_PCON || opc==OPC_KCON){
         return data[2];
     }
     return r;
@@ -196,10 +212,10 @@ byte Message::getConsist(){
 byte Message::getSpeedDir(){
     char* data=_canMessage->getData();
     byte r=0;
-    if (_opc==OPC_DSPD){
+    if (opc==OPC_DSPD){
         return data[2];
     }
-    else if (_opc==OPC_PLOC){
+    else if (opc==OPC_PLOC){
         return data[4];
     }
     return r;
@@ -209,10 +225,10 @@ byte Message::getSpeedDir(){
 byte Message::getEngineFlag(){
     char* data=_canMessage->getData();
     byte r=0;
-    if (_opc==OPC_DFLG ){
+    if (opc==OPC_DFLG ){
         return data[2];
     }
-    else if (_opc==OPC_GLOC){
+    else if (opc==OPC_GLOC){
         return data[3];
     }
     return r;
@@ -222,7 +238,7 @@ byte Message::getEngineFlag(){
 byte Message::getAvailableEventsLeft(){
     char* data=_canMessage->getData();
     byte r=0;
-    if (_opc==OPC_EVNLF ){
+    if (opc==OPC_EVNLF ){
         return data[3];
     }
     return r;
@@ -232,7 +248,7 @@ byte Message::getAvailableEventsLeft(){
 byte Message::getStoredEvents(){
     char* data=_canMessage->getData();
     byte r=0;
-    if (_opc==OPC_NUMEV ){
+    if (opc==OPC_NUMEV ){
         return data[3];
     }
     return r;
@@ -242,7 +258,7 @@ byte Message::getStoredEvents(){
 byte Message::getFunctionNumber(){
     char* data=_canMessage->getData();
     byte r=0;
-    if (_opc==OPC_DFNON||_opc==OPC_DFNOF||_opc==OPC_DFUN){
+    if (opc==OPC_DFNON||opc==OPC_DFNOF||opc==OPC_DFUN){
         return data[2];
     }
     return r;
@@ -251,7 +267,7 @@ byte Message::getFunctionNumber(){
 byte Message::functionValue(){
     char* data=_canMessage->getData();
     byte r=0;
-    if (_opc==OPC_DFUN){
+    if (opc==OPC_DFUN){
         return data[3];
     }
     return r;
@@ -261,7 +277,7 @@ byte Message::functionValue(){
 byte Message::getStatus(){
     char* data=_canMessage->getData();
     byte r=0;
-    if (_opc==OPC_SSTAT||_opc==OPC_DFNOF){
+    if (opc==OPC_SSTAT||opc==OPC_DFNOF){
         return data[2];
     }
     return r;
@@ -270,7 +286,7 @@ byte Message::getStatus(){
 byte Message::getParaIndex(){
     char* data=_canMessage->getData();
     byte r=0;
-    if (_opc==OPC_RQNP || _opc==OPC_NVSET || _opc==OPC_NVANS){
+    if (opc==OPC_RQNP || opc==OPC_NVSET || opc==OPC_NVANS){
         return data[3];
     }
     return r;
@@ -279,7 +295,7 @@ byte Message::getParaIndex(){
 byte Message::getParameter(){
     char* data=_canMessage->getData();
     byte r=0;
-    if (_opc==OPC_NVSET||_opc==OPC_NVANS){
+    if (opc==OPC_NVSET||opc==OPC_NVANS){
         return data[4];
     }
     return r;
@@ -288,7 +304,7 @@ byte Message::getParameter(){
 byte Message::getNodeVariableIndex(){
     char* data=_canMessage->getData();
     byte r=0;
-    if (_opc==OPC_NVRD || _opc==OPC_NVSET || _opc==OPC_NVANS){
+    if (opc==OPC_NVRD || opc==OPC_NVSET || opc==OPC_NVANS){
         return data[3];
     }
     return r;
@@ -297,7 +313,7 @@ byte Message::getNodeVariableIndex(){
 byte Message::getNodeVariable(){
     char* data=_canMessage->getData();
     byte r=0;
-    if (_opc==OPC_NVSET||_opc==OPC_NVANS){
+    if (opc==OPC_NVSET||opc==OPC_NVANS){
         return data[4];
     }
     return r;
@@ -306,13 +322,13 @@ byte Message::getNodeVariable(){
 byte Message::getEventIndex(){
     char* data=_canMessage->getData();
     byte r=0;
-    if (_opc==OPC_NENRD || _opc==OPC_REVAL || _opc==OPC_NEVAL){
+    if (opc==OPC_NENRD || opc==OPC_REVAL || opc==OPC_NEVAL){
         return data[3];
     }
-    else if (_opc==OPC_EVLRNI){
+    else if (opc==OPC_EVLRNI){
         return data[5];
     }
-     else if (_opc==OPC_ENRSP){
+     else if (opc==OPC_ENRSP){
         return data[7];
     }
 
@@ -322,13 +338,13 @@ byte Message::getEventIndex(){
 byte Message::getEventVarIndex(){
     char* data=_canMessage->getData();
     byte r=0;
-    if ( _opc==OPC_REVAL || _opc==OPC_NEVAL){
+    if ( opc==OPC_REVAL || opc==OPC_NEVAL){
         return data[4];
     }
-    else if (_opc==OPC_REQEV || _opc==OPC_EVLRN){
+    else if (opc==OPC_REQEV || opc==OPC_EVLRN){
         return data[5];
     }
-     else if (_opc==OPC_EVLRNI){
+     else if (opc==OPC_EVLRNI){
         return data[6];
     }
 
@@ -338,13 +354,13 @@ byte Message::getEventVarIndex(){
 byte Message::getEventVar(){
     char* data=_canMessage->getData();
     byte r=0;
-    if ( _opc==OPC_NEVAL){
+    if ( opc==OPC_NEVAL){
         return data[5];
     }
-     else if (_opc==OPC_EVLRN || _opc==OPC_EVANS){
+     else if (opc==OPC_EVLRN || opc==OPC_EVANS){
         return data[6];
     }
-    else if (_opc==OPC_EVLRNI){
+    else if (opc==OPC_EVLRNI){
         return data[7];
     }
 
@@ -362,7 +378,6 @@ bool Message::hasThisData(byte opc, message_config_pos pos){
     }
 
     if (bitRead(message_params[opc],pos)==1){
-
         return true;
     }
     else {
@@ -375,416 +390,413 @@ bool Message::hasThisData(byte opc, message_config_pos pos){
 void Message::loadMessageConfig(){
 
     int i=0;
-    for(i=0;i<MSGSIZE,i++)
+    for(i=0;i<MSGSIZE;i++)
     {
         message_params[i]=0;
     }
-    bitSet(message_params[OPC_KLOC],message_config_pos.SESSION);
+    bitSet(message_params[OPC_KLOC],SESSION);
 
-    bitSet(message_params[OPC_QLOC],message_config_pos.SESSION);
+    bitSet(message_params[OPC_QLOC],SESSION);
 
-    bitSet(message_params[OPC_DKEEP],message_config_pos.SESSION);
+    bitSet(message_params[OPC_DKEEP],SESSION);
 
-    //message_params[OPC_EXTC]=message_type.GENERAL;
-    bitSet(message_params[OPC_RLOC],message_config_pos.DECODER);
+    //message_params[OPC_EXTC]=GENERAL;
+    bitSet(message_params[OPC_RLOC],DECODER);
 
-    bitSet(message_params[OPC_SNN],message_config_pos.NODE_NUMBER);
+    bitSet(message_params[OPC_SNN],NODE_NUMBER);
 
-    bitSet(message_params[OPC_STMOD],message_config_pos.SESSION);
+    bitSet(message_params[OPC_STMOD],SESSION);
 
-    bitSet(message_params[OPC_PCON],message_config_pos.SESSION);
+    bitSet(message_params[OPC_PCON],SESSION);
 
-    bitSet(message_params[OPC_KCON],message_config_pos.SESSION);
+    bitSet(message_params[OPC_KCON],SESSION);
 
-    bitSet(message_params[OPC_DSPD],message_config_pos.SESSION);
+    bitSet(message_params[OPC_DSPD],SESSION);
 
-    bitSet(message_params[OPC_DFLG],message_config_pos.SESSION);
+    bitSet(message_params[OPC_DFLG],SESSION);
 
-    bitSet(message_params[OPC_DFNON],message_config_pos.SESSION);
+    bitSet(message_params[OPC_DFNON],SESSION);
 
-    bitSet(message_params[OPC_DFNOF],message_config_pos.SESSION);
+    bitSet(message_params[OPC_DFNOF],SESSION);
 
-    bitSet(message_params[OPC_SSTAT],message_config_pos.SESSION);
+    bitSet(message_params[OPC_SSTAT],SESSION);
 
-    bitSet(message_params[OPC_RQNN],message_config_pos.NODE_NUMBER);
+    bitSet(message_params[OPC_RQNN],NODE_NUMBER);
 
-    bitSet(message_params[OPC_NNREL],message_config_pos.NODE_NUMBER);
+    bitSet(message_params[OPC_NNREL],NODE_NUMBER);
 
-    bitSet(message_params[OPC_NNACK],message_config_pos.NODE_NUMBER);
+    bitSet(message_params[OPC_NNACK],NODE_NUMBER);
 
-    bitSet(message_params[OPC_NNLRN],message_config_pos.NODE_NUMBER);
+    bitSet(message_params[OPC_NNLRN],NODE_NUMBER);
 
-    bitSet(message_params[OPC_NNULN],message_config_pos.NODE_NUMBER);
+    bitSet(message_params[OPC_NNULN],NODE_NUMBER);
 
-    bitSet(message_params[OPC_NNCLR],message_config_pos.NODE_NUMBER);
+    bitSet(message_params[OPC_NNCLR],NODE_NUMBER);
 
-    bitSet(message_params[OPC_NNEVN],message_config_pos.NODE_NUMBER);
+    bitSet(message_params[OPC_NNEVN],NODE_NUMBER);
 
-    bitSet(message_params[OPC_NERD],message_config_pos.NODE_NUMBER);
+    bitSet(message_params[OPC_NERD],NODE_NUMBER);
 
-    bitSet(message_params[OPC_RQEVN],message_config_pos.NODE_NUMBER);
+    bitSet(message_params[OPC_RQEVN],NODE_NUMBER);
 
-    bitSet(message_params[OPC_WRACK],message_config_pos.NODE_NUMBER);
+    bitSet(message_params[OPC_WRACK],NODE_NUMBER);
 
-    bitSet(message_params[OPC_RQDAT],message_config_pos.NODE_NUMBER);
+    bitSet(message_params[OPC_RQDAT],NODE_NUMBER);
 
-    bitSet(message_params[OPC_RQDDS],message_config_pos.DEVICE_NUMBER);
+    bitSet(message_params[OPC_RQDDS],DEVICE_NUMBER);
 
-    bitSet(message_params[OPC_BOOT],message_config_pos.NODE_NUMBER);
+    bitSet(message_params[OPC_BOOT],NODE_NUMBER);
 
-    bitSet(message_params[OPC_ENUM],message_config_pos.NODE_NUMBER);
+    bitSet(message_params[OPC_ENUM],NODE_NUMBER);
 
 
-    //message_params[OPC_EXTC1]=message_type.GENERAL;
+    //message_params[OPC_EXTC1]=GENERAL;
 
-    bitSet(message_params[OPC_DFUN],message_config_pos.SESSION);
+    bitSet(message_params[OPC_DFUN],SESSION);
 
-    bitSet(message_params[OPC_GLOC],message_config_pos.DECODER);
+    bitSet(message_params[OPC_GLOC],DECODER);
 
-    //message_params[OPC_ERR]=message_type.DCC;
+    //message_params[OPC_ERR]=DCC;
 
-    bitSet(message_params[OPC_CMDERR],message_config_pos.NODE_NUMBER);
+    bitSet(message_params[OPC_CMDERR],NODE_NUMBER);
 
-    bitSet(message_params[OPC_EVNLF],message_config_pos.NODE_NUMBER);
+    bitSet(message_params[OPC_EVNLF],NODE_NUMBER);
 
-    bitSet(message_params[OPC_NVRD],message_config_pos.NODE_NUMBER);
+    bitSet(message_params[OPC_NVRD],NODE_NUMBER);
 
-    bitSet(message_params[OPC_NENRD],message_config_pos.NODE_NUMBER);
+    bitSet(message_params[OPC_NENRD],NODE_NUMBER);
 
-    bitSet(message_params[OPC_RQNPN],message_config_pos.NODE_NUMBER);
+    bitSet(message_params[OPC_RQNPN],NODE_NUMBER);
 
-    bitSet(message_params[OPC_NUMEV],message_config_pos.NODE_NUMBER);
+    bitSet(message_params[OPC_NUMEV],NODE_NUMBER);
 
-    bitSet(message_params[OPC_CANID],message_config_pos.NODE_NUMBER);
+    bitSet(message_params[OPC_CANID],NODE_NUMBER);
 
-    //message_params[OPC_EXTC2]=message_type.GENERAL;
+    //message_params[OPC_EXTC2]=GENERAL;
 
-    bitSet(message_params[OPC_RDCC3],message_config_pos.SESSION);
-    bitSet(message_params[OPC_RDCC3],message_config_pos.CV);
+    bitSet(message_params[OPC_RDCC3],SESSION);
+    bitSet(message_params[OPC_RDCC3],CV);
 
-    bitSet(message_params[OPC_WCVO],message_config_pos.SESSION);
-    bitSet(message_params[OPC_WCVO],message_config_pos.CV);
+    bitSet(message_params[OPC_WCVO],SESSION);
+    bitSet(message_params[OPC_WCVO],CV);
 
-    bitSet(message_params[OPC_WCVB],message_config_pos.SESSION);
-    bitSet(message_params[OPC_WCVB],message_config_pos.CV);
+    bitSet(message_params[OPC_WCVB],SESSION);
+    bitSet(message_params[OPC_WCVB],CV);
 
-    bitSet(message_params[OPC_QCVS],message_config_pos.SESSION);
-    bitSet(message_params[OPC_QCVS],message_config_pos.CV);
+    bitSet(message_params[OPC_QCVS],SESSION);
+    bitSet(message_params[OPC_QCVS],CV);
 
-    bitSet(message_params[OPC_PCVS],message_config_pos.SESSION);
-    bitSet(message_params[OPC_PCVS],message_config_pos.CV);
+    bitSet(message_params[OPC_PCVS],SESSION);
+    bitSet(message_params[OPC_PCVS],CV);
 
-    bitSet(message_params[OPC_ACON],message_config_pos.NODE_NUMBER);
-    bitSet(message_params[OPC_ACON],message_config_pos.EVENT_NUMBER);
+    bitSet(message_params[OPC_ACON],NODE_NUMBER);
+    bitSet(message_params[OPC_ACON],EVENT_NUMBER);
 
-    bitSet(message_params[OPC_ACOF],message_config_pos.NODE_NUMBER);
-    bitSet(message_params[OPC_ACOF],message_config_pos.EVENT_NUMBER);
+    bitSet(message_params[OPC_ACOF],NODE_NUMBER);
+    bitSet(message_params[OPC_ACOF],EVENT_NUMBER);
 
-    bitSet(message_params[OPC_AREQ],message_config_pos.NODE_NUMBER);
-    bitSet(message_params[OPC_AREQ],message_config_pos.EVENT_NUMBER);
+    bitSet(message_params[OPC_AREQ],NODE_NUMBER);
+    bitSet(message_params[OPC_AREQ],EVENT_NUMBER);
 
-    bitSet(message_params[OPC_AREQ],message_config_pos.NODE_NUMBER);
-    bitSet(message_params[OPC_AREQ],message_config_pos.EVENT_NUMBER);
+    bitSet(message_params[OPC_AREQ],NODE_NUMBER);
+    bitSet(message_params[OPC_AREQ],EVENT_NUMBER);
 
-    bitSet(message_params[OPC_ARON],message_config_pos.NODE_NUMBER);
-    bitSet(message_params[OPC_ARON],message_config_pos.EVENT_NUMBER);
+    bitSet(message_params[OPC_ARON],NODE_NUMBER);
+    bitSet(message_params[OPC_ARON],EVENT_NUMBER);
 
-    bitSet(message_params[OPC_AROF],message_config_pos.NODE_NUMBER);
-    bitSet(message_params[OPC_AROF],message_config_pos.EVENT_NUMBER);
+    bitSet(message_params[OPC_AROF],NODE_NUMBER);
+    bitSet(message_params[OPC_AROF],EVENT_NUMBER);
 
-    bitSet(message_params[OPC_EVULN],message_config_pos.NODE_NUMBER);
-    bitSet(message_params[OPC_EVULN],message_config_pos.EVENT_NUMBER);
+    bitSet(message_params[OPC_EVULN],NODE_NUMBER);
+    bitSet(message_params[OPC_EVULN],EVENT_NUMBER);
 
-    bitSet(message_params[OPC_NVSET],message_config_pos.NODE_NUMBER);
+    bitSet(message_params[OPC_NVSET],NODE_NUMBER);
 
-    bitSet(message_params[OPC_NVANS],message_config_pos.NODE_NUMBER);
+    bitSet(message_params[OPC_NVANS],NODE_NUMBER);
 
-    bitSet(message_params[OPC_ASON],message_config_pos.NODE_NUMBER);
-    bitSet(message_params[OPC_ASON],message_config_pos.DEVICE_NUMBER);
+    bitSet(message_params[OPC_ASON],NODE_NUMBER);
+    bitSet(message_params[OPC_ASON],DEVICE_NUMBER);
 
-    bitSet(message_params[OPC_ASOF],message_config_pos.NODE_NUMBER);
-    bitSet(message_params[OPC_ASOF],message_config_pos.DEVICE_NUMBER);
+    bitSet(message_params[OPC_ASOF],NODE_NUMBER);
+    bitSet(message_params[OPC_ASOF],DEVICE_NUMBER);
 
-    bitSet(message_params[OPC_ASRQ],message_config_pos.NODE_NUMBER);
-    bitSet(message_params[OPC_ASRQ],message_config_pos.DEVICE_NUMBER);
+    bitSet(message_params[OPC_ASRQ],NODE_NUMBER);
+    bitSet(message_params[OPC_ASRQ],DEVICE_NUMBER);
 
-    bitSet(message_params[OPC_PARAN],message_config_pos.NODE_NUMBER);
+    bitSet(message_params[OPC_PARAN],NODE_NUMBER);
 
-    bitSet(message_params[OPC_REVAL],message_config_pos.NODE_NUMBER);
+    bitSet(message_params[OPC_REVAL],NODE_NUMBER);
 
-    bitSet(message_params[OPC_ARSON],message_config_pos.NODE_NUMBER);
-    bitSet(message_params[OPC_ARSON],message_config_pos.DEVICE_NUMBER);
+    bitSet(message_params[OPC_ARSON],NODE_NUMBER);
+    bitSet(message_params[OPC_ARSON],DEVICE_NUMBER);
 
-    bitSet(message_params[OPC_ARSOF],message_config_pos.NODE_NUMBER);
-    bitSet(message_params[OPC_ARSOF],message_config_pos.DEVICE_NUMBER);
+    bitSet(message_params[OPC_ARSOF],NODE_NUMBER);
+    bitSet(message_params[OPC_ARSOF],DEVICE_NUMBER);
 
-    //message_params[OPC_EXTC3]=message_type.GENERAL;
-    //message_params[OPC_RDCC4]=message_type.DCC;
+    //message_params[OPC_EXTC3]=GENERAL;
+    //message_params[OPC_RDCC4]=DCC;
 
-    bitSet(message_params[OPC_WCVS],message_config_pos.SESSION);
-    bitSet(message_params[OPC_WCVS],message_config_pos.CV);
+    bitSet(message_params[OPC_WCVS],SESSION);
+    bitSet(message_params[OPC_WCVS],CV);
 
-    bitSet(message_params[OPC_ACON1],message_config_pos.NODE_NUMBER);
-    bitSet(message_params[OPC_ACON1],message_config_pos.EVENT_NUMBER);
+    bitSet(message_params[OPC_ACON1],NODE_NUMBER);
+    bitSet(message_params[OPC_ACON1],EVENT_NUMBER);
 
-    bitSet(message_params[OPC_ACOF1],message_config_pos.NODE_NUMBER);
-    bitSet(message_params[OPC_ACOF1],message_config_pos.EVENT_NUMBER);
+    bitSet(message_params[OPC_ACOF1],NODE_NUMBER);
+    bitSet(message_params[OPC_ACOF1],EVENT_NUMBER);
 
-    bitSet(message_params[OPC_REQEV],message_config_pos.NODE_NUMBER);
-    bitSet(message_params[OPC_REQEV],message_config_pos.EVENT_NUMBER);
+    bitSet(message_params[OPC_REQEV],NODE_NUMBER);
+    bitSet(message_params[OPC_REQEV],EVENT_NUMBER);
 
-    bitSet(message_params[OPC_ARON1],message_config_pos.NODE_NUMBER);
-    bitSet(message_params[OPC_ARON1],message_config_pos.EVENT_NUMBER);
+    bitSet(message_params[OPC_ARON1],NODE_NUMBER);
+    bitSet(message_params[OPC_ARON1],EVENT_NUMBER);
 
-    bitSet(message_params[OPC_AROF1],message_config_pos.NODE_NUMBER);
-    bitSet(message_params[OPC_AROF1],message_config_pos.EVENT_NUMBER);
+    bitSet(message_params[OPC_AROF1],NODE_NUMBER);
+    bitSet(message_params[OPC_AROF1],EVENT_NUMBER);
 
-    bitSet(message_params[OPC_NEVAL],message_config_pos.NODE_NUMBER);
+    bitSet(message_params[OPC_NEVAL],NODE_NUMBER);
 
-    bitSet(message_params[OPC_PNN],message_config_pos.NODE_NUMBER);
+    bitSet(message_params[OPC_PNN],NODE_NUMBER);
 
-    bitSet(message_params[OPC_ASON1],message_config_pos.NODE_NUMBER);
-    bitSet(message_params[OPC_ASON1],message_config_pos.DEVICE_NUMBER);
+    bitSet(message_params[OPC_ASON1],NODE_NUMBER);
+    bitSet(message_params[OPC_ASON1],DEVICE_NUMBER);
 
-    bitSet(message_params[OPC_ASOF1],message_config_pos.NODE_NUMBER);
-    bitSet(message_params[OPC_ASOF1],message_config_pos.DEVICE_NUMBER);
+    bitSet(message_params[OPC_ASOF1],NODE_NUMBER);
+    bitSet(message_params[OPC_ASOF1],DEVICE_NUMBER);
 
-    bitSet(message_params[OPC_ARSON1],message_config_pos.NODE_NUMBER);
-    bitSet(message_params[OPC_ARSON1],message_config_pos.DEVICE_NUMBER);
+    bitSet(message_params[OPC_ARSON1],NODE_NUMBER);
+    bitSet(message_params[OPC_ARSON1],DEVICE_NUMBER);
 
-    bitSet(message_params[OPC_ARSOF1],message_config_pos.NODE_NUMBER);
-    bitSet(message_params[OPC_ARSOF1],message_config_pos.DEVICE_NUMBER);
+    bitSet(message_params[OPC_ARSOF1],NODE_NUMBER);
+    bitSet(message_params[OPC_ARSOF1],DEVICE_NUMBER);
 
-    //message_params[OPC_EXTC4]=message_type.GENERAL;
-    //message_params[OPC_RDCC5]=message_type.DCC;
+    //message_params[OPC_EXTC4]=GENERAL;
+    //message_params[OPC_RDCC5]=DCC;
 
-    bitSet(message_params[OPC_WCVOA],message_config_pos.DECODER);
-    bitSet(message_params[OPC_WCVOA],message_config_pos.CV);
+    bitSet(message_params[OPC_WCVOA],DECODER);
+    bitSet(message_params[OPC_WCVOA],CV);
 
-    //message_params[OPC_FCLK]=message_type.ACCESSORY;
+    //message_params[OPC_FCLK]=ACCESSORY;
 
-    bitSet(message_params[OPC_ACON2],message_config_pos.NODE_NUMBER);
-    bitSet(message_params[OPC_ACON2],message_config_pos.EVENT_NUMBER);
+    bitSet(message_params[OPC_ACON2],NODE_NUMBER);
+    bitSet(message_params[OPC_ACON2],EVENT_NUMBER);
 
-    bitSet(message_params[OPC_ACOF2],message_config_pos.NODE_NUMBER);
-    bitSet(message_params[OPC_ACOF2],message_config_pos.EVENT_NUMBER);
+    bitSet(message_params[OPC_ACOF2],NODE_NUMBER);
+    bitSet(message_params[OPC_ACOF2],EVENT_NUMBER);
 
-    bitSet(message_params[OPC_EVLRN],message_config_pos.NODE_NUMBER);
-    bitSet(message_params[OPC_EVLRN],message_config_pos.EVENT_NUMBER);
+    bitSet(message_params[OPC_EVLRN],NODE_NUMBER);
+    bitSet(message_params[OPC_EVLRN],EVENT_NUMBER);
 
-    bitSet(message_params[OPC_EVANS],message_config_pos.NODE_NUMBER);
-    bitSet(message_params[OPC_EVANS],message_config_pos.EVENT_NUMBER);
+    bitSet(message_params[OPC_EVANS],NODE_NUMBER);
+    bitSet(message_params[OPC_EVANS],EVENT_NUMBER);
 
-    bitSet(message_params[OPC_ARON2],message_config_pos.NODE_NUMBER);
-    bitSet(message_params[OPC_ARON2],message_config_pos.EVENT_NUMBER);
+    bitSet(message_params[OPC_ARON2],NODE_NUMBER);
+    bitSet(message_params[OPC_ARON2],EVENT_NUMBER);
 
-    bitSet(message_params[OPC_AROF2],message_config_pos.NODE_NUMBER);
-    bitSet(message_params[OPC_AROF2],message_config_pos.EVENT_NUMBER);
+    bitSet(message_params[OPC_AROF2],NODE_NUMBER);
+    bitSet(message_params[OPC_AROF2],EVENT_NUMBER);
 
-    bitSet(message_params[OPC_ASON2],message_config_pos.NODE_NUMBER);
-    bitSet(message_params[OPC_ASON2],message_config_pos.DEVICE_NUMBER);
+    bitSet(message_params[OPC_ASON2],NODE_NUMBER);
+    bitSet(message_params[OPC_ASON2],DEVICE_NUMBER);
 
-    bitSet(message_params[OPC_ASOF2],message_config_pos.NODE_NUMBER);
-    bitSet(message_params[OPC_ASOF2],message_config_pos.DEVICE_NUMBER);
+    bitSet(message_params[OPC_ASOF2],NODE_NUMBER);
+    bitSet(message_params[OPC_ASOF2],DEVICE_NUMBER);
 
-    bitSet(message_params[OPC_ARSON2],message_config_pos.NODE_NUMBER);
-    bitSet(message_params[OPC_ARSON2],message_config_pos.DEVICE_NUMBER);
+    bitSet(message_params[OPC_ARSON2],NODE_NUMBER);
+    bitSet(message_params[OPC_ARSON2],DEVICE_NUMBER);
 
-    bitSet(message_params[OPC_ARSOF2],message_config_pos.NODE_NUMBER);
-    bitSet(message_params[OPC_ARSOF2],message_config_pos.DEVICE_NUMBER);
+    bitSet(message_params[OPC_ARSOF2],NODE_NUMBER);
+    bitSet(message_params[OPC_ARSOF2],DEVICE_NUMBER);
 
-    //message_params[OPC_EXTC5]=message_type.GENERAL;
-    //message_params[OPC_RDCC6]=message_type.DCC;
+    //message_params[OPC_EXTC5]=GENERAL;
+    //message_params[OPC_RDCC6]=DCC;
 
-    bitSet(message_params[OPC_PLOC],message_config_pos.SESSION;
-    bitSet(message_params[OPC_PLOC],message_config_pos.DECODER);
+    bitSet(message_params[OPC_PLOC],SESSION);
+    bitSet(message_params[OPC_PLOC],DECODER);
 
-    //message_params[OPC_NAME]=message_type.CONFIG;
+    //message_params[OPC_NAME]=CONFIG;
 
-    bitSet(message_params[OPC_STAT],message_config_pos.NODE_NUMBER);
+    bitSet(message_params[OPC_STAT],NODE_NUMBER);
 
-    //message_params[OPC_PARAMS]=message_type.CONFIG;
+    //message_params[OPC_PARAMS]=CONFIG;
 
-    bitSet(message_params[OPC_ACON3],message_config_pos.NODE_NUMBER);
-    bitSet(message_params[OPC_ACON3],message_config_pos.EVENT_NUMBER);
+    bitSet(message_params[OPC_ACON3],NODE_NUMBER);
+    bitSet(message_params[OPC_ACON3],EVENT_NUMBER);
 
-    bitSet(message_params[OPC_ACOF3],message_config_pos.NODE_NUMBER);
-    bitSet(message_params[OPC_ACOF3],message_config_pos.EVENT_NUMBER);
+    bitSet(message_params[OPC_ACOF3],NODE_NUMBER);
+    bitSet(message_params[OPC_ACOF3],EVENT_NUMBER);
 
-    //message_params[OPC_ENRSP]=message_type.CONFIG;
+    //message_params[OPC_ENRSP]=CONFIG;
 
-    bitSet(message_params[OPC_ARON3],message_config_pos.NODE_NUMBER);
-    bitSet(message_params[OPC_ARON3],message_config_pos.EVENT_NUMBER);
+    bitSet(message_params[OPC_ARON3],NODE_NUMBER);
+    bitSet(message_params[OPC_ARON3],EVENT_NUMBER);
 
-    bitSet(message_params[OPC_AROF3],message_config_pos.NODE_NUMBER);
-    bitSet(message_params[OPC_AROF3],message_config_pos.EVENT_NUMBER);
+    bitSet(message_params[OPC_AROF3],NODE_NUMBER);
+    bitSet(message_params[OPC_AROF3],EVENT_NUMBER);
 
-    bitSet(message_params[OPC_EVLRNI],message_config_pos.NODE_NUMBER);
-    bitSet(message_params[OPC_EVLRNI],message_config_pos.EVENT_NUMBER);
+    bitSet(message_params[OPC_EVLRNI],NODE_NUMBER);
+    bitSet(message_params[OPC_EVLRNI],EVENT_NUMBER);
 
-    bitSet(message_params[OPC_ACDAT],message_config_pos.NODE_NUMBER);
+    bitSet(message_params[OPC_ACDAT],NODE_NUMBER);
 
-    bitSet(message_params[OPC_ARDAT],message_config_pos.NODE_NUMBER);
+    bitSet(message_params[OPC_ARDAT],NODE_NUMBER);
 
-    bitSet(message_params[OPC_ASON3],message_config_pos.NODE_NUMBER);
-    bitSet(message_params[OPC_ASON3],message_config_pos.DEVICE_NUMBER);
+    bitSet(message_params[OPC_ASON3],NODE_NUMBER);
+    bitSet(message_params[OPC_ASON3],DEVICE_NUMBER);
 
-    bitSet(message_params[OPC_ASOF3],message_config_pos.NODE_NUMBER);
-    bitSet(message_params[OPC_ASOF3],message_config_pos.DEVICE_NUMBER);
+    bitSet(message_params[OPC_ASOF3],NODE_NUMBER);
+    bitSet(message_params[OPC_ASOF3],DEVICE_NUMBER);
 
-    bitSet(message_params[OPC_DDES],message_config_pos.DEVICE_NUMBER);
+    bitSet(message_params[OPC_DDES],DEVICE_NUMBER);
 
-    bitSet(message_params[OPC_DDRS],message_config_pos.DEVICE_NUMBER);
+    bitSet(message_params[OPC_DDRS],DEVICE_NUMBER);
 
-    bitSet(message_params[OPC_ARSON3],message_config_pos.NODE_NUMBER);
-    bitSet(message_params[OPC_ARSON3],message_config_pos.DEVICE_NUMBER);
+    bitSet(message_params[OPC_ARSON3],NODE_NUMBER);
+    bitSet(message_params[OPC_ARSON3],DEVICE_NUMBER);
 
-    bitSet(message_params[OPC_ARSOF3],message_config_pos.NODE_NUMBER);
-    bitSet(message_params[OPC_ARSOF3],message_config_pos.DEVICE_NUMBER);
+    bitSet(message_params[OPC_ARSOF3],NODE_NUMBER);
+    bitSet(message_params[OPC_ARSOF3],DEVICE_NUMBER);
 
-    //message_params[OPC_EXTC6]=message_type.ACCESSORY;
+    //message_params[OPC_EXTC6]=ACCESSORY;
 
 
 
 }
 
 
-unsigned int bitSet(unsigned int &val,unsigned int pos){
-    return *val;
-}
 
 void Message::loadMessageType()
 {
     //clear all types
     int i=0;
-    for(i=0;i<MSGSIZE,i++)
+    for(i=0;i<MSGSIZE;i++)
     {
-        messages[i]=message_type.RESERVED;
+        messages[i]=RESERVED;
     }
-    messages[OPC_ACK]=message_type.GENERAL;
-    messages[OPC_NAK]=message_type.GENERAL;
-    messages[OPC_HLT]=message_type.GENERAL;
-    messages[OPC_BON]=message_type.GENERAL;
-    messages[OPC_TOF]=message_type.DCC;
-    messages[OPC_TON]=message_type.DCC;
-    messages[OPC_ESTOP]=message_type.DCC;
-    messages[OPC_ARST]=message_type.GENERAL;
-    messages[OPC_RTOF]=message_type.DCC;
-    messages[OPC_RTON]=message_type.DCC;
-    messages[OPC_RESTP]=message_type.DCC;
-    messages[OPC_RSTAT]=message_type.CONFIG;
-    messages[OPC_QNN]=message_type.CONFIG;
-    messages[OPC_RQNP]=message_type.CONFIG;
-    messages[OPC_RQMN]=message_type.CONFIG;
-    messages[OPC_KLOC]=message_type.DCC;
-    messages[OPC_QLOC]=message_type.DCC;
-    messages[OPC_DKEEP]=message_type.DCC;
-    messages[OPC_EXTC]=message_type.GENERAL;
-    messages[OPC_RLOC]=message_type.DCC;
-    messages[OPC_QCON]=message_type.RESERVED;
-    messages[OPC_SNN]=message_type.GENERAL;
-    messages[OPC_STMOD]=message_type.DCC;
-    messages[OPC_PCON]=message_type.DCC;
-    messages[OPC_KCON]=message_type.DCC;
-    messages[OPC_DSPD]=message_type.DCC;
-    messages[OPC_DFLG]=message_type.DCC;
-    messages[OPC_DFNON]=message_type.DCC;
-    messages[OPC_DFNOF]=message_type.DCC;
-    messages[OPC_SSTAT]=message_type.DCC;
-    messages[OPC_RQNN]=message_type.CONFIG;
-    messages[OPC_NNREL]=message_type.CONFIG;
-    messages[OPC_NNACK]=message_type.CONFIG;
-    messages[OPC_NNLRN]=message_type.CONFIG;
-    messages[OPC_NNULN]=message_type.CONFIG;
-    messages[OPC_NNCLR]=message_type.CONFIG;
-    messages[OPC_NNEVN]=message_type.CONFIG;
-    messages[OPC_NERD]=message_type.CONFIG;
-    messages[OPC_RQEVN]=message_type.CONFIG;
-    messages[OPC_WRACK]=message_type.CONFIG;
-    messages[OPC_RQDAT]=message_type.ACCESSORY;
-    messages[OPC_RQDDS]=message_type.ACCESSORY;
-    messages[OPC_BOOT]=message_type.CONFIG;
-    messages[OPC_ENUM]=message_type.CONFIG;
-    messages[OPC_EXTC1]=message_type.GENERAL;
-    messages[OPC_DFUN]=message_type.DCC;
-    messages[OPC_GLOC]=message_type.DCC;
-    messages[OPC_ERR]=message_type.DCC;
-    messages[OPC_CMDERR]=message_type.CONFIG;
-    messages[OPC_EVNLF]=message_type.CONFIG;
-    messages[OPC_NVRD]=message_type.CONFIG;
-    messages[OPC_NENRD]=message_type.CONFIG;
-    messages[OPC_RQNPN]=message_type.CONFIG;
-    messages[OPC_NUMEV]=message_type.CONFIG;
-    messages[OPC_CANID]=message_type.CONFIG;
-    messages[OPC_EXTC2]=message_type.GENERAL;
-    messages[OPC_RDCC3]=message_type.DCC;
-    messages[OPC_WCVO]=message_type.DCC;
-    messages[OPC_WCVB]=message_type.DCC;
-    messages[OPC_QCVS]=message_type.DCC;
-    messages[OPC_PCVS]=message_type.DCC;
-    messages[OPC_ACON]=message_type.ACCESSORY;
-    messages[OPC_ACOF]=message_type.ACCESSORY;
-    messages[OPC_AREQ]=message_type.ACCESSORY;
-    messages[OPC_ARON]=message_type.ACCESSORY;
-    messages[OPC_AROF]=message_type.ACCESSORY;
-    messages[OPC_EVULN]=message_type.CONFIG;
-    messages[OPC_NVSET]=message_type.CONFIG;
-    messages[OPC_NVANS]=message_type.CONFIG;
-    messages[OPC_ASON]=message_type.ACCESSORY;
-    messages[OPC_ASOF]=message_type.ACCESSORY;
-    messages[OPC_ASRQ]=message_type.ACCESSORY;
-    messages[OPC_PARAN]=message_type.CONFIG;
-    messages[OPC_REVAL]=message_type.CONFIG;
-    messages[OPC_ARSON]=message_type.ACCESSORY;
-    messages[OPC_ARSOF]=message_type.ACCESSORY;
-    messages[OPC_EXTC3]=message_type.GENERAL;
-    messages[OPC_RDCC4]=message_type.DCC;
-    messages[OPC_WCVS]=message_type.DCC;
-    messages[OPC_ACON1]=message_type.ACCESSORY;
-    messages[OPC_ACOF1]=message_type.ACCESSORY;
-    messages[OPC_REQEV]=message_type.CONFIG;
-    messages[OPC_ARON1]=message_type.ACCESSORY;
-    messages[OPC_AROF1]=message_type.ACCESSORY;
-    messages[OPC_NEVAL]=message_type.CONFIG;
-    messages[OPC_PNN]=message_type.GENERAL;
-    messages[OPC_ASON1]=message_type.ACCESSORY;
-    messages[OPC_ASOF1]=message_type.ACCESSORY;
-    messages[OPC_ARSON1]=message_type.ACCESSORY;
-    messages[OPC_ARSOF1]=message_type.ACCESSORY;
-    messages[OPC_EXTC4]=message_type.GENERAL;
-    messages[OPC_RDCC5]=message_type.DCC;
-    messages[OPC_WCVOA]=message_type.DCC;
-    messages[OPC_FCLK]=message_type.ACCESSORY;
-    messages[OPC_ACON2]=message_type.ACCESSORY;
-    messages[OPC_ACOF2]=message_type.ACCESSORY;
-    messages[OPC_EVLRN]=message_type.CONFIG;
-    messages[OPC_EVANS]=message_type.CONFIG;
-    messages[OPC_ARON2]=message_type.ACCESSORY;
-    messages[OPC_AROF2]=message_type.ACCESSORY;
-    messages[OPC_ASON2]=message_type.ACCESSORY;
-    messages[OPC_ASOF2]=message_type.ACCESSORY;
-    messages[OPC_ARSON2]=message_type.ACCESSORY;
-    messages[OPC_ARSOF2]=message_type.ACCESSORY;
-    messages[OPC_EXTC5]=message_type.GENERAL;
-    messages[OPC_RDCC6]=message_type.DCC;
-    messages[OPC_PLOC]=message_type.DCC;
-    messages[OPC_NAME]=message_type.CONFIG;
-    messages[OPC_STAT]=message_type.DCC;
-    messages[OPC_PARAMS]=message_type.CONFIG;
-    messages[OPC_ACON3]=message_type.ACCESSORY;
-    messages[OPC_ACOF3]=message_type.ACCESSORY;
-    messages[OPC_ENRSP]=message_type.CONFIG;
-    messages[OPC_ARON3]=message_type.ACCESSORY;
-    messages[OPC_AROF3]=message_type.ACCESSORY;
-    messages[OPC_EVLRNI]=message_type.CONFIG;
-    messages[OPC_ACDAT]=message_type.ACCESSORY;
-    messages[OPC_ARDAT]=message_type.ACCESSORY;
-    messages[OPC_ASON3]=message_type.ACCESSORY;
-    messages[OPC_ASOF3]=message_type.ACCESSORY;
-    messages[OPC_DDES]=message_type.ACCESSORY;
-    messages[OPC_DDRS]=message_type.ACCESSORY;
-    messages[OPC_ARSON3]=message_type.ACCESSORY;
-    messages[OPC_ARSOF3]=message_type.ACCESSORY;
-    messages[OPC_EXTC6]=message_type.ACCESSORY;
+    messages[OPC_ACK]=GENERAL;
+    messages[OPC_NAK]=GENERAL;
+    messages[OPC_HLT]=GENERAL;
+    messages[OPC_BON]=GENERAL;
+    messages[OPC_TOF]=DCC;
+    messages[OPC_TON]=DCC;
+    messages[OPC_ESTOP]=DCC;
+    messages[OPC_ARST]=GENERAL;
+    messages[OPC_RTOF]=DCC;
+    messages[OPC_RTON]=DCC;
+    messages[OPC_RESTP]=DCC;
+    messages[OPC_RSTAT]=CONFIG;
+    messages[OPC_QNN]=CONFIG;
+    messages[OPC_RQNP]=CONFIG;
+    messages[OPC_RQMN]=CONFIG;
+    messages[OPC_KLOC]=DCC;
+    messages[OPC_QLOC]=DCC;
+    messages[OPC_DKEEP]=DCC;
+    messages[OPC_EXTC]=GENERAL;
+    messages[OPC_RLOC]=DCC;
+    messages[OPC_QCON]=RESERVED;
+    messages[OPC_SNN]=GENERAL;
+    messages[OPC_STMOD]=DCC;
+    messages[OPC_PCON]=DCC;
+    messages[OPC_KCON]=DCC;
+    messages[OPC_DSPD]=DCC;
+    messages[OPC_DFLG]=DCC;
+    messages[OPC_DFNON]=DCC;
+    messages[OPC_DFNOF]=DCC;
+    messages[OPC_SSTAT]=DCC;
+    messages[OPC_RQNN]=CONFIG;
+    messages[OPC_NNREL]=CONFIG;
+    messages[OPC_NNACK]=CONFIG;
+    messages[OPC_NNLRN]=CONFIG;
+    messages[OPC_NNULN]=CONFIG;
+    messages[OPC_NNCLR]=CONFIG;
+    messages[OPC_NNEVN]=CONFIG;
+    messages[OPC_NERD]=CONFIG;
+    messages[OPC_RQEVN]=CONFIG;
+    messages[OPC_WRACK]=CONFIG;
+    messages[OPC_RQDAT]=ACCESSORY;
+    messages[OPC_RQDDS]=ACCESSORY;
+    messages[OPC_BOOT]=CONFIG;
+    messages[OPC_ENUM]=CONFIG;
+    messages[OPC_EXTC1]=GENERAL;
+    messages[OPC_DFUN]=DCC;
+    messages[OPC_GLOC]=DCC;
+    messages[OPC_ERR]=DCC;
+    messages[OPC_CMDERR]=CONFIG;
+    messages[OPC_EVNLF]=CONFIG;
+    messages[OPC_NVRD]=CONFIG;
+    messages[OPC_NENRD]=CONFIG;
+    messages[OPC_RQNPN]=CONFIG;
+    messages[OPC_NUMEV]=CONFIG;
+    messages[OPC_CANID]=CONFIG;
+    messages[OPC_EXTC2]=GENERAL;
+    messages[OPC_RDCC3]=DCC;
+    messages[OPC_WCVO]=DCC;
+    messages[OPC_WCVB]=DCC;
+    messages[OPC_QCVS]=DCC;
+    messages[OPC_PCVS]=DCC;
+    messages[OPC_ACON]=ACCESSORY;
+    messages[OPC_ACOF]=ACCESSORY;
+    messages[OPC_AREQ]=ACCESSORY;
+    messages[OPC_ARON]=ACCESSORY;
+    messages[OPC_AROF]=ACCESSORY;
+    messages[OPC_EVULN]=CONFIG;
+    messages[OPC_NVSET]=CONFIG;
+    messages[OPC_NVANS]=CONFIG;
+    messages[OPC_ASON]=ACCESSORY;
+    messages[OPC_ASOF]=ACCESSORY;
+    messages[OPC_ASRQ]=ACCESSORY;
+    messages[OPC_PARAN]=CONFIG;
+    messages[OPC_REVAL]=CONFIG;
+    messages[OPC_ARSON]=ACCESSORY;
+    messages[OPC_ARSOF]=ACCESSORY;
+    messages[OPC_EXTC3]=GENERAL;
+    messages[OPC_RDCC4]=DCC;
+    messages[OPC_WCVS]=DCC;
+    messages[OPC_ACON1]=ACCESSORY;
+    messages[OPC_ACOF1]=ACCESSORY;
+    messages[OPC_REQEV]=CONFIG;
+    messages[OPC_ARON1]=ACCESSORY;
+    messages[OPC_AROF1]=ACCESSORY;
+    messages[OPC_NEVAL]=CONFIG;
+    messages[OPC_PNN]=GENERAL;
+    messages[OPC_ASON1]=ACCESSORY;
+    messages[OPC_ASOF1]=ACCESSORY;
+    messages[OPC_ARSON1]=ACCESSORY;
+    messages[OPC_ARSOF1]=ACCESSORY;
+    messages[OPC_EXTC4]=GENERAL;
+    messages[OPC_RDCC5]=DCC;
+    messages[OPC_WCVOA]=DCC;
+    messages[OPC_FCLK]=ACCESSORY;
+    messages[OPC_ACON2]=ACCESSORY;
+    messages[OPC_ACOF2]=ACCESSORY;
+    messages[OPC_EVLRN]=CONFIG;
+    messages[OPC_EVANS]=CONFIG;
+    messages[OPC_ARON2]=ACCESSORY;
+    messages[OPC_AROF2]=ACCESSORY;
+    messages[OPC_ASON2]=ACCESSORY;
+    messages[OPC_ASOF2]=ACCESSORY;
+    messages[OPC_ARSON2]=ACCESSORY;
+    messages[OPC_ARSOF2]=ACCESSORY;
+    messages[OPC_EXTC5]=GENERAL;
+    messages[OPC_RDCC6]=DCC;
+    messages[OPC_PLOC]=DCC;
+    messages[OPC_NAME]=CONFIG;
+    messages[OPC_STAT]=DCC;
+    messages[OPC_PARAMS]=CONFIG;
+    messages[OPC_ACON3]=ACCESSORY;
+    messages[OPC_ACOF3]=ACCESSORY;
+    messages[OPC_ENRSP]=CONFIG;
+    messages[OPC_ARON3]=ACCESSORY;
+    messages[OPC_AROF3]=ACCESSORY;
+    messages[OPC_EVLRNI]=CONFIG;
+    messages[OPC_ACDAT]=ACCESSORY;
+    messages[OPC_ARDAT]=ACCESSORY;
+    messages[OPC_ASON3]=ACCESSORY;
+    messages[OPC_ASOF3]=ACCESSORY;
+    messages[OPC_DDES]=ACCESSORY;
+    messages[OPC_DDRS]=ACCESSORY;
+    messages[OPC_ARSON3]=ACCESSORY;
+    messages[OPC_ARSOF3]=ACCESSORY;
+    messages[OPC_EXTC6]=ACCESSORY;
 }
 

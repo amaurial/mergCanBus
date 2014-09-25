@@ -4,7 +4,6 @@ typedef char byte;
 #include "MergNodeIdentification.h"
 //#include "opcodes.h"
 #include "CANMessage.h"
-#include "MessageParser.h"
 #include <iostream>
 
 using namespace std;
@@ -23,15 +22,12 @@ int main ()
     Message message;
     CANMessage canMessage;
     MessageReader msgReader;
-    MessageParser msgParser;
 
     msgReader.readMessage(&canMessage);
 
     cout << "CAN MESSAGE:" << canMessage.getData()<< "\t" << canMessage.get_header()<<endl;
 
-    msgParser.parse(&message,&canMessage);
 
-    cout << "MESSAGE:" << message.getCanId()<< endl;
 
 
 
