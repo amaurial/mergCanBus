@@ -12,9 +12,13 @@ typedef char byte;
 //#include "mcp_can.h"
 
 
+#define SELF_ENUM_TIME 200
+#define TEMP_BUFFER_SIZE 99
+
+
 enum process_mode{AUTOMATIC,MANUAL};
-enum state {LEARN,UNLEARN,BOOT,NORMAL};
-enum can_error {OK=0,UNKNOWN_MSG_TYPE=1};
+enum state {LEARN,UNLEARN,BOOT,NORMAL,SELF_ENUMERATION};
+enum can_error {OK=0,UNKNOWN_MSG_TYPE=1,NO_MESSAGE=2};
 
 class MergCanBus
 {
@@ -27,9 +31,9 @@ class MergCanBus
         bool hasMessageToHandle();
         MergNodeIdentification *getNodeId(){return &nodeId;};
         bool sendCanMessage(CANMessage *msg);
-        void setup();
+        bool initCanBus(unsigned int port,unsigned int rate, int retries,unsigned int retryIntervalMilliseconds);
         //let the bus level lib public
-        //MCP_CAN Can;
+        MCP_CAN Can;
     protected:
     private:
         void setBitMessage(byte pos,bool val);
@@ -38,6 +42,13 @@ class MergCanBus
         MergNodeIdentification nodeId;
         byte messageFilter;//bit filter about each message to handle. by default avoid reserved messages
         process_mode runMode;
+        state state_mode;
+        byte otherCanID;
+        unsigned long timeDelay;//used for self ennumeration
+        byte buffer[TEMP_BUFFER_SIZE];
+        byte bufferIndex=0;
+
+
         bool messageToHandle;
         bool readCanBus();
         void sendCanMessage();
@@ -45,7 +56,7 @@ class MergCanBus
         void getStoredIDs();//node number,canId,device Number
         bool matchEvent();//
         unsigned int runAutomatic();
-        state state_mode;
+
         void handleConfigMessages();
         void handleDCCMessages();
         void handleACCMessages();

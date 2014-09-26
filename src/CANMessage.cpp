@@ -28,6 +28,8 @@ void CANMessage::set_header(byte val[HEADER_SIZE])
 void CANMessage::clear()
 {
     int i=0;
+    canMsgSize=0;
+    _RTR=false;
     for (i=0;i<DATA_SIZE;i++){_data[i]=0;}
     for (i=0;i<HEADER_SIZE;i++){_header[i]=0;}
 }
