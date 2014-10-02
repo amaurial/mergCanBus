@@ -44,7 +44,7 @@ void Message::clear(){
     setType(RESERVED);
     setEventNumber(0);
     setNodeNumber(0);
-    setData("00000000");
+    setData((byte*)"00000000");
     setPriority(0);
     setNumBytes(0);
     unsetRTR();
@@ -85,7 +85,7 @@ byte Message::getByte(byte pos){
 
 unsigned int Message::getNodeNumber(){
     //node number is always at the position 1 and 2
-    char* data=_canMessage->getData();
+    byte* data=_canMessage->getData();
     unsigned int r=0;
     if (hasThisData(opc,NODE_NUMBER)){
             r=data[1];
@@ -98,7 +98,7 @@ unsigned int Message::getNodeNumber(){
 
 byte Message::getSession(){
     //session is always at the position 1
-    char* data=_canMessage->getData();
+    byte* data=_canMessage->getData();
     byte r=0;
     if (hasThisData(opc,SESSION)){
             r=data[1];
@@ -110,7 +110,7 @@ byte Message::getSession(){
 
 unsigned int Message::getEventNumber(){
     //node number is always at the position 3 and 4
-    char* data=_canMessage->getData();
+    byte* data=_canMessage->getData();
     unsigned int r=0;
     if (hasThisData(opc,EVENT_NUMBER)){
             r=data[3];
@@ -125,7 +125,7 @@ unsigned int Message::getEventNumber(){
 unsigned int Message::getDeviceNumber(){
     //node number is always at the position 3 and 4 with exception from the messages
     //OPC_DDRS OPC_DDES OPC_RQDDS
-    char* data=_canMessage->getData();
+    byte* data=_canMessage->getData();
     unsigned int r=0;
     if (hasThisData(opc,DEVICE_NUMBER)){
             if ((opc==OPC_DDRS) || (opc==OPC_DDES) || (opc==OPC_RQDDS)){
@@ -147,7 +147,7 @@ unsigned int Message::getDeviceNumber(){
 
 unsigned int Message::getDecoder(){
     //node number is always at the position 2 and 3
-    char* data=_canMessage->getData();
+    byte* data=_canMessage->getData();
     unsigned int r=0;
     if (hasThisData(opc,DECODER)){
             //r=(unsigned int)word(data[2],data[3]);
@@ -161,7 +161,7 @@ unsigned int Message::getDecoder(){
 //CV#
 unsigned int Message::getCV(){
     //node number is always at the position 2 and 3
-    char* data=_canMessage->getData();
+    byte* data=_canMessage->getData();
     unsigned int r=0;
     if (hasThisData(opc,CV)){
             //r=(unsigned int)word(data[2],data[3]);
@@ -176,7 +176,7 @@ unsigned int Message::getCV(){
 //CV Val
 unsigned int Message::getCVValue(){
 
-    char* data=_canMessage->getData();
+    byte* data=_canMessage->getData();
     byte r=0;
     if (opc==OPC_WCVO || opc==OPC_WCVB || opc==OPC_QCVS || opc==OPC_PCVS){
         return data[4];
@@ -190,7 +190,7 @@ unsigned int Message::getCVValue(){
 //CV Mode
 unsigned int Message::getCVMode(){
     //node number is always at the position 2 and 3
-    char* data=_canMessage->getData();
+    byte* data=_canMessage->getData();
     byte r=0;
     if (opc==OPC_WCVS){
         return data[4];
@@ -201,7 +201,7 @@ unsigned int Message::getCVMode(){
 
 
 byte Message::getConsist(){
-    char* data=_canMessage->getData();
+    byte* data=_canMessage->getData();
     byte r=0;
     if (opc==OPC_PCON || opc==OPC_KCON){
         return data[2];
@@ -210,7 +210,7 @@ byte Message::getConsist(){
 }
 
 byte Message::getSpeedDir(){
-    char* data=_canMessage->getData();
+    byte* data=_canMessage->getData();
     byte r=0;
     if (opc==OPC_DSPD){
         return data[2];
@@ -223,7 +223,7 @@ byte Message::getSpeedDir(){
 }
 
 byte Message::getEngineFlag(){
-    char* data=_canMessage->getData();
+    byte* data=_canMessage->getData();
     byte r=0;
     if (opc==OPC_DFLG ){
         return data[2];
@@ -236,7 +236,7 @@ byte Message::getEngineFlag(){
 }
 //Space left to store events
 byte Message::getAvailableEventsLeft(){
-    char* data=_canMessage->getData();
+    byte* data=_canMessage->getData();
     byte r=0;
     if (opc==OPC_EVNLF ){
         return data[3];
@@ -246,7 +246,7 @@ byte Message::getAvailableEventsLeft(){
 }
 //Stored events
 byte Message::getStoredEvents(){
-    char* data=_canMessage->getData();
+    byte* data=_canMessage->getData();
     byte r=0;
     if (opc==OPC_NUMEV ){
         return data[3];
@@ -256,7 +256,7 @@ byte Message::getStoredEvents(){
 }
 //Fn
 byte Message::getFunctionNumber(){
-    char* data=_canMessage->getData();
+    byte* data=_canMessage->getData();
     byte r=0;
     if (opc==OPC_DFNON||opc==OPC_DFNOF||opc==OPC_DFUN){
         return data[2];
@@ -265,7 +265,7 @@ byte Message::getFunctionNumber(){
 }
 //Fn value
 byte Message::functionValue(){
-    char* data=_canMessage->getData();
+    byte* data=_canMessage->getData();
     byte r=0;
     if (opc==OPC_DFUN){
         return data[3];
@@ -275,7 +275,7 @@ byte Message::functionValue(){
 
 //Status
 byte Message::getStatus(){
-    char* data=_canMessage->getData();
+    byte* data=_canMessage->getData();
     byte r=0;
     if (opc==OPC_SSTAT||opc==OPC_DFNOF){
         return data[2];
@@ -284,7 +284,7 @@ byte Message::getStatus(){
 }
 //Para#
 byte Message::getParaIndex(){
-    char* data=_canMessage->getData();
+    byte* data=_canMessage->getData();
     byte r=0;
     if (opc==OPC_RQNP || opc==OPC_NVSET || opc==OPC_NVANS){
         return data[3];
@@ -293,7 +293,7 @@ byte Message::getParaIndex(){
 }
 //Para
 byte Message::getParameter(){
-    char* data=_canMessage->getData();
+    byte* data=_canMessage->getData();
     byte r=0;
     if (opc==OPC_NVSET||opc==OPC_NVANS){
         return data[4];
@@ -302,7 +302,7 @@ byte Message::getParameter(){
 }
 //NV#
 byte Message::getNodeVariableIndex(){
-    char* data=_canMessage->getData();
+    byte* data=_canMessage->getData();
     byte r=0;
     if (opc==OPC_NVRD || opc==OPC_NVSET || opc==OPC_NVANS){
         return data[3];
@@ -311,7 +311,7 @@ byte Message::getNodeVariableIndex(){
 }
 //NV
 byte Message::getNodeVariable(){
-    char* data=_canMessage->getData();
+    byte* data=_canMessage->getData();
     byte r=0;
     if (opc==OPC_NVSET||opc==OPC_NVANS){
         return data[4];
@@ -320,7 +320,7 @@ byte Message::getNodeVariable(){
 }
 //EN#
 byte Message::getEventIndex(){
-    char* data=_canMessage->getData();
+    byte* data=_canMessage->getData();
     byte r=0;
     if (opc==OPC_NENRD || opc==OPC_REVAL || opc==OPC_NEVAL){
         return data[3];
@@ -336,7 +336,7 @@ byte Message::getEventIndex(){
 }
 //EV#
 byte Message::getEventVarIndex(){
-    char* data=_canMessage->getData();
+    byte* data=_canMessage->getData();
     byte r=0;
     if ( opc==OPC_REVAL || opc==OPC_NEVAL){
         return data[4];
@@ -352,7 +352,7 @@ byte Message::getEventVarIndex(){
 }
 //EV
 byte Message::getEventVar(){
-    char* data=_canMessage->getData();
+    byte* data=_canMessage->getData();
     byte r=0;
     if ( opc==OPC_NEVAL){
         return data[5];
@@ -367,9 +367,6 @@ byte Message::getEventVar(){
     return r;
 }
 
-
-
-
 //check the filter for specific information
 bool Message::hasThisData(byte opc, message_config_pos pos){
 
@@ -383,7 +380,6 @@ bool Message::hasThisData(byte opc, message_config_pos pos){
     else {
         return false;
     }
-
 
 }
 

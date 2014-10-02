@@ -1,10 +1,7 @@
-#ifndef BYTE_TYPE
-#define BYTE_TYPE
-typedef char byte;
-#endif // BYTE_TYPE
-
 #ifndef CANMESSAGE_H
 #define CANMESSAGE_H
+
+#include <Arduino.h>
 
 #define DATA_SIZE 8
 #define HEADER_SIZE 2

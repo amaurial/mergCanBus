@@ -22,6 +22,7 @@
 */
 #include "mcp_can.h"
 
+
 #define spi_readwrite SPI.transfer
 #define spi_read() spi_readwrite(0x00)
 
@@ -527,6 +528,14 @@ INT8U MCP_CAN::mcp2515_getNextFreeTXBuf(INT8U *txbuf_n)                 /* get N
 *********************************************************************************************************/
 MCP_CAN::MCP_CAN(INT8U _CS)
 {
+    set_cs(_CS);
+}
+
+MCP_CAN::MCP_CAN()
+{
+}
+
+void MCP_CAN::set_cs(INT8U _CS){
     SPICS = _CS;
     pinMode(SPICS, OUTPUT);
     MCP2515_UNSELECT();

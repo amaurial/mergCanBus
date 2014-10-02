@@ -1,14 +1,14 @@
 #ifndef BYTE_TYPE
 #define BYTE_TYPE
-typedef char byte;
+//typedef char byte;
 #endif // BYTE_TYPE
 
 #ifndef MESSAGE_H
 #define MESSAGE_H
 
-#define bitRead(val,pos){return 1;};
-#define bitSet(val,pos){return;};
-#define bitClear(val,pos){return;};
+//#define bitRead(val,pos){return 1;};
+//#define bitSet(val,pos){return;};
+//#define bitClear(val,pos){return;};
 
 
 #include "CANMessage.h"
@@ -94,6 +94,7 @@ class Message
         byte getEventVarIndex();
         byte getEventVar();
         void clear();
+
     protected:
     private:
         byte canId;
