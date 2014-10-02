@@ -1,0 +1,21 @@
+Dados para guardar
+can_id = 1 byte
+Node number = 2 bytes
+Node variables = 1 byte cada 
+Learned Events = 4 bytes cada evento
+Learned variables = 1 byte pra cada
+Device number = 2 bytes ?
+
+Memory organization
+512 bytes
+byte=value;explanation
+1=0xaa ; indicates that it is a merg arduino memory storage
+2=can_id;store the can_id
+3=hh Node number;high byte from node number
+4=ll Node number;low byte from node number
+5=hh device number;high byte from node number
+6=ll device number;low byte from node number
+7-32=25 bytes for node variables
+32-153=120 bytes for 30 learned events
+154-304=150 bytes for learned event variables. 2 bytes for each variable. 1st is the event number index
+
