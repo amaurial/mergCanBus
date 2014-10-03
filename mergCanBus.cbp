@@ -37,21 +37,23 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
-		<Unit filename="include/CANMessage.h" />
-		<Unit filename="include/MergCanBus.h" />
-		<Unit filename="include/MergNodeIdentification.h" />
-		<Unit filename="include/Message.h" />
-		<Unit filename="include/MessageReader.h" />
-		<Unit filename="include/mcp_can.h" />
-		<Unit filename="include/mcp_can_dfs.h" />
-		<Unit filename="include/opcodes.h" />
-		<Unit filename="src/CANMessage.cpp" />
-		<Unit filename="src/MergCanBus.cpp" />
-		<Unit filename="src/MergNodeIdentification.cpp" />
-		<Unit filename="src/Message.cpp" />
-		<Unit filename="src/MessageReader.cpp" />
-		<Unit filename="src/main_test.cpp" />
-		<Unit filename="src/mcp_can.cpp" />
+		<Unit filename="CANMessage.cpp" />
+		<Unit filename="CANMessage.h" />
+		<Unit filename="LICENSE" />
+		<Unit filename="MergCanBus.cpp" />
+		<Unit filename="MergCanBus.h" />
+		<Unit filename="MergMemoryManagement.cpp" />
+		<Unit filename="MergMemoryManagement.h" />
+		<Unit filename="MergNodeIdentification.cpp" />
+		<Unit filename="MergNodeIdentification.h" />
+		<Unit filename="Message.cpp" />
+		<Unit filename="Message.h" />
+		<Unit filename="README.md" />
+		<Unit filename="mcp_can.cpp" />
+		<Unit filename="mcp_can.h" />
+		<Unit filename="mcp_can_dfs.h" />
+		<Unit filename="memory_organization.TXT" />
+		<Unit filename="opcodes.h" />
 		<Extensions>
 			<code_completion />
 			<debugger />
