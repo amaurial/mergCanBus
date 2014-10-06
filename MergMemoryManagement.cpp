@@ -101,13 +101,14 @@ byte MergMemoryManagement::getEventVar(int eventIdx,int index){
 // get all variables of an specific event
 // len indicates how many variables
 */
-byte *MergMemoryManagement::getEventVar(int eventIdx,int &len){
+byte* MergMemoryManagement::getEventVars(int eventIdx,int &len){
     //populate the array to return
     len=0;
     for (int i=0;i<MAX_NUM_EVENTS_VAR;i++){
         if (eventVars[i].event_index==eventIdx ){
             return_eventVars[eventVars[i].index]=eventVars[i].value;
             len++;
+        }
     }
     return return_eventVars;
 }
@@ -133,7 +134,9 @@ byte=value;explanation
 void MergMemoryManagement::read(){
 
     clear();
-    if (EEPROM.read(0)!=0xaa){
+    byte mergid=EEPROM.read(0);
+
+    if (mergid!=0xaa){
         return;
     }
     int pos=0;
@@ -144,8 +147,8 @@ void MergMemoryManagement::read(){
     nn[0]=EEPROM.read(NN_MEMPOS);
     nn[0]=EEPROM.read(NN_MEMPOS+1);
     //device number
-    dd[0]=EEPROM.read(DD_MEMPOS);
-    dd[0]=EEPROM.read(DD_MEMPOS+1);
+    dd[0]=EEPROM.read(DN_MEMPOS);
+    dd[0]=EEPROM.read(DN_MEMPOS+1);
     //number of variables
     numVars=EEPROM.read(NUM_VARS_MEMPOS);
     //number of events

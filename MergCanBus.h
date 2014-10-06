@@ -10,6 +10,7 @@
 #include "Message.h"
 #include "MergNodeIdentification.h"
 #include "mcp_can.h"
+#include "MergMemoryManagement.h"
 
 typedef unsigned int (*userHandlerType)(Message*);
 
