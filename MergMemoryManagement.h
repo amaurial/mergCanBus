@@ -4,6 +4,13 @@
 #include <Arduino.h>
 #include <EEPROM.h>
 
+struct event_vars{
+    unsigned int index;
+    unsigned int event_index;
+    unsigned int mem_index;
+    byte value;
+
+}
 
 #define MAX_AVAIL_VARS 25           //each has 1 byte
 #define MAX_NUM_EVENTS 30           //each event has 4 bytes
@@ -35,7 +42,7 @@ class MergMemoryManagement
         byte* getVars(){return vars;};
         byte getVar(int index);
 
-        byte* getEventVars(){return eventVars;};
+        byte* getEventVars();
         byte getEventVar(byte eventIdx,int index);
 
         byte getNumVars(){return numVars;};
@@ -48,7 +55,8 @@ class MergMemoryManagement
     private:
         byte events[MAX_NUM_EVENTS*4];
         byte vars[MAX_AVAIL_VARS];
-        byte eventVars[MAX_NUM_EVENTS_VAR*2];
+        event_vars eventVars[MAX_NUM_EVENTS_VAR];
+        byte return_eventVars[MAX_NUM_EVENTS_VAR];       //used to return all the variables of an event
         byte can_ID;
         byte nn[2];
         byte dd[2];
