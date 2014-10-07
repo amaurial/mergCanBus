@@ -306,4 +306,17 @@ void MergMemoryManagement::eraseEvent(int eventIdx);{
 
 }
 
+void MergMemoryManagement::setVar(int index){
+
+}
+
+void MergMemoryManagement::setCanId(byte canId){
+}
+
+void MergMemoryManagement::setNodeNumber(unsigned int val){
+}
+
+void MergMemoryManagement::setDeviceNumber(unsigned int val){
+}
+
 
