@@ -145,10 +145,10 @@ void MergMemoryManagement::read(){
     can_ID=EEPROM.read(CAN_ID_MEMPOS);
     //node number
     nn[0]=EEPROM.read(NN_MEMPOS);
-    nn[0]=EEPROM.read(NN_MEMPOS+1);
+    nn[1]=EEPROM.read(NN_MEMPOS+1);
     //device number
     dd[0]=EEPROM.read(DN_MEMPOS);
-    dd[0]=EEPROM.read(DN_MEMPOS+1);
+    dd[1]=EEPROM.read(DN_MEMPOS+1);
     //number of variables
     numVars=EEPROM.read(NUM_VARS_MEMPOS);
     //number of events
@@ -204,6 +204,106 @@ void MergMemoryManagement::read(){
 // write all data to memory. it overwrites the hole information
 */
 void MergMemoryManagement::write(){
-    //[TODO]
+
+    int pos=0;
+    //merg id
+    EEPROM.write(0,0xaa);
+    //Can id
+    EEPROM.write(CAN_ID_MEMPOS,can_ID);
+    //node number
+    EEPROM.write(NN_MEMPOS,nn[0]);
+    EEPROM.write(NN_MEMPOS+1,nn[1]);
+    //device number
+    EEPROM.write(DN_MEMPOS,dd[0]);
+    EEPROM.write(DN_MEMPOS+1,dd[1]);
+    //number of variables
+    EEPROM.write(NUM_VARS_MEMPOS,numVars);
+    //number of events
+     EEPROM.write(NUM_EVENTS_MEMPOS,numEvents);
+    //number of events vars
+     EEPROM.write(NUM_EVENTS_VARS_MEMPOS,numEventVars);
+     //write the variables
+     byte n=0;
+    if (numVars>0){
+        pos=VARS_MEMPOS;
+        while (n<numVars){
+            EEPROM.write(pos,vars[n]);
+            n++;
+            pos++;
+        }
+    }
+    //write events
+    if (numEvents>0){
+        n=0;
+        pos=EVENTS_MEMPOS;
+        while (n<(numEvents*4)){
+            EEPROM.write(pos,events[n]);
+            n++;
+            pos++;
+        }
+    }
+
+    //write events vars
+    if (numEventVars>0){
+        n=0;//array index
+        pos=EVENTS_VARS_MEMPOS;//memory index
+        while (n<(numEventVars)){
+            EEPROM.write(pos,eventVars[n].event_index);
+            pos++;
+            EEPROM.write(pos,eventVars[n].value);
+            pos++;
+            n++;
+        }
+    }
+
 
 }
+
+void MergMemoryManagement::eraseAllEvents(){
+    //to avoid to many eprom writings we just set the numberOfEvents to zero and the eventsVar to zero and clear the arrays
+
+    //erase the events var
+    //number of events
+    byte val=0;
+     EEPROM.write(NUM_EVENTS_MEMPOS,val);
+    //number of events vars
+     EEPROM.write(NUM_EVENTS_VARS_MEMPOS,val);
+
+    for (int i=0;i<(MAX_NUM_EVENTS*4);i++){
+        events[i]=0;
+    }
+    for (int i=0;i<(MAX_NUM_EVENTS_VAR*2);i++){
+        eventVars[i].event_index=0;
+        eventVars[i].index=0;
+        eventVars[i].mem_index=0;
+        eventVars[i].value=0;
+        return_eventVars[i]=0;
+    }
+}
+
+//[TODO]
+void MergMemoryManagement::eraseEvent(int eventIdx);{
+    //to avoid to many eprom writings we just set the numberOfEvents to zero and the eventsVar to zero and clear the arrays
+
+    //erase the events var
+    //number of events
+    byte val=0;
+     EEPROM.write(NUM_EVENTS_MEMPOS,val);
+    //number of events vars
+     EEPROM.write(NUM_EVENTS_VARS_MEMPOS,val);
+
+    for (int i=0;i<(MAX_NUM_EVENTS*4);i++){
+        events[i]=0;
+    }
+    for (int i=0;i<(MAX_NUM_EVENTS_VAR*2);i++){
+        eventVars[i].event_index=0;
+        eventVars[i].index=0;
+        eventVars[i].mem_index=0;
+        eventVars[i].value=0;
+        return_eventVars[i]=0;
+    }
+
+
+}
+
+
