@@ -36,6 +36,10 @@ class MergMemoryManagement
         void read();
         void write();
 
+        bool hasEvents(){numEvents>0?true:false;};
+        bool hasEventVars(){numEventVars>0?true:false;};
+        bool hasEventVars(int eventIdx);
+
         byte* getEvents(){return events;};
         byte* getEvent(int index);
 
@@ -55,15 +59,19 @@ class MergMemoryManagement
         void eraseEvent(byte event[EVENT_SIZE]);
 
 
-        void setVar(int index);
+        void setVar(int index,byte val);
         void setCanId(byte canId);
         void setNodeNumber(unsigned int val);                       //2 bytes representation
         void setDeviceNumber(unsigned int val);                     //2 bytes representation
 
+        byte getCanId(){return can_ID;};
+        unsigned int getNodeNumber();
+        unsigned int getDeviceNumber();
+
         void setEvent(byte event[EVENT_SIZE]);
         void setEvent(byte event[EVENT_SIZE],int eventIdx);
 
-        void setEventVar(int eventIdx,byte value);
+        void newEventVar(int eventIdx,byte val);
         void setEventVar(int eventIdx,int index, byte value);
 
 
@@ -83,6 +91,8 @@ class MergMemoryManagement
         byte event[EVENT_SIZE];                                     //used to return this instead of a pointer to events array
 
         void clear();
+        void writeEvents();
+
 };
 
 #endif // MERGMEMORYMANAGEMENT_H
