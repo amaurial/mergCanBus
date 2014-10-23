@@ -16,7 +16,7 @@ typedef unsigned int (*userHandlerType)(Message*);
 
 
 #define SELF_ENUM_TIME 200
-#define TEMP_BUFFER_SIZE 99
+#define TEMP_BUFFER_SIZE 100
 
 #define lowByte(w) ((uint8_t) ((w) & 0xff))
 #define highByte(w) ((uint8_t) ((w) >> 8))
@@ -41,6 +41,8 @@ class MergCanBus
         //let the bus level lib public
         MCP_CAN Can;
         void setUserHandlerFunction(userHandlerType f) {userHandler=f;};
+        void doSelfEnnumeration(bool soft);
+        void setDebug(bool debug);
     protected:
     private:
         void setBitMessage(byte pos,bool val);  //set or unset the bit on pos for messageFilter
@@ -49,6 +51,9 @@ class MergCanBus
         Message message;                        //canbus message representation
         MergNodeIdentification nodeId;          //node identification:name,manufacuter , ...
         byte messageFilter;                     //bit filter about each message to handle. by default avoid reserved messages
+        MergMemoryManagement memory;            //organize the eeprom memory and maintain a copy in RAM
+        bool softwareEnum;
+        bool DEBUG;
 
         state state_mode;                       //actual state of the node
         unsigned long timeDelay;                //used for self ennumeration
@@ -70,7 +75,7 @@ class MergCanBus
         byte handleACCMessages();
         byte handleGeneralMessages();
 
-        void doSelfEnnumeration();
+
         void finishSelfEnumeration();
         void clearMsgToSend();
         byte sendCanMessage(byte message_size);

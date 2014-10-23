@@ -6,11 +6,13 @@ MergCanBus::MergCanBus()
     messageFilter=0;
     bufferIndex=0;
     //Can=MCP_CAN();
+    memory=MergMemoryManagement();
     canMessage=CANMessage();
     nodeId=MergNodeIdentification();
-
     message=Message();
     skipMessage(RESERVED);
+    softwareEnum=false;
+    DEBUG=false;
 }
 
 MergCanBus::~MergCanBus()
@@ -34,6 +36,10 @@ bool MergCanBus::initCanBus(unsigned int port,unsigned int rate, int retries,uns
    return false;
 }
 
+/*
+Set the bit in the message bit filter
+The messageFilter indicates if a message type will be handled or not
+*/
 void MergCanBus::setBitMessage(byte pos,bool val){
     if (val){
         bitSet(messageFilter,pos);
@@ -43,6 +49,10 @@ void MergCanBus::setBitMessage(byte pos,bool val){
     }
 }
 
+/*
+Method that deals with the majority of messages and behavior. Auto enum, query requests
+If a custom function is set it calls it for every non automatic message
+*/
 unsigned int MergCanBus::runAutomatic(){
 
     if (!readCanBus()){
@@ -60,8 +70,17 @@ unsigned int MergCanBus::runAutomatic(){
             return OK;
         }
     }
+
+    //message for self enumeration
+    if (message.getOpc()==OPC_ENUM && message.getNodeNumber()==nodeId.getNodeNumber()){
+        doSelfEnnumeration(true);
+        return;
+    }
+
     //do self enumeration
     //collect the canid from messages with 0 size
+    //the state can be a message or manually
+
     if (state_mode==SELF_ENUMERATION){
         unsigned long tdelay=millis()-timeDelay;
 
@@ -117,7 +136,8 @@ bool MergCanBus::readCanBus(){
     return false;
 }
 
-void MergCanBus::doSelfEnnumeration(){
+void MergCanBus::doSelfEnnumeration(bool softEnum){
+    softwareEnum=softEnum;
     state_mode=SELF_ENUMERATION;
     Can.sendRTMMessage(nodeId.getCanID());
     timeDelay=millis();
@@ -134,13 +154,42 @@ void MergCanBus::finishSelfEnumeration(){
         }
         cid++;
     }
+    if (cid>99){
+        //send and error message
+        if (softwareEnum){
+            mergCanData[0]=OPC_CMDERR;
+            mergCanData[1]=highByte(nodeId.getNodeNumber());
+            mergCanData[2]=lowByte(nodeId.getNodeNumber());
+            mergCanData[3]=7;
+            Can.sendMsgBuf(nodeId.getCanID(),0,3,mergCanData);
+        }
+        return;
+    }
     nodeId.setCanID(cid);
-    //TODO: store the nodId on the memory
+    memory.setCanId(cid);
+    //TODO: check if it is from software
+
+    if (softwareEnum){
+        mergCanData[0]=OPC_NNACK;
+        mergCanData[1]=highByte(nodeId.getNodeNumber());
+        mergCanData[2]=lowByte(nodeId.getNodeNumber());
+        Can.sendMsgBuf(nodeId.getCanID(),0,3,mergCanData);
+    }
+
+
+    return;
 }
 
 
 
 byte MergCanBus::handleConfigMessages(){
+
+    //config messages should be directed to node number or device id
+
+    if (message.getNodeNumber()!=nodeId.getNodeNumber() {
+        if (state_mode!=SETUP)){return;}
+    }
+
     switch (message.getOpc()){
     case OPC_QNN:
         //response with a OPC_PNN if we have a node ID
@@ -245,4 +294,7 @@ byte MergCanBus::sendCanMessage(byte message_size){
     return OK;
 }
 
+void MergCanBus::setDebug(bool debug){
+    DEBUG=debug;
+}
 

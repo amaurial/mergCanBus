@@ -4,6 +4,7 @@ MergMemoryManagement::MergMemoryManagement()
 {
     //ctor
     clear();
+    read();
 }
 /*
 // clear the arrays
