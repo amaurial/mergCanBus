@@ -15,6 +15,7 @@ struct merg_event_vars{
 #define MAX_NUM_EVENTS 30           //each event has 4 bytes
 #define MAX_NUM_EVENTS_VAR 75       //each var has 2 bytes. first is the index, second is the value
 #define EVENT_SIZE 4
+#define EVENT_VARS_SIZE 2
 
 
 #define MERG_MEMPOS 0                                   //has the value 0xaa to mark it is from this mod
@@ -68,8 +69,8 @@ class MergMemoryManagement
         unsigned int getNodeNumber();
         unsigned int getDeviceNumber();
 
-        void setEvent(byte event[EVENT_SIZE]);
-        void setEvent(byte event[EVENT_SIZE],int eventIdx);
+        void setEvent(byte *event);
+        void setEvent(byte *event,int eventIdx);
 
         void newEventVar(int eventIdx,byte val);
         void setEventVar(int eventIdx,int index, byte value);

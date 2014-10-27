@@ -13,7 +13,7 @@ void MergMemoryManagement::clear(){
 
     int i=0;
 
-    for (i=0;i<(MAX_NUM_EVENTS*4);i++){
+    for (i=0;i<(MAX_NUM_EVENTS*EVENT_SIZE);i++){
         events[i]=0;
     }
 
@@ -21,7 +21,7 @@ void MergMemoryManagement::clear(){
         vars[i]=0;
     }
 
-    for (i=0;i<(MAX_NUM_EVENTS_VAR*2);i++){
+    for (i=0;i<(MAX_NUM_EVENTS_VAR*EVENT_VARS_SIZE);i++){
         eventVars[i].event_index=0;
         eventVars[i].index=0;
         eventVars[i].mem_index=0;
@@ -62,6 +62,33 @@ byte * MergMemoryManagement::getEvent(int index){
 
     return event;
 
+}
+
+/*
+//put a new event in the memory
+*/
+void MergMemoryManagement::setEvent(byte *event){
+    if (numEvents>=MAX_NUM_EVENTS){
+        return ;
+    }
+    int i=numEvents+1;
+    setEvent(event,i);
+}
+/*
+//put a new event in the memory
+*/
+void MergMemoryManagement::setEvent(byte *event,int index){
+    for (int i=0;i<EVENT_SIZE;i++){
+            events[index+i]=event[i];
+    }
+    numEvents++;
+    //number of events
+     EEPROM.write(NUM_EVENTS_MEMPOS,numEvents);
+     //write event
+     for (int i=0;i<EVENT_SIZE;i++){
+        EEPROM.write(EVENTS_MEMPOS+index+i,event[i]);
+     }
+     return ;
 }
 
 /*
@@ -169,7 +196,7 @@ void MergMemoryManagement::read(){
     if (numEvents>0){
         n=0;
         pos=EVENTS_MEMPOS;
-        while (n<(numEvents*4)){
+        while (n<(numEvents*EVENT_SIZE)){
             events[n]=EEPROM.read(pos);
             n++;
             pos++;
@@ -261,7 +288,7 @@ void MergMemoryManagement::writeEvents(){
     if (numEvents>0){
         n=0;
         pos=EVENTS_MEMPOS;
-        while (n<(numEvents*4)){
+        while (n<(numEvents*EVENT_SIZE)){
             EEPROM.write(pos,events[n]);
             n++;
             pos++;
@@ -280,7 +307,7 @@ void MergMemoryManagement::eraseAllEvents(){
     //number of events vars
     if (numEventVars>0){
         EEPROM.write(NUM_EVENTS_VARS_MEMPOS,val);
-        for (int i=0;i<(MAX_NUM_EVENTS_VAR*2);i++){
+        for (int i=0;i<(MAX_NUM_EVENTS_VAR*EVENT_VARS_SIZE);i++){
             eventVars[i].event_index=0;
             eventVars[i].index=0;
             eventVars[i].mem_index=0;
@@ -289,7 +316,7 @@ void MergMemoryManagement::eraseAllEvents(){
         }
     }
 
-    for (int i=0;i<(MAX_NUM_EVENTS*4);i++){
+    for (int i=0;i<(MAX_NUM_EVENTS*EVENT_SIZE);i++){
         events[i]=0;
     }
 

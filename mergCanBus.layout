@@ -6,9 +6,9 @@
 			<Cursor1 position="5320" topLine="87" />
 		</Cursor>
 	</File>
-	<File name="MergCanBus.cpp" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="MergCanBus.cpp" open="1" top="1" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="780" topLine="15" />
+			<Cursor1 position="10164" topLine="334" />
 		</Cursor>
 	</File>
 	<File name="memory_organization.TXT" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -18,17 +18,32 @@
 	</File>
 	<File name="MergCanBus.h" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="2145" topLine="36" />
+			<Cursor1 position="2376" topLine="0" />
 		</Cursor>
 	</File>
 	<File name="MergMemoryManagement.h" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="2238" topLine="64" />
+			<Cursor1 position="2613" topLine="48" />
+		</Cursor>
+	</File>
+	<File name="MergNodeIdentification.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="751" topLine="24" />
+		</Cursor>
+	</File>
+	<File name="opcodes.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="4261" topLine="78" />
 		</Cursor>
 	</File>
 	<File name="MergMemoryManagement.cpp" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="-1" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="123" topLine="0" />
+			<Cursor1 position="1571" topLine="62" />
+		</Cursor>
+	</File>
+	<File name="MergNodeIdentification.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="2067" topLine="35" />
 		</Cursor>
 	</File>
 </CodeBlocks_layout_file>

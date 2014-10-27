@@ -43,6 +43,8 @@ class MergCanBus
         void setUserHandlerFunction(userHandlerType f) {userHandler=f;};
         void doSelfEnnumeration(bool soft);
         void setDebug(bool debug);
+        void doSetup();
+        void doOutOfService();
     protected:
     private:
         void setBitMessage(byte pos,bool val);  //set or unset the bit on pos for messageFilter
@@ -81,7 +83,7 @@ class MergCanBus
         byte sendCanMessage(byte message_size);
 
         void sortArray(byte *a, byte n);
-
+        void prepareMessage(byte opc);
 
 
 
