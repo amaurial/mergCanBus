@@ -66,7 +66,7 @@ class MergCanBus
 
         bool messageToHandle;
         bool readCanBus();
-        void sendCanMessage();
+        //void sendCanMessage();
         void getStoredEvents();                 //events that were learned
         void getStoredIDs();                    //node number,canId,device Number
         bool matchEvent();                      //
@@ -80,7 +80,7 @@ class MergCanBus
 
         void finishSelfEnumeration();
         void clearMsgToSend();
-        byte sendCanMessage(byte message_size);
+        byte sendCanMessage();
 
         void sortArray(byte *a, byte n);
         void prepareMessage(byte opc);

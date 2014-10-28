@@ -58,6 +58,7 @@ class MergMemoryManagement
         void eraseAllEvents();
         void eraseEvent(int eventIdx);
         void eraseEvent(byte event[EVENT_SIZE]);
+        int eraseEvent(unsigned int event);
 
 
         void setVar(int index,byte val);
@@ -74,6 +75,8 @@ class MergMemoryManagement
 
         void newEventVar(int eventIdx,byte val);
         void setEventVar(int eventIdx,int index, byte value);
+
+        int getEventIndex(unsigned int event);
 
 
     protected:
@@ -93,6 +96,7 @@ class MergMemoryManagement
 
         void clear();
         void writeEvents();
+
 
 };
 

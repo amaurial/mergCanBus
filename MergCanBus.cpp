@@ -143,12 +143,12 @@ bool MergCanBus::readCanBus(){
 void MergCanBus::doSetup(){
     state_mode=SETUP;
     prepareMessage(OPC_RQNN);
-    sendCanMessage(3);
+    sendCanMessage();
 }
 //sent by a node when going out of service
 void MergCanBus::doOutOfService(){
     prepareMessage(OPC_NNREL);
-    sendCanMessage(3);
+    sendCanMessage();
 }
 
 void MergCanBus::doSelfEnnumeration(bool softEnum){
@@ -199,7 +199,8 @@ void MergCanBus::finishSelfEnumeration(){
 byte MergCanBus::handleConfigMessages(){
 
     //config messages should be directed to node number or device id
-    byte ind;
+    byte ind,val,evidx;
+    unsigned int ev;
     if (message.getNodeNumber()!=nodeId.getNodeNumber()) {
         if (state_mode!=SETUP){return OK;}
     }
@@ -214,7 +215,7 @@ byte MergCanBus::handleConfigMessages(){
         //[<MjPri><MinPri=3><CANID>]<B6><NN Hi><NN Lo><Manuf Id><Module Id><Flags>
         if (nodeId.getNodeNumber()>0){
             prepareMessage(OPC_PNN);
-            return sendCanMessage(6);
+            return sendCanMessage();
         }
         break;
     case OPC_RQNP:
@@ -233,14 +234,14 @@ byte MergCanBus::handleConfigMessages(){
         if (state_mode==SETUP){
             clearMsgToSend();
             prepareMessage(OPC_PARAMS);
-            return sendCanMessage(8);
+            return sendCanMessage();
         }
         break;
     case OPC_RQNN:
         //Answer with OPC_NAME
         if (state_mode==SETUP){
             prepareMessage(OPC_NAME);
-            return sendCanMessage(8);
+            return sendCanMessage();
         }
         break;
 
@@ -253,7 +254,7 @@ byte MergCanBus::handleConfigMessages(){
             memory.setCanId(message.getNodeNumber());
             prepareMessage(OPC_NNACK);
             state_mode=NORMAL;
-            return sendCanMessage(3);
+            return sendCanMessage();
         }
         break;
     case OPC_NNLRN:
@@ -273,7 +274,7 @@ byte MergCanBus::handleConfigMessages(){
         break;
     case OPC_NNEVN:
         prepareMessage(OPC_EVNLF);
-        return sendCanMessage(4);
+        return sendCanMessage();
         break;
 
     case OPC_NERD:
@@ -292,14 +293,14 @@ byte MergCanBus::handleConfigMessages(){
                 mergCanData[5]=events[pos];pos++;
                 mergCanData[6]=events[pos];pos++;
                 mergCanData[7]=j;
-                ind=sendCanMessage(8);
+                ind=sendCanMessage();
             }
         }
         break;
 
     case OPC_RQEVN:
         prepareMessage(OPC_NUMEV);
-        sendCanMessage(4);
+        sendCanMessage();
         break;
     case OPC_BOOT:
         return OK;
@@ -317,7 +318,7 @@ byte MergCanBus::handleConfigMessages(){
         mergCanData[2]=lowByte(nodeId.getNodeNumber());
         mergCanData[3]=ind;
         mergCanData[4]=memory.getVar(ind);
-        sendCanMessage(5);
+        sendCanMessage();
         break;
 
     case OPC_NENRD:
@@ -344,18 +345,92 @@ byte MergCanBus::handleConfigMessages(){
         mergCanData[2]=lowByte(nodeId.getNodeNumber());
         mergCanData[3]=ind;
         mergCanData[4]=nodeId.getParameter(ind);
-        sendCanMessage(5);
+        sendCanMessage();
         break;
     case OPC_CANID:
         ind=message.getData()[3];
         nodeId.setCanID(ind);
         memory.setCanId(ind);
         prepareMessage(OPC_NNACK);
-        sendCanMessage(3);
+        sendCanMessage();
         break;
     case OPC_EVULN:
         //[TODO]
+
+        if (state_mode==LEARN){
+            ev=message.getEventNumber();
+            if (memory.eraseEvent(ev)==0){
+                //send ack
+                prepareMessage(OPC_WRACK);
+                sendCanMessage();
+            }else{
+                //send error
+                //[TODO]
+            }
+        }
+
         break;
+    case OPC_NVSET:
+        ind=message.getNodeVariableIndex();
+        val=message.getNodeVariable();
+        //index starts at 1. internal index starts at 0
+        ind--;
+        if (ind<=nodeId.getSuportedNodeVariables()){
+            memory.setVar(ind,val);
+        }else{
+            //send error
+            //TODO
+        }
+        break;
+
+    case OPC_REVAL:
+        evidx=message.getEventIndex();
+        ind=message.getEventVarIndex();
+        val=memory.getEventVar(evidx,ind);
+
+        //send a NEVAL
+        mergCanData[0]=OPC_NEVAL;
+        mergCanData[1]=highByte(nodeId.getNodeNumber());
+        mergCanData[2]=lowByte(nodeId.getNodeNumber());
+        mergCanData[3]=evidx;
+        mergCanData[4]=ind;
+        mergCanData[5]=val;
+        sendCanMessage();
+        break;
+    case OPC_REQEV:
+        if (state_mode==LEARN){
+            ev=message.getEventNumber();
+            evidx=memory.getEventIndex(ev);
+            ind=message.getEventVarIndex();
+            val=memory.getEventVar(evidx,ind);
+            //send a EVANS
+            mergCanData[0]=OPC_EVANS;
+            mergCanData[1]=highByte(nodeId.getNodeNumber());
+            mergCanData[2]=lowByte(nodeId.getNodeNumber());
+            mergCanData[3]=highByte(ev);
+            mergCanData[4]=lowByte(ev);
+            mergCanData[5]=ind;
+            mergCanData[6]=val;
+            sendCanMessage();
+        }
+
+        break;
+
+    case OPC_EVLRN:
+        if (state_mode==LEARN){
+
+            ev=message.getEventNumber();
+            ind=message.getEventVarIndex();
+            val=message.getEventVar();
+            //TODO
+
+        }
+
+
+
+        break;
+
+
     }
     return OK;
 }
@@ -380,7 +455,8 @@ void MergCanBus::clearMsgToSend(){
     }
 }
 
-byte MergCanBus::sendCanMessage(byte message_size){
+byte MergCanBus::sendCanMessage(){
+    byte message_size=getMessageSize(mergCanData[0]);
     byte r=Can.sendMsgBuf(nodeId.getCanID(),0,message_size,mergCanData);
     if (CAN_OK!=r){
         return r;
@@ -390,6 +466,12 @@ byte MergCanBus::sendCanMessage(byte message_size){
 
 void MergCanBus::setDebug(bool debug){
     DEBUG=debug;
+}
+
+int MergCanBus::getMessageSize(byte opc){
+    byte a=opc;
+    a=a>>5;
+    return a;
 }
 
 void MergCanBus::prepareMessage(byte opc){

@@ -65,12 +65,18 @@ byte * MergMemoryManagement::getEvent(int index){
 }
 
 /*
-//put a new event in the memory
+//put a new event in the memory and return the index
 */
-void MergMemoryManagement::setEvent(byte *event){
+byte MergMemoryManagement::setEvent(byte *event){
     if (numEvents>=MAX_NUM_EVENTS){
         return ;
     }
+
+    //check if the event exists
+    //TODO
+    unsigned int ev=;
+
+
     int i=numEvents+1;
     setEvent(event,i);
 }
@@ -400,6 +406,40 @@ void MergMemoryManagement::eraseEvent(int eventIdx){
     }
 }
 
+
+byte MergMemoryManagement::eraseEvent(unsigned int ev){
+
+    //find the event in the memory and erase
+    int index=getEventIndex(ev);
+    if (index>=0){
+        eraseEvent(index);
+        return 0;
+    }
+    return 1;
+}
+
+int MergMemoryManagement::getEventIndex(unsigned int ev){
+
+    byte highev,lowev,pos;
+    unsigned int evtmp;
+    pos=0;
+    for (int i=0;i<numEvents;i++){
+        highev=events[pos];
+        lowev=events[pos+1];
+        evtmp=highev;
+        evtmp<<8;
+        evtmp=evtmp && lowev;
+
+        if (evtmp==ev){
+            return i;
+        }
+
+        pos=pos+4;
+    }
+    //not found
+    return -1;
+
+}
 /*
 /* set the value of a node var
 */
