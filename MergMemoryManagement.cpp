@@ -73,7 +73,6 @@ unsigned int MergMemoryManagement::setEvent(byte *event){
     }
 
     //check if the event exists
-    //TODO
     unsigned int evidx,resp;
     evidx=getEventIndex(event[0],event[1],event[2],event[3]);
 
@@ -108,13 +107,19 @@ unsigned int MergMemoryManagement::setEvent(byte *event,unsigned int index){
      return index;
 }
 
+unsigned int MergMemoryManagement::getEventIndex(unsigned int nn,unsigned int ev){
+
+    return getEventIndex (highByte(nn),lowByte(nn),highByte(ev),lowByte(ev));
+
+}
+
 unsigned int MergMemoryManagement::getEventIndex(byte ev1,byte ev2,byte ev3,byte ev4){
     int n=0;
     for (int i=0;i<numEvents;i++){
         if (ev1==events[n] &&
             ev2==events[n+1] &&
             ev3==events[n+2] &&
-            ev4==events[n+3] &&){
+            ev4==events[n+3]){
             return i;
         }
         n=n+4;
@@ -358,7 +363,7 @@ void MergMemoryManagement::eraseAllEvents(){
 /* Erase a specific event
 /* Has to reorganize the memory: events and events vars to avoid fragmentation
 */
-unsigned int MergMemoryManagement::eraseEvent(int eventIdx){
+unsigned int MergMemoryManagement::eraseEvent(unsigned int eventIdx){
 
     if (eventIdx>numEvents||numEvents<1){
         return (MAX_NUM_EVENTS +1);
@@ -434,38 +439,17 @@ unsigned int MergMemoryManagement::eraseEvent(int eventIdx){
 }
 
 
-unsigned int MergMemoryManagement::eraseEvent(unsigned int ev){
+unsigned int MergMemoryManagement::eraseEvent(unsigned int nn,unsigned int ev){
 
     //find the event in the memory and erase
-    int index=getEventIndex(ev);
+    int index=getEventIndex(nn,ev);
     if (index>=0){
         return eraseEvent(index);
     }
     return (MAX_NUM_EVENTS+1);
 }
 
-int MergMemoryManagement::getEventIndex(unsigned int ev){
 
-    byte highev,lowev,pos;
-    unsigned int evtmp;
-    pos=0;
-    for (int i=0;i<numEvents;i++){
-        highev=events[pos];
-        lowev=events[pos+1];
-        evtmp=highev;
-        evtmp<<8;
-        evtmp=evtmp && lowev;
-
-        if (evtmp==ev){
-            return i;
-        }
-
-        pos=pos+4;
-    }
-    //not found
-    return -1;
-
-}
 /*
 /* set the value of a node var
 */

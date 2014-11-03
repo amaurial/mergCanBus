@@ -53,7 +53,7 @@ void MergCBUS::setBitMessage(byte pos,bool val){
 Method that deals with the majority of messages and behavior. Auto enum, query requests
 If a custom function is set it calls it for every non automatic message
 */
-unsigned int MergCBUS::runAutomatic(){
+unsigned int MergCBUS::run(){
 
     if (!readCanBus()){
         //nothing to do
@@ -205,6 +205,8 @@ byte MergCBUS::handleConfigMessages(){
         if (state_mode!=SETUP){return OK;}
     }
 
+    nn=nodeId.getNodeNumber();
+
     switch (message.getOpc()){
     case OPC_RSTAT:
         //command station
@@ -213,7 +215,7 @@ byte MergCBUS::handleConfigMessages(){
     case OPC_QNN:
         //response with a OPC_PNN if we have a node ID
         //[<MjPri><MinPri=3><CANID>]<B6><NN Hi><NN Lo><Manuf Id><Module Id><Flags>
-        if (nodeId.getNodeNumber()>0){
+        if (nn>0){
             prepareMessage(OPC_PNN);
             return sendCanMessage();
         }
@@ -290,8 +292,8 @@ byte MergCBUS::handleConfigMessages(){
             int pos=0;
             for (int j=0;j<i;j++){
                 mergCanData[0]=OPC_ENRSP;
-                mergCanData[1]=highByte(nodeId.getNodeNumber());
-                mergCanData[2]=lowByte(nodeId.getNodeNumber());
+                mergCanData[1]=highByte(nn);
+                mergCanData[2]=lowByte(nn);
                 mergCanData[3]=events[pos];pos++;
                 mergCanData[4]=events[pos];pos++;
                 mergCanData[5]=events[pos];pos++;
@@ -317,9 +319,10 @@ byte MergCBUS::handleConfigMessages(){
         //answer with NVANS
         ind=message.getNodeVariableIndex();
         clearMsgToSend();
+
         mergCanData[0]=OPC_NVANS;
-        mergCanData[1]=highByte(nodeId.getNodeNumber());
-        mergCanData[2]=lowByte(nodeId.getNodeNumber());
+        mergCanData[1]=highByte(nn);
+        mergCanData[2]=lowByte(nn);
         mergCanData[3]=ind;
         mergCanData[4]=memory.getVar(ind-1);//the CBUS index start with 1
         sendCanMessage();
@@ -330,9 +333,10 @@ byte MergCBUS::handleConfigMessages(){
         ind=message.getEventIndex();
         byte *event;
         event=memory.getEvent(ind-1);//the CBUS index start with 1
+
         mergCanData[0]=OPC_ENRSP;
-        mergCanData[1]=highByte(nodeId.getNodeNumber());
-        mergCanData[2]=lowByte(nodeId.getNodeNumber());
+        mergCanData[1]=highByte(nn);
+        mergCanData[2]=lowByte(nn);
         mergCanData[3]=event[0];
         mergCanData[4]=event[1];
         mergCanData[5]=event[2];
@@ -344,9 +348,10 @@ byte MergCBUS::handleConfigMessages(){
         //answer with PARAN
         clearMsgToSend();
         ind=message.getParaIndex();
+
         mergCanData[0]=OPC_PARAN;
-        mergCanData[1]=highByte(nodeId.getNodeNumber());
-        mergCanData[2]=lowByte(nodeId.getNodeNumber());
+        mergCanData[1]=highByte(nn);
+        mergCanData[2]=lowByte(nn);
         mergCanData[3]=ind;
         mergCanData[4]=nodeId.getParameter(ind-1);//the CBUS index start with 1
         sendCanMessage();
@@ -362,13 +367,21 @@ byte MergCBUS::handleConfigMessages(){
         //TODO
         if (state_mode==LEARN){
             ev=message.getEventNumber();
-            if (memory.eraseEvent(ev)!=ev){
+            nn=message.getNodeNumber();
+            evidx=memory.getEventIndex(nn,ev);
+
+            if (evidx<0){
+                sendERRMessage(CMDERR_INVALID_EVENT);
+                break;
+            }
+
+            if (memory.eraseEvent(evidx)!=ev){
                 //send ack
                 prepareMessage(OPC_WRACK);
                 sendCanMessage();
             }else{
                 //send error
-                //[TODO]
+                sendERRMessage(CMDERR_INVALID_EVENT);
             }
         }else{
             sendERRMessage(CMDERR_NOT_LRN);
@@ -381,6 +394,8 @@ byte MergCBUS::handleConfigMessages(){
 
         if (ind<=nodeId.getSuportedNodeVariables()){
             memory.setVar(ind,val);
+            prepareMessage(OPC_WRACK);
+            sendCanMessage();
         }else{
             //send error
             sendERRMessage(CMDERR_INV_PARAM_IDX);
@@ -391,11 +406,12 @@ byte MergCBUS::handleConfigMessages(){
         evidx=message.getEventIndex();
         ind=message.getEventVarIndex();
         val=memory.getEventVar(evidx-1,ind-1);//the CBUS index start with 1
+        nn=nodeId.getNodeNumber();
 
         //send a NEVAL
         mergCanData[0]=OPC_NEVAL;
-        mergCanData[1]=highByte(nodeId.getNodeNumber());
-        mergCanData[2]=lowByte(nodeId.getNodeNumber());
+        mergCanData[1]=highByte(nn);
+        mergCanData[2]=lowByte(nn);
         mergCanData[3]=evidx;
         mergCanData[4]=ind;
         mergCanData[5]=val;
@@ -404,13 +420,14 @@ byte MergCBUS::handleConfigMessages(){
     case OPC_REQEV:
         if (state_mode==LEARN){
             ev=message.getEventNumber();
-            evidx=memory.getEventIndex(ev);
+            evidx=memory.getEventIndex(nn,ev);
             ind=message.getEventVarIndex();
             val=memory.getEventVar(evidx,ind-1);//the CBUS index start with 1
+
             //send a EVANS
             mergCanData[0]=OPC_EVANS;
-            mergCanData[1]=highByte(nodeId.getNodeNumber());
-            mergCanData[2]=lowByte(nodeId.getNodeNumber());
+            mergCanData[1]=highByte(nn);
+            mergCanData[2]=lowByte(nn);
             mergCanData[3]=highByte(ev);
             mergCanData[4]=lowByte(ev);
             mergCanData[5]=ind;
@@ -505,14 +522,32 @@ byte MergCBUS::handleConfigMessages(){
         }
 
         break;
-
-
-
-
-
     }
     return OK;
 }
+
+//the accessory messages has to be threated by the user function
+//once it is related to the module function
+//has to deal with ACON,SCOF, ARON ,AROF, AREQ, ASON, ASOF
+byte MergCBUS::handleACCMessages(){
+    return userHandler(&message,this);
+}
+
+/*
+Has to handle the EXTC messages
+*/
+byte MergCBUS::handleGeneralMessages(){
+    return userHandler(&message,this);
+}
+
+/*
+TODO
+*/
+byte MergCBUS::handleDCCMessages(){
+    return 0;
+}
+
+
 
 void MergCBUS::sortArray(byte *a, byte n){
 
@@ -535,7 +570,8 @@ void MergCBUS::clearMsgToSend(){
 }
 
 byte MergCBUS::sendCanMessage(){
-    byte message_size=getMessageSize(mergCanData[0]);
+    byte message_size;
+    message_size=getMessageSize(mergCanData[0]);
     byte r=Can.sendMsgBuf(nodeId.getCanID(),0,message_size,mergCanData);
     if (CAN_OK!=r){
         return r;
@@ -547,7 +583,7 @@ void MergCBUS::setDebug(bool debug){
     DEBUG=debug;
 }
 
-int MergCBUS::getMessageSize(byte opc){
+byte MergCBUS::getMessageSize(byte opc){
     byte a=opc;
     a=a>>5;
     return a;
@@ -625,5 +661,24 @@ void MergCBUS::sendERRMessage(byte code){
     mergCanData[3]=code;
     sendCanMessage();
 
+}
+
+/*
+For the messages ACONs,ACOFs,ASONs,ASOFs
+*/
+
+bool MergCBUS::hasThisEvent(){
+    byte opc=message.getOpc();
+
+    if (opc==OPC_ACON || opc==OPC_ACON1 || opc==OPC_ACON2 || opc==OPC_ACON3 ||
+        opc==OPC_ACOF || opc==OPC_ACOF1 || opc==OPC_ACOF2 || opc==OPC_ACOF3 ||
+        opc==OPC_ASON || opc==OPC_ASON1 || opc==OPC_ASON2 || opc==OPC_ASON3 ||
+        opc==OPC_ASOF || opc==OPC_ASOF1 || opc==OPC_ASOF2 || opc==OPC_ASOF3
+        ){
+             if (memory.getEventIndex(message.getNodeNumber(),message.getEventNumber())>=0){
+                return true;
+             }
+    }
+    return false;
 }
 

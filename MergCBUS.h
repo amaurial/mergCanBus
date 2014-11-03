@@ -12,7 +12,7 @@
 #include "mcp_can.h"
 #include "MergMemoryManagement.h"
 
-typedef unsigned int (*userHandlerType)(Message*);
+
 
 
 #define SELF_ENUM_TIME 200
@@ -29,25 +29,29 @@ enum can_error {OK=0,UNKNOWN_MSG_TYPE=1,NO_MESSAGE=2};
 class MergCBUS
 {
     public:
+        typedef unsigned int (*userHandlerType)(Message*,MergCBUS*);
         MergCBUS();
         virtual ~MergCBUS();
         void skipMessage(message_type msg){setBitMessage (msg,true);};
         void processMessage(message_type msg){setBitMessage (msg,false);};
-        bool run(process_mode mode);
+        //bool run(process_mode mode);
+        unsigned int run();
         bool hasMessageToHandle();
         MergNodeIdentification *getNodeId(){return &nodeId;};
         bool sendCanMessage(CANMessage *msg);
         bool initCanBus(unsigned int port,unsigned int rate, int retries,unsigned int retryIntervalMilliseconds);
-        //let the bus level lib public
-        MCP_CAN Can;
+
         void setUserHandlerFunction(userHandlerType f) {userHandler=f;};
         void doSelfEnnumeration(bool soft);
         void setDebug(bool debug);
         void doSetup();
         void doOutOfService();
         void sendERRMessage(byte code);
+        bool hasThisEvent();
     protected:
     private:
+        //let the bus level lib private
+        MCP_CAN Can;
         void setBitMessage(byte pos,bool val);  //set or unset the bit on pos for messageFilter
         CANMessage canMessage;                  //data from can bus
         byte mergCanData[CANDATA_SIZE];         //can data . CANDATA_SIZE defined in message.h
@@ -85,6 +89,7 @@ class MergCBUS
 
         void sortArray(byte *a, byte n);
         void prepareMessage(byte opc);
+        byte getMessageSize(byte opc);
 
 
 
