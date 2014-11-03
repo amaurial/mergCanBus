@@ -40,8 +40,8 @@
 		<Unit filename="CANMessage.cpp" />
 		<Unit filename="CANMessage.h" />
 		<Unit filename="LICENSE" />
-		<Unit filename="MergCanBus.cpp" />
-		<Unit filename="MergCanBus.h" />
+		<Unit filename="MergCBUS.cpp" />
+		<Unit filename="MergCBUS.h" />
 		<Unit filename="MergMemoryManagement.cpp" />
 		<Unit filename="MergMemoryManagement.h" />
 		<Unit filename="MergNodeIdentification.cpp" />
