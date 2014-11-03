@@ -25,6 +25,8 @@ Extracted from the Developer’s Guide for CBUS (Version 5g)
 // include the source code or a link to a location where you make the source
 // publicly available. The best way to make your changes publicly available is
 // via the MERG online resources. See <www.merg.co.uk>
+
+
 // Manufacturers
 #define MANU_MERG 165 // http://www.merg.co.uk
 #define MANU_ROCRAIL 70 // http://www.rocrail.net

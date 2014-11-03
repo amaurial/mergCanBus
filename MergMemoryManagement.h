@@ -56,9 +56,9 @@ class MergMemoryManagement
         byte getNumEventVars(){return numEventVars;};
 
         void eraseAllEvents();
-        void eraseEvent(int eventIdx);
-        void eraseEvent(byte event[EVENT_SIZE]);
-        int eraseEvent(unsigned int event);
+        unsigned int  eraseEvent(int eventIdx);
+        unsigned int  eraseEvent(byte event[EVENT_SIZE]);
+        unsigned int  eraseEvent(unsigned int event);
 
 
         void setVar(int index,byte val);
@@ -70,13 +70,12 @@ class MergMemoryManagement
         unsigned int getNodeNumber();
         unsigned int getDeviceNumber();
 
-        void setEvent(byte *event);
-        void setEvent(byte *event,int eventIdx);
+        unsigned int setEvent(byte *event);//return the index
+        unsigned int setEvent(byte *event,int eventIdx);
 
-        void newEventVar(int eventIdx,byte val);
-        void setEventVar(int eventIdx,int index, byte value);
+        unsigned int setEventVar(unsigned int eventIdx,unsigned int varIdx,byte val);
 
-        int getEventIndex(unsigned int event);
+        unsigned int getEventIndex(byte ev1,byte ev2,byte ev3,byte ev4);
 
 
     protected:
@@ -96,6 +95,7 @@ class MergMemoryManagement
 
         void clear();
         void writeEvents();
+        void newEventVar(int eventIdx,byte val);
 
 
 };

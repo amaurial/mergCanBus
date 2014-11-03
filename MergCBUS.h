@@ -45,6 +45,7 @@ class MergCBUS
         void setDebug(bool debug);
         void doSetup();
         void doOutOfService();
+        void sendERRMessage(byte code);
     protected:
     private:
         void setBitMessage(byte pos,bool val);  //set or unset the bit on pos for messageFilter

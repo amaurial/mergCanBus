@@ -200,7 +200,7 @@ byte MergCBUS::handleConfigMessages(){
 
     //config messages should be directed to node number or device id
     byte ind,val,evidx;
-    unsigned int ev;
+    unsigned int ev,nn,resp;
     if (message.getNodeNumber()!=nodeId.getNodeNumber()) {
         if (state_mode!=SETUP){return OK;}
     }
@@ -242,6 +242,8 @@ byte MergCBUS::handleConfigMessages(){
         if (state_mode==SETUP){
             prepareMessage(OPC_NAME);
             return sendCanMessage();
+        }else{
+            sendERRMessage(CMDERR_NOT_SETUP);
         }
         break;
 
@@ -255,6 +257,8 @@ byte MergCBUS::handleConfigMessages(){
             prepareMessage(OPC_NNACK);
             state_mode=NORMAL;
             return sendCanMessage();
+        }else{
+            sendERRMessage(CMDERR_NOT_SETUP);
         }
         break;
     case OPC_NNLRN:
@@ -292,7 +296,7 @@ byte MergCBUS::handleConfigMessages(){
                 mergCanData[4]=events[pos];pos++;
                 mergCanData[5]=events[pos];pos++;
                 mergCanData[6]=events[pos];pos++;
-                mergCanData[7]=j;
+                mergCanData[7]=j+1;//the CBUS index start with 1
                 ind=sendCanMessage();
             }
         }
@@ -317,7 +321,7 @@ byte MergCBUS::handleConfigMessages(){
         mergCanData[1]=highByte(nodeId.getNodeNumber());
         mergCanData[2]=lowByte(nodeId.getNodeNumber());
         mergCanData[3]=ind;
-        mergCanData[4]=memory.getVar(ind);
+        mergCanData[4]=memory.getVar(ind-1);//the CBUS index start with 1
         sendCanMessage();
         break;
 
@@ -325,7 +329,7 @@ byte MergCBUS::handleConfigMessages(){
         clearMsgToSend();
         ind=message.getEventIndex();
         byte *event;
-        event=memory.getEvent(ind);
+        event=memory.getEvent(ind-1);//the CBUS index start with 1
         mergCanData[0]=OPC_ENRSP;
         mergCanData[1]=highByte(nodeId.getNodeNumber());
         mergCanData[2]=lowByte(nodeId.getNodeNumber());
@@ -344,7 +348,7 @@ byte MergCBUS::handleConfigMessages(){
         mergCanData[1]=highByte(nodeId.getNodeNumber());
         mergCanData[2]=lowByte(nodeId.getNodeNumber());
         mergCanData[3]=ind;
-        mergCanData[4]=nodeId.getParameter(ind);
+        mergCanData[4]=nodeId.getParameter(ind-1);//the CBUS index start with 1
         sendCanMessage();
         break;
     case OPC_CANID:
@@ -355,11 +359,10 @@ byte MergCBUS::handleConfigMessages(){
         sendCanMessage();
         break;
     case OPC_EVULN:
-        //[TODO]
-
+        //TODO
         if (state_mode==LEARN){
             ev=message.getEventNumber();
-            if (memory.eraseEvent(ev)==0){
+            if (memory.eraseEvent(ev)!=ev){
                 //send ack
                 prepareMessage(OPC_WRACK);
                 sendCanMessage();
@@ -367,26 +370,27 @@ byte MergCBUS::handleConfigMessages(){
                 //send error
                 //[TODO]
             }
+        }else{
+            sendERRMessage(CMDERR_NOT_LRN);
         }
 
         break;
     case OPC_NVSET:
-        ind=message.getNodeVariableIndex();
+        ind=message.getNodeVariableIndex()-1;//the CBUS index start with 1
         val=message.getNodeVariable();
-        //index starts at 1. internal index starts at 0
-        ind--;
+
         if (ind<=nodeId.getSuportedNodeVariables()){
             memory.setVar(ind,val);
         }else{
             //send error
-            //TODO
+            sendERRMessage(CMDERR_INV_PARAM_IDX);
         }
         break;
 
     case OPC_REVAL:
         evidx=message.getEventIndex();
         ind=message.getEventVarIndex();
-        val=memory.getEventVar(evidx,ind);
+        val=memory.getEventVar(evidx-1,ind-1);//the CBUS index start with 1
 
         //send a NEVAL
         mergCanData[0]=OPC_NEVAL;
@@ -402,7 +406,7 @@ byte MergCBUS::handleConfigMessages(){
             ev=message.getEventNumber();
             evidx=memory.getEventIndex(ev);
             ind=message.getEventVarIndex();
-            val=memory.getEventVar(evidx,ind);
+            val=memory.getEventVar(evidx,ind-1);//the CBUS index start with 1
             //send a EVANS
             mergCanData[0]=OPC_EVANS;
             mergCanData[1]=highByte(nodeId.getNodeNumber());
@@ -412,6 +416,8 @@ byte MergCBUS::handleConfigMessages(){
             mergCanData[5]=ind;
             mergCanData[6]=val;
             sendCanMessage();
+        }else{
+            sendERRMessage(CMDERR_NOT_LRN);
         }
 
         break;
@@ -419,16 +425,89 @@ byte MergCBUS::handleConfigMessages(){
     case OPC_EVLRN:
         if (state_mode==LEARN){
 
+            //TODO: suport device number mode
+
             ev=message.getEventNumber();
+            nn=message.getNodeNumber();
             ind=message.getEventVarIndex();
             val=message.getEventVar();
-            //TODO
 
+            //save event and get the index
+            buffer[0]=highByte(nn);
+            buffer[1]=lowByte(nn);
+            buffer[2]=highByte(ev);
+            buffer[3]=lowByte(ev);
+            evidx=memory.setEvent(buffer);
+
+            if (evidx>MAX_NUM_EVENTS){
+                //send a message error
+                sendERRMessage(CMDERR_TOO_MANY_EVENTS);
+            }
+
+            //save the parameter
+            //the CBUS index start with 1
+            resp=memory.setEventVar(evidx,ind-1,val);
+
+            if (resp!=message.getEventVarIndex()){
+                //send a message error
+                sendERRMessage(CMDERR_INV_NV_IDX);
+            }
+            //send a WRACK back
+            prepareMessage(OPC_WRACK);
+            sendCanMessage();
+
+        }else{
+            sendERRMessage(CMDERR_NOT_LRN);
         }
 
+        break;
 
+    case OPC_EVLRNI:
+
+        if (state_mode==LEARN){
+
+            //TODO: suport device number mode
+
+            ev=message.getEventNumber();
+            nn=message.getNodeNumber();
+            ind=message.getEventVarIndex();
+            val=message.getEventVar();
+            evidx=message.getEventIndex();
+
+            //save event and get the index
+            buffer[0]=highByte(nn);
+            buffer[1]=lowByte(nn);
+            buffer[2]=highByte(ev);
+            buffer[3]=lowByte(ev);
+            resp=memory.setEvent(buffer,evidx-1);
+
+            if (resp!=(evidx-1)){
+                //send a message error
+                sendERRMessage(CMDERR_INV_EV_IDX);
+                break;
+            }
+
+            //save the parameter
+            //the CBUS index start with 1
+            resp=memory.setEventVar(evidx-1,ind-1,val);
+
+            if (resp!=(ind-1)){
+                //send a message error
+                sendERRMessage(CMDERR_INV_NV_IDX);
+                break;
+            }
+            //send a WRACK back
+            prepareMessage(OPC_WRACK);
+            sendCanMessage();
+
+        }else{
+            sendERRMessage(CMDERR_NOT_LRN);
+        }
 
         break;
+
+
+
 
 
     }
@@ -535,5 +614,16 @@ void MergCBUS::prepareMessage(byte opc){
         mergCanData[2]=lowByte(nodeId.getNodeNumber());
         break;
     }
+}
+
+
+void MergCBUS::sendERRMessage(byte code){
+    clearMsgToSend();
+    mergCanData[0]=OPC_CMDERR;
+    mergCanData[1]=highByte(nodeId.getNodeNumber());
+    mergCanData[2]=lowByte(nodeId.getNodeNumber());
+    mergCanData[3]=code;
+    sendCanMessage();
+
 }
 
