@@ -26,11 +26,11 @@ enum process_mode{AUTOMATIC,MANUAL};
 enum state {LEARN,UNLEARN,BOOT,NORMAL,SELF_ENUMERATION,SETUP};
 enum can_error {OK=0,UNKNOWN_MSG_TYPE=1,NO_MESSAGE=2};
 
-class MergCanBus
+class MergCBUS
 {
     public:
-        MergCanBus();
-        virtual ~MergCanBus();
+        MergCBUS();
+        virtual ~MergCBUS();
         void skipMessage(message_type msg){setBitMessage (msg,true);};
         void processMessage(message_type msg){setBitMessage (msg,false);};
         bool run(process_mode mode);

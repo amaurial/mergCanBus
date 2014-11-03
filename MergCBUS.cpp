@@ -1,6 +1,6 @@
-#include "MergCanBus.h"
+#include "MergCBUS.h"
 
-MergCanBus::MergCanBus()
+MergCBUS::MergCBUS()
 {
     //ctor
     messageFilter=0;
@@ -15,12 +15,12 @@ MergCanBus::MergCanBus()
     DEBUG=false;
 }
 
-MergCanBus::~MergCanBus()
+MergCBUS::~MergCBUS()
 {
     //dtor
 }
 
-bool MergCanBus::initCanBus(unsigned int port,unsigned int rate, int retries,unsigned int retryIntervalMilliseconds){
+bool MergCBUS::initCanBus(unsigned int port,unsigned int rate, int retries,unsigned int retryIntervalMilliseconds){
 
     unsigned int r=0;
     Can.set_cs(port);
@@ -40,7 +40,7 @@ bool MergCanBus::initCanBus(unsigned int port,unsigned int rate, int retries,uns
 Set the bit in the message bit filter
 The messageFilter indicates if a message type will be handled or not
 */
-void MergCanBus::setBitMessage(byte pos,bool val){
+void MergCBUS::setBitMessage(byte pos,bool val){
     if (val){
         bitSet(messageFilter,pos);
     }
@@ -53,7 +53,7 @@ void MergCanBus::setBitMessage(byte pos,bool val){
 Method that deals with the majority of messages and behavior. Auto enum, query requests
 If a custom function is set it calls it for every non automatic message
 */
-unsigned int MergCanBus::runAutomatic(){
+unsigned int MergCBUS::runAutomatic(){
 
     if (!readCanBus()){
         //nothing to do
@@ -122,7 +122,7 @@ unsigned int MergCanBus::runAutomatic(){
 }
 
 //read the can bus and load the data in canMessage
-bool MergCanBus::readCanBus(){
+bool MergCBUS::readCanBus(){
     byte len=0;
     if(CAN_MSGAVAIL == Can.checkReceive()) // check if data coming
     {
@@ -140,25 +140,25 @@ bool MergCanBus::readCanBus(){
 
 //put node in setup mode
 //changing from slim to flim
-void MergCanBus::doSetup(){
+void MergCBUS::doSetup(){
     state_mode=SETUP;
     prepareMessage(OPC_RQNN);
     sendCanMessage();
 }
 //sent by a node when going out of service
-void MergCanBus::doOutOfService(){
+void MergCBUS::doOutOfService(){
     prepareMessage(OPC_NNREL);
     sendCanMessage();
 }
 
-void MergCanBus::doSelfEnnumeration(bool softEnum){
+void MergCBUS::doSelfEnnumeration(bool softEnum){
     softwareEnum=softEnum;
     state_mode=SELF_ENUMERATION;
     Can.sendRTMMessage(nodeId.getCanID());
     timeDelay=millis();
 }
 
-void MergCanBus::finishSelfEnumeration(){
+void MergCBUS::finishSelfEnumeration(){
     state_mode=NORMAL;
     sortArray(buffer,bufferIndex);
     //run the buffer and find the lowest can_id
@@ -196,7 +196,7 @@ void MergCanBus::finishSelfEnumeration(){
 
 
 
-byte MergCanBus::handleConfigMessages(){
+byte MergCBUS::handleConfigMessages(){
 
     //config messages should be directed to node number or device id
     byte ind,val,evidx;
@@ -435,7 +435,7 @@ byte MergCanBus::handleConfigMessages(){
     return OK;
 }
 
-void MergCanBus::sortArray(byte *a, byte n){
+void MergCBUS::sortArray(byte *a, byte n){
 
   for (byte i = 1; i < n; ++i)
   {
@@ -449,13 +449,13 @@ void MergCanBus::sortArray(byte *a, byte n){
   }
 }
 
-void MergCanBus::clearMsgToSend(){
+void MergCBUS::clearMsgToSend(){
     for (int i=0;i<CANDATA_SIZE;i++){
         mergCanData[i]=0;
     }
 }
 
-byte MergCanBus::sendCanMessage(){
+byte MergCBUS::sendCanMessage(){
     byte message_size=getMessageSize(mergCanData[0]);
     byte r=Can.sendMsgBuf(nodeId.getCanID(),0,message_size,mergCanData);
     if (CAN_OK!=r){
@@ -464,17 +464,17 @@ byte MergCanBus::sendCanMessage(){
     return OK;
 }
 
-void MergCanBus::setDebug(bool debug){
+void MergCBUS::setDebug(bool debug){
     DEBUG=debug;
 }
 
-int MergCanBus::getMessageSize(byte opc){
+int MergCBUS::getMessageSize(byte opc){
     byte a=opc;
     a=a>>5;
     return a;
 }
 
-void MergCanBus::prepareMessage(byte opc){
+void MergCBUS::prepareMessage(byte opc){
 
     clearMsgToSend();
     switch (opc){
