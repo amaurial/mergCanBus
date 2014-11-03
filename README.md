@@ -1,4 +1,4 @@
-mergCanBus
+MergCBus
 ==========
 
-Merg CANBUS implementation for Arduino
+MergCBUS implementation for Arduino
