@@ -1,5 +1,8 @@
 #include "MergMemoryManagement.h"
 
+/*
+Constructor: clear array and reads the EEPROM
+*/
 MergMemoryManagement::MergMemoryManagement()
 {
     //ctor
@@ -7,7 +10,7 @@ MergMemoryManagement::MergMemoryManagement()
     read();
 }
 /*
-// clear the arrays
+// clear the internal arrays
 */
 void MergMemoryManagement::clear(){
 
@@ -86,7 +89,7 @@ unsigned int MergMemoryManagement::setEvent(byte *event){
 
 }
 /*
-//put a new event in the memory
+//put a new event in the memory and return its index
 */
 unsigned int MergMemoryManagement::setEvent(byte *event,unsigned int index){
 
@@ -107,12 +110,20 @@ unsigned int MergMemoryManagement::setEvent(byte *event,unsigned int index){
      return index;
 }
 
+/*
+return the internal index of an event
+use event and node number
+*/
 unsigned int MergMemoryManagement::getEventIndex(unsigned int nn,unsigned int ev){
 
     return getEventIndex (highByte(nn),lowByte(nn),highByte(ev),lowByte(ev));
 
 }
 
+/*
+return the internal index of an event
+use the byte description of an event
+*/
 unsigned int MergMemoryManagement::getEventIndex(byte ev1,byte ev2,byte ev3,byte ev4){
     int n=0;
     for (int i=0;i<numEvents;i++){
@@ -312,8 +323,6 @@ void MergMemoryManagement::write(){
             n++;
         }
     }
-
-
 }
 /*
 /*Write the events to the memory
@@ -333,6 +342,9 @@ void MergMemoryManagement::writeEvents(){
     }
 }
 
+/*
+Erase all events and their variables
+*/
 
 void MergMemoryManagement::eraseAllEvents(){
     //to avoid to many eprom writings we just set the numberOfEvents to zero and the eventsVar to zero and clear the arrays
@@ -438,7 +450,9 @@ unsigned int MergMemoryManagement::eraseEvent(unsigned int eventIdx){
     return eventIdx;
 }
 
-
+/*
+Erase a specific event
+*/
 unsigned int MergMemoryManagement::eraseEvent(unsigned int nn,unsigned int ev){
 
     //find the event in the memory and erase
@@ -542,12 +556,24 @@ void MergMemoryManagement::setDeviceNumber(unsigned int val){
     return;
 }
 
+/*
+return the node number
+*/
+
 unsigned int MergMemoryManagement::getNodeNumber(){
     return ((unsigned int)word(nn[0],nn[1]));
 }
+
+/*
+returns the device number
+*/
 unsigned int MergMemoryManagement::getDeviceNumber(){
     return ((unsigned int)word(dd[0],dd[1]));
 }
+
+/*
+check if an event has any variables
+*/
 bool MergMemoryManagement::hasEventVars(int eventIdx){
     for (int i=0;i<numEventVars;i++){
         if (eventVars[i].event_index==eventIdx){

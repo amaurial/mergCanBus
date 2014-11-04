@@ -91,8 +91,6 @@ class MergCBUS
         void prepareMessage(byte opc);
         byte getMessageSize(byte opc);
 
-
-
 };
 
 #endif // MESSAGEPARSER_H

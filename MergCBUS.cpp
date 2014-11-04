@@ -1,5 +1,10 @@
 #include "MergCBUS.h"
 
+/*
+Constructor
+Create the internal array and initiate the memory management
+*/
+
 MergCBUS::MergCBUS()
 {
     //ctor
@@ -19,6 +24,23 @@ MergCBUS::~MergCBUS()
 {
     //dtor
 }
+/*
+//set the CBUS rate and initiate the physical layer
+//rates are defined in the can file
+//#define CAN_5KBPS    1
+//#define CAN_10KBPS   2
+//#define CAN_20KBPS   3
+//#define CAN_31K25BPS 4
+//#define CAN_40KBPS   5
+//#define CAN_50KBPS   6
+//#define CAN_80KBPS   7
+//#define CAN_100KBPS  8
+//#define CAN_125KBPS  9
+//#define CAN_200KBPS  10
+//#define CAN_250KBPS  11
+//#define CAN_500KBPS  12
+//#define CAN_1000KBPS 13
+*/
 
 bool MergCBUS::initCanBus(unsigned int port,unsigned int rate, int retries,unsigned int retryIntervalMilliseconds){
 
@@ -150,14 +172,14 @@ void MergCBUS::doOutOfService(){
     prepareMessage(OPC_NNREL);
     sendCanMessage();
 }
-
+//initiate the auto enumeration procedure
 void MergCBUS::doSelfEnnumeration(bool softEnum){
     softwareEnum=softEnum;
     state_mode=SELF_ENUMERATION;
     Can.sendRTMMessage(nodeId.getCanID());
     timeDelay=millis();
 }
-
+//finish the auto enumeration
 void MergCBUS::finishSelfEnumeration(){
     state_mode=NORMAL;
     sortArray(buffer,bufferIndex);
@@ -195,12 +217,17 @@ void MergCBUS::finishSelfEnumeration(){
 }
 
 
-
+/*
+function to handle the config messages
+do the hard work of learning and managing of memory
+*/
 byte MergCBUS::handleConfigMessages(){
 
-    //config messages should be directed to node number or device id
+
     byte ind,val,evidx;
     unsigned int ev,nn,resp;
+
+    //config messages should be directed to node number or device id
     if (message.getNodeNumber()!=nodeId.getNodeNumber()) {
         if (state_mode!=SETUP){return OK;}
     }
@@ -227,7 +254,7 @@ byte MergCBUS::handleConfigMessages(){
         //Para 1 The manufacturer ID as a HEX numeric (If the manufacturer has a NMRA
         //number this can be used)
         //Para 2 Minor code version as an alphabetic character (ASCII)
-        //Para 3 Manufacturer’s module identifier as a HEX numeric
+        //Para 3 Manufacturerâ€™s module identifier as a HEX numeric
         //Para 4 Number of supported events as a HEX numeric
         //Para 5 Number of Event Variables per event as a HEX numeric
         //Para 6 Number of supported Node Variables as a HEX numeric
@@ -540,14 +567,15 @@ byte MergCBUS::handleGeneralMessages(){
     return userHandler(&message,this);
 }
 
-/*
-TODO
-*/
+// TODO (amauriala#1#): Create the DDC handle
+
 byte MergCBUS::handleDCCMessages(){
     return 0;
 }
 
-
+/*
+Sort a simple array
+*/
 
 void MergCBUS::sortArray(byte *a, byte n){
 
@@ -563,12 +591,18 @@ void MergCBUS::sortArray(byte *a, byte n){
   }
 }
 
+/*
+clear the message buffer
+*/
 void MergCBUS::clearMsgToSend(){
     for (int i=0;i<CANDATA_SIZE;i++){
         mergCanData[i]=0;
     }
 }
 
+/*
+send the message to CAN
+*/
 byte MergCBUS::sendCanMessage(){
     byte message_size;
     message_size=getMessageSize(mergCanData[0]);
@@ -579,16 +613,24 @@ byte MergCBUS::sendCanMessage(){
     return OK;
 }
 
+/*
+Put in debug mode
+*/
 void MergCBUS::setDebug(bool debug){
     DEBUG=debug;
 }
 
+/*
+get the message size using the opc
+*/
 byte MergCBUS::getMessageSize(byte opc){
     byte a=opc;
     a=a>>5;
     return a;
 }
-
+/*
+prepare the general messages
+*/
 void MergCBUS::prepareMessage(byte opc){
 
     clearMsgToSend();
@@ -652,7 +694,9 @@ void MergCBUS::prepareMessage(byte opc){
     }
 }
 
-
+/*
+send the error message with the code
+*/
 void MergCBUS::sendERRMessage(byte code){
     clearMsgToSend();
     mergCanData[0]=OPC_CMDERR;
