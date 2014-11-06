@@ -90,6 +90,7 @@ class MergCBUS
         void sortArray(byte *a, byte n);
         void prepareMessage(byte opc);
         byte getMessageSize(byte opc);
+        void printMessage();
 
 };
 

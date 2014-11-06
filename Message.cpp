@@ -31,6 +31,18 @@ Message::~Message()
     //dtor
 }
 
+unsigned int Message::setCanMessage(CANMessage *canMessage){
+    _canMessage=canMessage;
+    canId = _canMessage.getCanId();
+    opc = _canMessage.getOpc();
+    _RTR=_canMessage.getRTR();
+}
+
+byte Message::getMessageSize(){
+
+    return canMessage.getDataSize();
+}
+
 void Message::setData(byte val[DATA_SIZE] )
 {
     int i=0;
