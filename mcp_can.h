@@ -39,7 +39,9 @@ class MCP_CAN
     INT8U   m_nRtr;                                                     /* rtr                          */
     INT8U   m_nfilhit;
     INT8U   SPICS;
-	  INT8U canHeader[4];																										/*can header*/
+    INT8U canHeader[4];
+    INT8U _prio;//priority
+    INT8U _minprio;//min priority																									/*can header*/
 /*
 *  mcp2515 driver function
 */
@@ -110,7 +112,8 @@ public:
     INT8U sendRTMMessage(INT32U id);																/* send the request transfer message	*/
     INT8U isRTMMessage(void);																			  /* check if received message is a request transfer message	*/
     void getCanHeader(INT8U *buf);
-
+    void setPriority(INT8U prio,INT8U minprio);                                   //set the first 2 bits of can header
+                                    //set the bits 8 and 7 of header
 
 
 };

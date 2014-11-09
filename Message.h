@@ -37,7 +37,7 @@ class Message
         byte getByte(byte pos);
 
         byte getCanId() { return canId; }
-        //void setCanId(byte val) { canId = val; }
+        void setCanId(byte val) { canId = val; }
 
         byte getOpc() { return opc; }
         void setOpc(byte val) {opc = val; }
@@ -54,18 +54,18 @@ class Message
         unsigned int getDeviceNumber();
         void setDeviceNumber(unsigned int val) { _deviceNumber = val; }
 
-        //byte* getData() { return _data; }
-        //void setData(byte val[CANDATA_SIZE]);
+        byte* getData() { return _data; }
+        void setData(byte val[CANDATA_SIZE]);
 
         byte getPriority() { return _priority;}
         void setPriority(byte val) { _priority = val; }
 
         byte getMessageSize();
-        //unsigned int getNumBytes() { return _numBytes; }
-        //void setNumBytes(unsigned int val) { _numBytes = val; }
+        unsigned int getNumBytes() { return _numBytes; }
+        void setNumBytes(unsigned int val) { _numBytes = val; }
 
-        //void setRTR() {_RTR=true;};
-        //void unsetRTR(){_RTR=false;};
+        void setRTR() {_RTR=true;};
+        void unsetRTR(){_RTR=false;};
         bool getRTR(){return _RTR;};
 
         void setSession(byte val) {_session=val;}

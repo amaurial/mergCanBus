@@ -16,8 +16,19 @@ MergCBUS::MergCBUS()
     nodeId=MergNodeIdentification();
     message=Message();
     skipMessage(RESERVED);
+    loadMemory();
     softwareEnum=false;
     DEBUG=false;
+    greenLed=255;
+    yellowLed=255;
+
+
+}
+
+void MergCBUS::loadMemory(){
+    nodeId.setNodeNumber(memory.getNodeNumber());
+    nodeId.setDeviceNumber(memory.getDeviceNumber());
+    nodeId.setCanID(memory.getCanId());
 }
 
 MergCBUS::~MergCBUS()
@@ -86,24 +97,22 @@ If a custom function is set it calls it for every non automatic message
 */
 unsigned int MergCBUS::run(){
 
+    controlLeds();
+
+    if (state_mode==SELF_ENUMERATION){
+        unsigned long tdelay=millis()-timeDelay;
+
+        if (tdelay>SELF_ENUM_TIME){
+            if (DEBUG){
+                Serial.println("Finishing self ennumeration.");
+            }
+            finishSelfEnumeration();
+        }
+    }
+
     if (!readCanBus()){
         //nothing to do
         return NO_MESSAGE;
-    }
-
-    if (DEBUG){
-        Serial.println("Message found.");
-        Serial.println("CANID\tSIZE\tB0\tB1\tB2\tB3\tB4\tB5\tB6\B7");
-        Serial.print(message.getCanId());
-        Serial.print("\t");
-        Serial.print(getMessageSize(message.getOpc()));
-        Serial.print("\t");
-
-        for (int i=0;i<8;i++){
-            Serial.print(message.getCanMessage().getData()[i]);
-            Serial.print("\t");
-        }
-        Serial.println("");
     }
 
     if (message.getRTR()){
@@ -112,10 +121,11 @@ unsigned int MergCBUS::run(){
         if (nodeId.getNodeNumber()!=0){
             //create the response message with no data
             if (DEBUG){
-                Serial.println("RTR message received. Sending can id.");
+                Serial.print("RTR message received. Sending can id: ");
+                Serial.println(nodeId.getCanID(),HEX);
             }
             canMessage.clear();
-            Can.sendMsgBuf(nodeId.getCanID(),0,0,message.getCanMessage().getData());
+            Can.sendMsgBuf(nodeId.getCanID(),0,0,&mergCanData[0]);
             return OK;
         }
     }
@@ -134,25 +144,19 @@ unsigned int MergCBUS::run(){
     //the state can be a message or manually
 
     if (state_mode==SELF_ENUMERATION){
-        unsigned long tdelay=millis()-timeDelay;
-
-        if (tdelay>SELF_ENUM_TIME){
-            if (DEBUG){
-                Serial.println("Finishing self ennumeration.");
-            }
-            finishSelfEnumeration();
-        }
 
         if (message.getMessageSize()==0){
 
-            if (DEBUG){
-                Serial.println("Self ennumeration: saving others can id.");
-            }
+            //if (message.getCanId()!=nodeId.getCanID()){
+                if (DEBUG){
+                    Serial.println("Self ennumeration: saving others can id.");
+                }
 
-            if (bufferIndex<TEMP_BUFFER_SIZE){
-                buffer[bufferIndex]=message.getCanId();
-                bufferIndex++;
-            }
+                if (bufferIndex<TEMP_BUFFER_SIZE){
+                    buffer[bufferIndex]=message.getCanId();
+                    bufferIndex++;
+                }
+            //}
         }
         return OK;
     }
@@ -187,13 +191,25 @@ bool MergCBUS::readCanBus(){
     if(CAN_MSGAVAIL == Can.checkReceive()) // check if data coming
     {
         canMessage.clear();
+        message.clear();
         Can.readMsgBuf(&len, canMessage.getData());
         Can.getCanHeader(canMessage.get_header());
         if (Can.isRTMMessage()!=0){
             canMessage.setRTR();
         }
+        else{
+            canMessage.unsetRTR();
+        }
         canMessage.setCanMsgSize(len);
         message.setCanMessage(&canMessage);
+
+        if (DEBUG){
+            printReceivedMessage();
+            Serial.print("RTM message:");
+            Serial.println(message.getRTR());
+            //Serial.println(message.getRTR());
+        }
+
         return true;
     }
     return false;
@@ -202,8 +218,13 @@ bool MergCBUS::readCanBus(){
 //put node in setup mode
 //changing from slim to flim
 void MergCBUS::doSetup(){
+
     state_mode=SETUP;
     prepareMessage(OPC_RQNN);
+    if (DEBUG){
+        Serial.println("Doing setup");
+        printSentMessage();
+    }
     sendCanMessage();
 }
 //sent by a node when going out of service
@@ -213,9 +234,12 @@ void MergCBUS::doOutOfService(){
 }
 //initiate the auto enumeration procedure
 void MergCBUS::doSelfEnnumeration(bool softEnum){
+    bufferIndex=0;
     softwareEnum=softEnum;
     state_mode=SELF_ENUMERATION;
-    Can.sendRTMMessage(nodeId.getCanID());
+    //Can.sendRTMMessage(nodeId.getCanID());
+    Can.setPriority(PRIO_LOW,PRIO_MIN_LOWEST);
+    Can.sendRTMMessage(1);
     timeDelay=millis();
 }
 //finish the auto enumeration
@@ -296,7 +320,7 @@ byte MergCBUS::handleConfigMessages(){
 
             if (DEBUG){
                 Serial.println("RECEIVED OPC_QNN sending OPC_PNN");
-                printMessage();
+                printSentMessage();
             }
 
 
@@ -322,20 +346,20 @@ byte MergCBUS::handleConfigMessages(){
 
             if (DEBUG){
                 Serial.println("RECEIVED OPC_RQNP sending OPC_PARAMS");
-                printMessage();
+                printSentMessage();
             }
 
             return sendCanMessage();
         }
         break;
-    case OPC_RQNN:
+    case OPC_RQMN:
         //Answer with OPC_NAME
         if (state_mode==SETUP){
             prepareMessage(OPC_NAME);
 
             if (DEBUG){
                 Serial.println("RECEIVED OPC_RQNN sending OPC_NAME");
-                printMessage();
+                printSentMessage();
             }
 
 
@@ -359,7 +383,7 @@ byte MergCBUS::handleConfigMessages(){
 
             if (DEBUG){
                 Serial.println("RECEIVED OPC_SNN sending OPC_NNACK");
-                printMessage();
+                printSentMessage();
             }
 
 
@@ -407,7 +431,7 @@ byte MergCBUS::handleConfigMessages(){
 
         if (DEBUG){
                 Serial.println("RECEIVED OPC_NNEVN sending OPC_EVNLF");
-                printMessage();
+                printSentMessage();
             }
 
         return sendCanMessage();
@@ -432,7 +456,7 @@ byte MergCBUS::handleConfigMessages(){
 
                 if (DEBUG){
                     Serial.println("RECEIVED OPC_NERD sending OPC_ENRSP");
-                    printMessage();
+                    printSentMessage();
                 }
 
                 ind=sendCanMessage();
@@ -444,7 +468,7 @@ byte MergCBUS::handleConfigMessages(){
         prepareMessage(OPC_NUMEV);
         if (DEBUG){
             Serial.println("RECEIVED OPC_RQEVN sending OPC_NUMEV");
-            printMessage();
+            printSentMessage();
         }
         sendCanMessage();
         break;
@@ -475,7 +499,7 @@ byte MergCBUS::handleConfigMessages(){
 
         if (DEBUG){
             Serial.println("RECEIVED OPC_NVRD sending OPC_NVANS");
-            printMessage();
+            printSentMessage();
         }
 
         sendCanMessage();
@@ -498,7 +522,7 @@ byte MergCBUS::handleConfigMessages(){
 
         if (DEBUG){
             Serial.println("RECEIVED OPC_NENRD sending OPC_ENRSP");
-            printMessage();
+            printSentMessage();
         }
 
         sendCanMessage();
@@ -518,20 +542,20 @@ byte MergCBUS::handleConfigMessages(){
 
         if (DEBUG){
             Serial.println("RECEIVED OPC_RQNPN sending OPC_PARAN");
-            printMessage();
+            printSentMessage();
         }
 
         sendCanMessage();
         break;
     case OPC_CANID:
-        ind=message.getData()[3];
+        ind=message.getCanMessage()->getData()[3];
         nodeId.setCanID(ind);
         memory.setCanId(ind);
         prepareMessage(OPC_NNACK);
 
         if (DEBUG){
             Serial.println("RECEIVED OPC_CANID sending OPC_NNACK");
-            printMessage();
+            printSentMessage();
         }
 
         sendCanMessage();
@@ -539,7 +563,7 @@ byte MergCBUS::handleConfigMessages(){
     case OPC_EVULN:
         if (DEBUG){
             Serial.println("Unlearn event");
-            //printMessage();
+            //printSentMessage();
         }
         if (state_mode==LEARN){
             ev=message.getEventNumber();
@@ -566,10 +590,10 @@ byte MergCBUS::handleConfigMessages(){
         break;
     case OPC_NVSET:
         ind=message.getNodeVariableIndex()-1;//the CBUS index start with 1
-        val=message.getNodeVariable;
+        val=message.getNodeVariable();
         if (DEBUG){
             Serial.println("Learning node variable");
-            //printMessage();
+            //printSentMessage();
         }
 
         if (ind<=nodeId.getSuportedNodeVariables()){
@@ -598,7 +622,7 @@ byte MergCBUS::handleConfigMessages(){
 
         if (DEBUG){
             Serial.println("RECEIVED OPC_REVAL sending OPC_NEVAL");
-            printMessage();
+            printSentMessage();
         }
 
         sendCanMessage();
@@ -621,7 +645,7 @@ byte MergCBUS::handleConfigMessages(){
 
         if (DEBUG){
             Serial.println("RECEIVED OPC_REQEV sending OPC_EVANS");
-            printMessage();
+            printSentMessage();
         }
 
             sendCanMessage();
@@ -638,7 +662,7 @@ byte MergCBUS::handleConfigMessages(){
 
             if (DEBUG){
                 Serial.println("Learning event.");
-                //printMessage();
+                //printSentMessage();
             }
 
             ev=message.getEventNumber();
@@ -687,7 +711,7 @@ byte MergCBUS::handleConfigMessages(){
 
             if (DEBUG){
                 Serial.println("UnLearning event.");
-                //printMessage();
+                //printSentMessage();
             }
 
             ev=message.getEventNumber();
@@ -784,6 +808,7 @@ send the message to CAN
 byte MergCBUS::sendCanMessage(){
     byte message_size;
     message_size=getMessageSize(mergCanData[0]);
+    Can.setPriority(PRIO_LOW,PRIO_MIN_LOWEST);
     byte r=Can.sendMsgBuf(nodeId.getCanID(),0,message_size,mergCanData);
     if (CAN_OK!=r){
         return r;
@@ -804,7 +829,7 @@ get the message size using the opc
 byte MergCBUS::getMessageSize(byte opc){
     byte a=opc;
     a=a>>5;
-    return a;
+    return (a+1);
 }
 /*
 prepare the general messages
@@ -835,11 +860,16 @@ void MergCBUS::prepareMessage(byte opc){
         mergCanData[0]=OPC_PARAMS;
         mergCanData[1]=nodeId.getManufacturerId();
         mergCanData[2]=nodeId.getMinCodeVersion();
-        mergCanData[3]=nodeId.getSuportedEvents();
-        mergCanData[4]=nodeId.getSuportedEventsVariables();
-        mergCanData[5]=nodeId.getSuportedNodeVariables();
-        mergCanData[6]=nodeId.getMaxCodeVersion();
-        mergCanData[7]=nodeId.getFlags();
+        mergCanData[3]=nodeId.getModuleId();
+        mergCanData[4]=nodeId.getSuportedEvents();
+        mergCanData[5]=nodeId.getSuportedEventsVariables();
+        mergCanData[6]=nodeId.getSuportedNodeVariables();
+        mergCanData[7]=nodeId.getMaxCodeVersion();
+        break;
+    case OPC_RQNN:
+        mergCanData[0]=OPC_RQNN;
+        mergCanData[1]=highByte(nodeId.getNodeNumber());
+        mergCanData[2]=lowByte(nodeId.getNodeNumber());
         break;
     case OPC_NNACK:
         mergCanData[0]=OPC_NNACK;
@@ -904,14 +934,60 @@ bool MergCBUS::hasThisEvent(){
     return false;
 }
 
-void MergCBUS::printMessage(){
+void MergCBUS::printSentMessage(){
 
     Serial.print("message sent: ");
-    for (int i=0;i>8;i++){
-        Serial.print(mergCanData[i]);
+    for (int i=0;i<8;i++){
+        Serial.print(mergCanData[i],HEX);
+        Serial.print(" ");
     }
     Serial.println("");
 
 }
 
+void MergCBUS::printReceivedMessage(){
 
+    if (message.getMessageSize()<=0){
+        return;
+    }
+    Serial.print("message received: ");
+    for (int i=0;i<8;i++){
+        Serial.print(message.getCanMessage()->getData()[i],HEX);
+        Serial.print(" ");
+    }
+    Serial.println("");
+
+}
+
+void MergCBUS::setUpNewMemory(){
+    memory.setUpNewMemory();
+}
+
+void MergCBUS::setLeds(byte green,byte yellow){
+    greenLed=green;
+    yellowLed=yellow;
+    pinMode(greenLed,OUTPUT);
+    pinMode(yellowLed,OUTPUT);
+}
+
+void MergCBUS::controlLeds(){
+
+    if (yellowLed==255 && greenLed==255){
+        return;
+    }
+
+    if (getNodeMode()==0){
+    digitalWrite(greenLed,HIGH);
+    digitalWrite(yellowLed,LOW);
+    }
+    else{
+    digitalWrite(greenLed,LOW);
+    digitalWrite(yellowLed,HIGH);
+    }
+}
+
+bool MergCBUS::isSelfEnumMode(){
+
+    if (state_mode==SELF_ENUMERATION){return true;}
+    return false;
+}

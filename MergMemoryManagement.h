@@ -21,6 +21,7 @@ struct merg_event_vars{
 #define MERG_MEMPOS 0                                   //has the value 0xaa to mark it is from this mod
 #define CAN_ID_MEMPOS 1                                 //can id has 1 byte
 #define NN_MEMPOS 2                                      //Node mumber has 2 bytes
+#define NN_MODE_MEMPOS 3                                       //node mode SLIM=0 or FLIM=1
 #define DN_MEMPOS 4                                      //Device number has 2 bytes
 #define NUM_VARS_MEMPOS 6                               //amount of variables for this module- 1 byte
 #define NUM_EVENTS_MEMPOS 7                             //amount of learned events
@@ -78,6 +79,11 @@ class MergMemoryManagement
         unsigned int getEventIndex(byte ev1,byte ev2,byte ev3,byte ev4);
         unsigned int getEventIndex(unsigned int nn,unsigned int ev);
 
+        byte getNodeMode();
+        void setNodeMode(byte mode);
+
+        void setUpNewMemory();
+        void dumpMemory();
 
     protected:
 
@@ -93,7 +99,7 @@ class MergMemoryManagement
         byte numEvents;
         byte numEventVars;
         byte event[EVENT_SIZE];                                     //used to return this instead of a pointer to events array
-
+        byte nodeMode;
         void clear();
         void writeEvents();
         void newEventVar(unsigned int eventIdx,unsigned int varIdx,byte val);

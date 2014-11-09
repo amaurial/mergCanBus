@@ -33,6 +33,7 @@ Extracted from the Developer’s Guide for CBUS (Version 5g)
 #define MANU_SPECTRUM 80 // http://animatedmodeler.com (Spectrum Engineering)
 // MERG Module types
 #define MTYP_SLIM 0 // default for SLiM nodes
+#define MTYP_FLIM 1 // default for SLiM nodes
 
 // CBUS opcodes list
 // Packets with no data bytes

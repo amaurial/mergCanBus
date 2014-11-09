@@ -9,6 +9,13 @@ MergMemoryManagement::MergMemoryManagement()
     clear();
     read();
 }
+
+void MergMemoryManagement::setUpNewMemory(){
+
+    clear();
+    write();
+}
+
 /*
 // clear the internal arrays
 */
@@ -40,6 +47,7 @@ void MergMemoryManagement::clear(){
     numVars=0;
     numEvents=0;
     numEventVars=0;
+    nodeMode=0;
 
 }
 
@@ -210,7 +218,7 @@ byte=value;explanation
 void MergMemoryManagement::read(){
 
     clear();
-    byte mergid=EEPROM.read(0);
+    byte mergid=EEPROM.read(MERG_MEMPOS);
 
     if (mergid!=0xaa){
         return;
@@ -222,6 +230,8 @@ void MergMemoryManagement::read(){
     //node number
     nn[0]=EEPROM.read(NN_MEMPOS);
     nn[1]=EEPROM.read(NN_MEMPOS+1);
+    //node mode
+    nodeMode=EEPROM.read(NN_MODE_MEMPOS);
     //device number
     dd[0]=EEPROM.read(DN_MEMPOS);
     dd[1]=EEPROM.read(DN_MEMPOS+1);
@@ -283,12 +293,14 @@ void MergMemoryManagement::write(){
 
     int pos=0;
     //merg id
-    EEPROM.write(0,0xaa);
+    EEPROM.write(MERG_MEMPOS,0xaa);
     //Can id
     EEPROM.write(CAN_ID_MEMPOS,can_ID);
     //node number
     EEPROM.write(NN_MEMPOS,nn[0]);
     EEPROM.write(NN_MEMPOS+1,nn[1]);
+    //node mode
+    EEPROM.write(NN_MODE_MEMPOS,nodeMode);
     //device number
     EEPROM.write(DN_MEMPOS,dd[0]);
     EEPROM.write(DN_MEMPOS+1,dd[1]);
@@ -583,3 +595,61 @@ bool MergMemoryManagement::hasEventVars(int eventIdx){
     return false;
 }
 
+byte MergMemoryManagement::getNodeMode(){
+    return nodeMode;
+}
+void MergMemoryManagement::setNodeMode(byte mode){
+    nodeMode=mode;
+    EEPROM.write(NN_MODE_MEMPOS,nodeMode);
+}
+
+void MergMemoryManagement::dumpMemory(){
+
+    read();
+    byte a;
+    Serial.println("MEMORY DUMP");
+    Serial.print("IDENT:");
+    a=EEPROM.read(MERG_MEMPOS);
+    Serial.print(a,HEX);
+    Serial.print("\nCAN_ID:");
+    Serial.print(can_ID,HEX);
+    Serial.print("\nNN:");
+    Serial.print(nn[0],HEX);
+    Serial.print(nn[1],HEX);
+    Serial.print("\nDN:");
+    Serial.print(dd[0],HEX);
+    Serial.print(dd[1],HEX);
+    Serial.print("\nNODE MODE:");
+    Serial.print(nodeMode,HEX);
+    Serial.print("\nNUM EVENTS:");
+    Serial.print(numEvents,HEX);
+    Serial.print("\nNUM EVENTS VARS:");
+    Serial.print(numEventVars,HEX);
+    Serial.print("\nNUM VARS:");
+    Serial.print(numVars,HEX);
+    Serial.print("\nNODE VARS:");
+    for (int i=0;i<MAX_AVAIL_VARS;i++){
+        Serial.print(vars[i],HEX);
+        Serial.print(" ");
+    }
+
+    Serial.println("\nEVENTS:");
+    int n=0;
+    for (int i=0;i<MAX_NUM_EVENTS;i++){
+        Serial.print(events[n],HEX);n++;
+        Serial.print(events[n],HEX);n++;
+        Serial.print(events[n],HEX);n++;
+        Serial.print(events[n],HEX);n++;
+        Serial.println();
+    }
+
+    Serial.println("EVENTS VARS:");
+    for (int i=0;i<MAX_NUM_EVENTS_VAR;i++){
+        Serial.print(eventVars[i].event_index);
+        Serial.print(" ");
+        Serial.print(eventVars[i].value);
+        Serial.println();
+    }
+
+
+}

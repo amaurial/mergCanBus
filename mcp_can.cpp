@@ -309,7 +309,8 @@ INT8U MCP_CAN::mcp2515_init(const INT8U canSpeed)                       /* mcp25
 {
 
   INT8U res;
-
+    _prio=PRIO_NEXT;
+    _minprio=PRIO_MIN_LOW;
     mcp2515_reset();
 
     res = mcp2515_setCANCTRL_Mode(MODE_CONFIG);
@@ -387,7 +388,7 @@ INT8U MCP_CAN::mcp2515_init(const INT8U canSpeed)                       /* mcp25
 
 /*********************************************************************************************************
 ** Function name:           mcp2515_write_id
-** Descriptions:            write can id
+** Descriptions:            write can id and header
 *********************************************************************************************************/
 void MCP_CAN::mcp2515_write_id( const INT8U mcp_addr, const INT8U ext, const INT32U id )
 {
@@ -410,13 +411,43 @@ void MCP_CAN::mcp2515_write_id( const INT8U mcp_addr, const INT8U ext, const INT
     else
     {
     	  //or standard (the 11 LSB)
-        tbufdata[MCP_SIDH] = (INT8U) (canid >> 3 );
-        tbufdata[MCP_SIDL] = (INT8U) ((canid & 0x07 ) << 5);
+        tbufdata[MCP_SIDH] = (_prio<<6) | (_minprio<<4);
+        tbufdata[MCP_SIDH] = tbufdata[MCP_SIDH] | ((INT8U) (canid >> 3 ));
+        tbufdata[MCP_SIDL] = (INT8U) ((canid & 0x07 ) << 5);//(INT8U) ((canid & 0x07 ) << 5);
         tbufdata[MCP_EID0] = 0;
         tbufdata[MCP_EID8] = 0;
+
+        Serial.print("CANHEADER:");
+        Serial.print(tbufdata[MCP_SIDH],HEX);
+        Serial.print(tbufdata[MCP_SIDL],HEX);
+        Serial.println();
+
     }
     mcp2515_setRegisterS( mcp_addr, tbufdata, 4 );
 }
+
+/*********************************************************************************************************
+** Function name:           setPriority
+** Descriptions:            set priority on the can header
+*********************************************************************************************************/
+void MCP_CAN::setPriority(INT8U prio,INT8U minprio){
+
+    if (prio==PRIO_HIGH||prio==PRIO_LOW || prio==PRIO_NEXT){
+        _prio=prio;
+    }
+    else {
+        _prio=PRIO_LOW;
+    }
+
+    if (minprio==PRIO_MIN_HIGH||minprio==PRIO_MIN_LOW || minprio==PRIO_MIN_NORMAL || minprio==PRIO_MIN_LOWEST){
+        _minprio=minprio;
+    }
+    else {
+        _minprio=PRIO_MIN_LOW;
+    }
+
+}
+
 
 /*********************************************************************************************************
 ** Function name:           mcp2515_read_id
@@ -739,6 +770,7 @@ INT8U MCP_CAN::sendMsg()
 *********************************************************************************************************/
 INT8U MCP_CAN::sendMsgBuf(INT32U id, INT8U ext, INT8U len, INT8U *buf)
 {
+    //unsetRTMBit();
     setMsg(id, ext, len, buf);
     return sendMsg();
 }
@@ -750,22 +782,28 @@ INT8U MCP_CAN::sendMsgBuf(INT32U id, INT8U ext, INT8U len, INT8U *buf)
 INT8U MCP_CAN::readMsg()
 {
     INT8U stat, res;
+    bool msgfound=false;
+    bool bf1,bf2;
 
     stat = mcp2515_readStatus();
 
     if ( stat & MCP_STAT_RX0IF )                                        /* Msg in Buffer 0              */
     {
+        bf1=true;
         mcp2515_read_canMsg( MCP_RXBUF_0);
         mcp2515_modifyRegister(MCP_CANINTF, MCP_RX0IF, 0);
         res = CAN_OK;
+        msgfound=true;
     }
     else if ( stat & MCP_STAT_RX1IF )                                   /* Msg in Buffer 1              */
     {
+        bf2=true;
         mcp2515_read_canMsg( MCP_RXBUF_1);
         mcp2515_modifyRegister(MCP_CANINTF, MCP_RX1IF, 0);
         res = CAN_OK;
+        msgfound=true;
     }
-    else
+    if (!msgfound)
     {
         res = CAN_NOMSG;
     }
@@ -858,7 +896,9 @@ INT8U MCP_CAN::sendRTMMessage(INT32U id)
       buffer[i] = 0x00;
 
 	setRTMBit();
-	return sendMsgBuf(id, 0, 0, buffer);
+	INT8U r=sendMsgBuf(0xff, 0, 0, buffer);
+	unsetRTMBit();
+	return r;
 }
 
 /*********************************************************************************************************

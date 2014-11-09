@@ -59,6 +59,23 @@
 #define MCP_RXB_BUKT_MASK   (1<<2)
 
 /*
+**Priority values
+**Can has 3 possible values
+00 - HIGHEST
+01 - NEXT
+10 - LOWEST
+11-is prohibited
+*/
+
+#define PRIO_HIGH          0x00
+#define PRIO_NEXT          0x01
+#define PRIO_LOW           0x02
+#define PRIO_MIN_HIGH      0x00
+#define PRIO_MIN_NORMAL    0x01
+#define PRIO_MIN_LOW       0x02
+#define PRIO_MIN_LOWEST    0x03
+
+/*
 ** Bits in the TXBnCTRL registers.
 */
 #define MCP_TXB_TXBUFE_M    0x80

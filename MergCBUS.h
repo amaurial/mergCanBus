@@ -15,11 +15,11 @@
 
 
 
-#define SELF_ENUM_TIME 200
+#define SELF_ENUM_TIME 500
 #define TEMP_BUFFER_SIZE 100
 
-#define lowByte(w) ((uint8_t) ((w) & 0xff))
-#define highByte(w) ((uint8_t) ((w) >> 8))
+//#define lowByte(w) ((uint8_t) ((w) & 0xff))
+//#define highByte(w) ((uint8_t) ((w) >> 8))
 
 
 enum process_mode{AUTOMATIC,MANUAL};
@@ -48,10 +48,24 @@ class MergCBUS
         void doOutOfService();
         void sendERRMessage(byte code);
         bool hasThisEvent();
+        bool readCanBus();
+        void printSentMessage();
+        void printReceivedMessage();
+        void setSlimMode(){node_mode=MTYP_SLIM;};
+        void setFlimMode(){node_mode=MTYP_FLIM;};
+        byte getNodeMode(){return node_mode;};
+        void setUpNewMemory();
+        void dumpMemory(){memory.dumpMemory();};
+        void setLeds(byte green,byte yellow);
+        void controlLeds();
+        bool isSelfEnumMode();
+        state getNodeState(){return state_mode;};
+        void setNodeState(state newstate){ state_mode=newstate;};
     protected:
     private:
         //let the bus level lib private
         MCP_CAN Can;
+        byte node_mode;                         //Slim or Flim
         void setBitMessage(byte pos,bool val);  //set or unset the bit on pos for messageFilter
         CANMessage canMessage;                  //data from can bus
         byte mergCanData[CANDATA_SIZE];         //can data . CANDATA_SIZE defined in message.h
@@ -70,7 +84,7 @@ class MergCBUS
         userHandlerType userHandler;
 
         bool messageToHandle;
-        bool readCanBus();
+
         //void sendCanMessage();
         void getStoredEvents();                 //events that were learned
         void getStoredIDs();                    //node number,canId,device Number
@@ -86,11 +100,14 @@ class MergCBUS
         void finishSelfEnumeration();
         void clearMsgToSend();
         byte sendCanMessage();
+        void loadMemory();
 
         void sortArray(byte *a, byte n);
         void prepareMessage(byte opc);
         byte getMessageSize(byte opc);
-        void printMessage();
+
+        byte greenLed;
+        byte yellowLed;
 
 };
 
