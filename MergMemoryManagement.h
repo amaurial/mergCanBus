@@ -4,11 +4,19 @@
 #include <Arduino.h>
 #include <EEPROM.h>
 
+/** \brief Structure that contains the event variables.
+ *
+ * \param
+ * \param
+ * \return
+ *
+ */
+
 struct merg_event_vars{
-    unsigned int index;
-    unsigned int event_index;
-    unsigned int mem_index;
-    byte value;
+    unsigned int index;/**< index of this variable */
+    unsigned int event_index;/**< index of the event this variable belongs */
+    unsigned int mem_index;/**< position in the eeprom */
+    byte value;/**< value of the variable */
 };
 
 #define MAX_AVAIL_VARS 25           /** Number of node variables. Each has 1 byte                           */
@@ -41,28 +49,37 @@ class MergMemoryManagement
         MergMemoryManagement();
         void read();
         void write();
-
+        /** \brief Check if there is some learned event.*/
         bool hasEvents(){numEvents>0?true:false;};
+
+        /** \brief Check if there is some learned event variables.*/
         bool hasEventVars(){numEventVars>0?true:false;};
+
         bool hasEventVars(int eventIdx);
 
+        /** \brief Return the array of events.*/
         byte* getEvents(){return events;};
-        byte* getEvent(int index);
 
+        byte* getEvent(int index);
+        /** \brief Return the array of node variables.*/
         byte* getVars(){return vars;};
+
         byte getVar(int index);
 
-        byte* getEventVars();
+        //byte* getEventVars();
         byte getEventVar(int eventIdx,int index);
         byte *getEventVars(int eventIdx,int &len);
-
+        /** \brief Return the number of set node variables.*/
         byte getNumVars(){return numVars;};
+        /** \brief Return the number of learned events.*/
         byte getNumEvents(){return numEvents;};
+        /** \brief Return the number of learned events variables.*/
         byte getNumEventVars(){return numEventVars;};
 
         void eraseAllEvents();
+
         unsigned int  eraseEvent(unsigned int eventIdx);
-        unsigned int  eraseEvent(byte event[EVENT_SIZE]);
+        //unsigned int  eraseEvent(byte event[EVENT_SIZE]);
         unsigned int  eraseEvent(unsigned int nn,unsigned int ev);
 
 

@@ -1,11 +1,12 @@
 #include "MergCBUS.h"
 
-/**
+/** \brief
 * Constructor
 * Create the internal buffers.
 * Initiate the memory management and transport object.
 *
 */
+
 
 MergCBUS::MergCBUS()
 {
@@ -27,7 +28,7 @@ MergCBUS::MergCBUS()
 
 }
 
-/**
+/** \brief
 * Load the important EPROM memory data to RAM memory.
 */
 
@@ -37,7 +38,7 @@ void MergCBUS::loadMemory(){
     nodeId.setCanID(memory.getCanId());
 }
 
-/**
+/** \brief
 * Destructor
 * Not used.
 */
@@ -46,7 +47,7 @@ MergCBUS::~MergCBUS()
 {
     //dtor
 }
-/**
+/** \brief
 * Set the port number for SPI communication.
 * Set the CBUS rate and initiate the transport layer.
 * @param port is the the SPI port number.
@@ -93,7 +94,7 @@ bool MergCBUS::initCanBus(unsigned int port,unsigned int rate, int retries,unsig
    return false;
 }
 
-/**
+/** \brief
 * Set or unset the bit in the message bit.
 * @param pos specifies the bit position @see messageFilter
 * @param val if true set bit to 1, else set bit to 0
@@ -110,7 +111,7 @@ void MergCBUS::setBitMessage(byte pos,bool val){
     }
 }
 
-/**
+/** \brief
 * Method that deals with the majority of messages and behavior. Auto enummeration, query requests and config messages.
 * If a custom function is set it calls it for every non automatic message.
 * @see setUserHandlerFunction
@@ -206,7 +207,7 @@ unsigned int MergCBUS::run(){
 
 }
 
-/**
+/** \brief
 * Read the can bus and load the data in the message object.
 * @return true if a message in the can bus.
 */
@@ -239,7 +240,7 @@ bool MergCBUS::readCanBus(){
     return false;
 }
 
-/**
+/** \brief
 * Put node in setup mode and send the Request Node Number RQNN
 * It is the function that starts the changing from slim to flim
 */
@@ -254,14 +255,14 @@ void MergCBUS::doSetup(){
     sendCanMessage();
 }
 
-/**
+/** \brief
 * Node when going out of service. Send NNREL.
 */
 void MergCBUS::doOutOfService(){
     prepareMessage(OPC_NNREL);
     sendCanMessage();
 }
-/**
+/** \brief
 * Initiate the auto enumeration procedure
 * Start the timers and send a RTR message.
 * @param softEnum True if the self ennumeration started by a software tool by receiving a ENUM message.
@@ -276,7 +277,7 @@ void MergCBUS::doSelfEnnumeration(bool softEnum){
     timeDelay=millis();
 }
 
-/**
+/** \brief
 * Finish the auto enumeration. Get the lowest available can id and set the Node to NORMAL mode.
 * If a software tool started the ennumeration, it return a NNACK message - in revision.
 */
@@ -324,7 +325,7 @@ void MergCBUS::finishSelfEnumeration(){
 }
 
 
-/**
+/** \brief
 * Handle all config messages
 * Do the hard work of learning and managing the memory
 */
@@ -811,7 +812,7 @@ byte MergCBUS::handleConfigMessages(){
     return OK;
 }
 
-/**
+/** \brief
 * Deals with accessory functions. No automatic response of events once the user function determines the behaviour.
 * The accessory messages has to be threated by the user function
 * once it is related to the module function
@@ -821,7 +822,7 @@ byte MergCBUS::handleACCMessages(){
     return userHandler(&message,this);
 }
 
-/**
+/** \brief
 * Handle general messages. No automatic response of events once the user function determines the behaviour..
 * Has to handle the EXTC messages
 */
@@ -830,14 +831,14 @@ byte MergCBUS::handleGeneralMessages(){
 }
 
 // TODO (amauriala#1#): Create the DDC handle
-/**
+/** \brief
 * Handle DCC messages. Still to TODO.
 */
 byte MergCBUS::handleDCCMessages(){
     return 0;
 }
 
-/**
+/** \brief
 * Sort a simple array.
 */
 
@@ -855,7 +856,7 @@ void MergCBUS::sortArray(byte *a, byte n){
   }
 }
 
-/**
+/** \brief
 * Clear the message buffer
 */
 void MergCBUS::clearMsgToSend(){
@@ -864,7 +865,7 @@ void MergCBUS::clearMsgToSend(){
     }
 }
 
-/**
+/** \brief
 * Send the message to can bus. The message is set by @see prepareMessage or @see prepareMessageBuff
 * @return OK if no error found, else return error code from the transport layer.
 */
@@ -879,14 +880,14 @@ byte MergCBUS::sendCanMessage(){
     return OK;
 }
 
-/**
+/** \brief
 * Put in debug mode
 */
 void MergCBUS::setDebug(bool debug){
     DEBUG=debug;
 }
 
-/**
+/** \brief
 * Get the message size using the opc
 */
 byte MergCBUS::getMessageSize(byte opc){
@@ -895,7 +896,7 @@ byte MergCBUS::getMessageSize(byte opc){
     return (a+1);
 }
 
-/**
+/**\brief
 * Save the parameters to the message buffer.
 */
 void MergCBUS::prepareMessageBuff(byte data0,byte data1,byte data2,byte data3,byte data4,byte data5,byte data6,byte data7){
@@ -910,7 +911,7 @@ void MergCBUS::prepareMessageBuff(byte data0,byte data1,byte data2,byte data3,by
     mergCanData[7]=data7;
 }
 
-/**
+/**\brief
 * Prepare the general messages by opc. If the opc is unknow it does nothing.
 */
 void MergCBUS::prepareMessage(byte opc){
@@ -997,7 +998,7 @@ void MergCBUS::prepareMessage(byte opc){
     }
 }
 
-/**
+/**\brief
 * Send the error message with the code.
 * @param code can be:
 * 1 Command Not Supported - see note 1.
@@ -1027,7 +1028,7 @@ void MergCBUS::sendERRMessage(byte code){
 
 }
 
-/**
+/**\brief
 * Check it the received event is a learned event. For the messages ACONs,ACOFs,ASONs,ASOFs.
 * Should be called after reading the can bus.
 */
@@ -1047,7 +1048,7 @@ bool MergCBUS::hasThisEvent(){
     return false;
 }
 
-/**
+/**\brief
 * Print the message to be sent to serial. Used for debug.
 */
 
@@ -1062,7 +1063,7 @@ void MergCBUS::printSentMessage(){
 
 }
 
-/**
+/**\brief
 * Print the received message buffer to serial. Used for debug.
 */
 void MergCBUS::printReceivedMessage(){
@@ -1079,7 +1080,7 @@ void MergCBUS::printReceivedMessage(){
 
 }
 
-/**
+/**\brief
 * Create a new memory set up. Writes the EEPROM with null values. Equivalent to reset the memory.
 * Should be done once before setting a new node.
 */
@@ -1087,7 +1088,7 @@ void MergCBUS::setUpNewMemory(){
     memory.setUpNewMemory();
 }
 
-/**
+/**\brief
 * Set the pins for green and yello leds.
 * @param green Pin for the green led.
 * @param yellow Pin for the yellow led.
@@ -1099,7 +1100,7 @@ void MergCBUS::setLeds(byte green,byte yellow){
     pinMode(yellowLed,OUTPUT);
 }
 
-/**
+/**\brief
 * Do the automatic led control based on the node status.
 * Called in the run() function. If not using the @see run then has to be called manually
 */
@@ -1119,7 +1120,7 @@ void MergCBUS::controlLeds(){
     }
 }
 
-/**
+/**\brief
 * Return true if the node is in self enumeration mode
 */
 bool MergCBUS::isSelfEnumMode(){

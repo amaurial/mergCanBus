@@ -1,0 +1,6 @@
+/home/user/amauriala/Projects/mergCanBus/Message.cpp:22: warning: no matching class member found for 
+  Message::Message(unsigned int canId, unsigned int opc, unsigned int nodeNumber, unsigned int eventNumber, byte[DATA_SIZE] data[DATA_SIZE], unsigned int priority)
+Possible candidates:
+  Message::Message()
+  Message::Message(unsigned int canId, unsigned int opc, unsigned int nodeNumber, unsigned int eventNumber, byte data[CANDATA_SIZE], unsigned int priority)
+

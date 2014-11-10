@@ -1,6 +1,6 @@
 #include "MergMemoryManagement.h"
 
-/**
+/**\brief
 * Constructor: clear array and reads the EEPROM
 */
 MergMemoryManagement::MergMemoryManagement()
@@ -9,7 +9,7 @@ MergMemoryManagement::MergMemoryManagement()
     clear();
     read();
 }
-/**
+/**\brief
 * Clear the EEPROM memory and the internal events.
 * Should be called just in the first setup of the node and never inside a loop. May damage the EEPROM.
 */
@@ -19,7 +19,7 @@ void MergMemoryManagement::setUpNewMemory(){
     write();
 }
 
-/**
+/**\brief
 * Clear the internal buffers
 */
 void MergMemoryManagement::clear(){
@@ -54,7 +54,7 @@ void MergMemoryManagement::clear(){
 
 }
 
-/**
+/**\brief
 * Return the event pointed by the index
 * If index out of bounds return empty event '0000'
 * @return 4 bytes
@@ -79,7 +79,7 @@ byte * MergMemoryManagement::getEvent(int index){
 
 }
 
-/**
+/**\brief
 * Put a new event in the memory and return the index
 * @return event index starting with 0.
 */
@@ -101,7 +101,7 @@ unsigned int MergMemoryManagement::setEvent(byte *event){
    return evidx;
 
 }
-/**
+/**\brief
 * Put a new event in the memory and return its index.
 * @param event 4 bytes event
 * @param index event index starting in 0.
@@ -125,7 +125,7 @@ unsigned int MergMemoryManagement::setEvent(byte *event,unsigned int index){
      return index;
 }
 
-/**
+/**\brief
 * Return the internal index of an event
 * @param nn Node number (16 bit integer)
 * @param ev Event number (16 bit integer)
@@ -137,7 +137,7 @@ unsigned int MergMemoryManagement::getEventIndex(unsigned int nn,unsigned int ev
 
 }
 
-/**
+/**\brief
 * Return the internal index of an event using 4 bytes as parameters.
 * The first 2 bytes are supposed to be the node number and the last 2 the event number
 * @return event index starting on 0.
@@ -157,7 +157,7 @@ unsigned int MergMemoryManagement::getEventIndex(byte ev1,byte ev2,byte ev3,byte
     return -1;
 }
 
-/**
+/**\brief
 * Return the node variable pointed by the index
 * @return FAILED_INDEX if index is out of bounds
 */
@@ -168,7 +168,7 @@ byte MergMemoryManagement::getVar(int index){
     return vars[index];
 }
 
-/**
+/**\brief
 * Return the event variable for a specific event
 * @return FAILED_INDEX if index out of bounds
 */
@@ -191,7 +191,7 @@ byte MergMemoryManagement::getEventVar(int eventIdx,int index){
     return FAILED_INDEX;
 }
 
-/**
+/**\brief
 * Get all variables of an specific event
 * @param eventIdx is the event index starting on 0.
 * @param len indicates how many variables
@@ -208,8 +208,9 @@ byte* MergMemoryManagement::getEventVars(int eventIdx,int &len){
     return return_eventVars;
 }
 
-/**
+/**\brief
 * Read all data from eprom memory and put in the internal arrays
+* @return
 * Memory organization
 * 512 bytes is the max value for simple arduino
 * byte=value;explanation
@@ -298,7 +299,7 @@ void MergMemoryManagement::read(){
     }
 }
 
-/**
+/**\brief
 * Write all data to memory. it overwrites the all the previous information.
 */
 void MergMemoryManagement::write(){
@@ -348,7 +349,7 @@ void MergMemoryManagement::write(){
         }
     }
 }
-/**
+/**\brief
 * Write the events to the memory.
 */
 void MergMemoryManagement::writeEvents(){
@@ -366,7 +367,7 @@ void MergMemoryManagement::writeEvents(){
     }
 }
 
-/**
+/**\brief
 * Erase all events and their variables.
 */
 
@@ -395,7 +396,7 @@ void MergMemoryManagement::eraseAllEvents(){
 
 }
 
-/**
+/**\brief
 * Erase a specific event by the event index.
 * Has to reorganize the memory: events and events vars to avoid fragmentation.
 * @param eventIdx event index starting on 0.
@@ -475,7 +476,7 @@ unsigned int MergMemoryManagement::eraseEvent(unsigned int eventIdx){
     return eventIdx;
 }
 
-/**
+/**\brief
 * Erase a specific event.
 * Has to reorganize the memory: events and events vars to avoid fragmentation.
 * @param nn node number (16 bits integer)
@@ -492,7 +493,7 @@ unsigned int MergMemoryManagement::eraseEvent(unsigned int nn,unsigned int ev){
 }
 
 
-/**
+/**\brief
 * Set the value of a node variable.
 * @param index variable index
 * @param val variable value
@@ -506,7 +507,7 @@ void MergMemoryManagement::setVar(int index,byte val){
     return;
 }
 
-/**
+/**\brief
 * Update the variable of an event
 * @param eventIdx Event index starting on 0.
 * @param varIdx Variable index starting on 0.
@@ -540,7 +541,7 @@ unsigned int MergMemoryManagement::setEventVar(unsigned int eventIdx,unsigned in
 
     return varIdx;
 }
-/**
+/**\brief
 * Create a new variable for an event.
 * @param eventIdx Event index starting on 0.
 * @param varIdx Variable index starting on 0.
@@ -562,7 +563,7 @@ void MergMemoryManagement::newEventVar(unsigned int eventIdx,unsigned int varIdx
 
 }
 
-/**
+/**\brief
 * Set the can id.
 * @param canId The can id
 */
@@ -571,7 +572,7 @@ void MergMemoryManagement::setCanId(byte canId){
     EEPROM.write(CAN_ID_MEMPOS,can_ID);
 }
 
-/**
+/**\brief
 * Set the node number.
 * @param val The node number (16 bit integer).
 */
@@ -583,7 +584,7 @@ void MergMemoryManagement::setNodeNumber(unsigned int val){
     return;
 }
 
-/**
+/**\brief
 * Set the device number.
 * @param val The node number (16 bit integer).
 */
@@ -595,7 +596,7 @@ void MergMemoryManagement::setDeviceNumber(unsigned int val){
     return;
 }
 
-/**
+/**\brief
 * Get the node number.
 * @return The node number (16 bit integer).
 */
@@ -604,7 +605,7 @@ unsigned int MergMemoryManagement::getNodeNumber(){
     return ((unsigned int)word(nn[0],nn[1]));
 }
 
-/**
+/**\brief
 * Get the device number.
 * @return The node number (16 bit integer).
 */
@@ -612,7 +613,7 @@ unsigned int MergMemoryManagement::getDeviceNumber(){
     return ((unsigned int)word(dd[0],dd[1]));
 }
 
-/**
+/**\brief
 * Check if an event has any variables.
 * @param eventIdx Event index starting on 0
 */
@@ -625,14 +626,14 @@ bool MergMemoryManagement::hasEventVars(int eventIdx){
     return false;
 }
 
-/**
+/**\brief
 * Get the node mode retrieved from the flags.
 * @return 0 if SLIM, 1 if FLIM
 */
 byte MergMemoryManagement::getNodeMode(){
     return nodeMode;
 }
-/**
+/**\brief
 * Set the node mode retrieved from the flags.
 * @param mode 0 if SLIM, 1 if FLIM
 */
@@ -640,7 +641,7 @@ void MergMemoryManagement::setNodeMode(byte mode){
     nodeMode=mode;
     EEPROM.write(NN_MODE_MEMPOS,nodeMode);
 }
-/**
+/**\brief
 * Print all memory to serial. Used for debug.
 */
 void MergMemoryManagement::dumpMemory(){

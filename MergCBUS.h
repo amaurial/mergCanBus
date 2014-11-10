@@ -53,18 +53,28 @@ enum can_error {OK=0,                   /**< Message sent.*/
 class MergCBUS
 {
     public:
-        typedef unsigned int (*userHandlerType)(Message*,MergCBUS*);
+
+        typedef unsigned int (*userHandlerType)(Message*,MergCBUS*);/**< This is the user function for processing other messages. It receives a reference to a Message and a reference to MergCBUS.*/
         MergCBUS();
         virtual ~MergCBUS();
+        /**\brief Set to skip processing certain message.
+        * @param msg Message type not to process.
+        */
         void skipMessage(message_type msg){setBitMessage (msg,true);};
+        /**\brief Set to process certain message.
+        * @param msg Message type to process.
+        */
         void processMessage(message_type msg){setBitMessage (msg,false);};
         //bool run(process_mode mode);
         unsigned int run();
         bool hasMessageToHandle();
+        /**\brief Get a reference to node identification.
+        * @return Pointer to a @see MergNodeIdentification
+        */
         MergNodeIdentification *getNodeId(){return &nodeId;};
         bool sendCanMessage(CANMessage *msg);
         bool initCanBus(unsigned int port,unsigned int rate, int retries,unsigned int retryIntervalMilliseconds);
-
+        /**\brief Set the user function to handle other messages.*/
         void setUserHandlerFunction(userHandlerType f) {userHandler=f;};
         void doSelfEnnumeration(bool soft);
         void setDebug(bool debug);
@@ -75,15 +85,22 @@ class MergCBUS
         bool readCanBus();
         void printSentMessage();
         void printReceivedMessage();
+        /**\brief Set the node to slim mode.*/
         void setSlimMode(){node_mode=MTYP_SLIM;};
+        /**\brief Set the node to flim mode.*/
         void setFlimMode(){node_mode=MTYP_FLIM;};
+        /**\brief Get the node mode.*/
         byte getNodeMode(){return node_mode;};
         void setUpNewMemory();
+        /**\brief Print all EEPROM values.*/
         void dumpMemory(){memory.dumpMemory();};
         void setLeds(byte green,byte yellow);
         void controlLeds();
         bool isSelfEnumMode();
         state getNodeState(){return state_mode;};
+        /**\brief Set the node state to a new state.
+        * @param newstate One of states @see state
+        */
         void setNodeState(state newstate){ state_mode=newstate;};
     protected:
     private:
