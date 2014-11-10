@@ -126,7 +126,7 @@ unsigned int Message::getNodeNumber(){
     //node number is always at the position 1 and 2
     byte* data=_canMessage->getData();
     unsigned int r=0;
-    if (hasThisData(opc,NODE_NUMBER)){
+    if (hasThisData(data[0],NODE_NUMBER)){
             r=data[1];
             r=r<<8;
             r=r|data[2];

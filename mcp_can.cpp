@@ -794,6 +794,7 @@ INT8U MCP_CAN::readMsg()
         mcp2515_modifyRegister(MCP_CANINTF, MCP_RX0IF, 0);
         res = CAN_OK;
         msgfound=true;
+        Serial.println("buffer 0");
     }
     else if ( stat & MCP_STAT_RX1IF )                                   /* Msg in Buffer 1              */
     {
@@ -802,6 +803,7 @@ INT8U MCP_CAN::readMsg()
         mcp2515_modifyRegister(MCP_CANINTF, MCP_RX1IF, 0);
         res = CAN_OK;
         msgfound=true;
+        Serial.println("buffer 1");
     }
     if (!msgfound)
     {

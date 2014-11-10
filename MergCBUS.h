@@ -6,6 +6,10 @@
 #ifndef MESSAGEPARSER_H
 #define MESSAGEPARSER_H
 
+#include <arduino.h>
+#include <EEPROM.h>
+#include <SPI.h>
+
 #include "CANMessage.h"
 #include "Message.h"
 #include "MergNodeIdentification.h"
@@ -91,6 +95,7 @@ class MergCBUS
         void setFlimMode(){node_mode=MTYP_FLIM;};
         /**\brief Get the node mode.*/
         byte getNodeMode(){return node_mode;};
+        void initMemory();
         void setUpNewMemory();
         /**\brief Print all EEPROM values.*/
         void dumpMemory(){memory.dumpMemory();};
@@ -150,7 +155,8 @@ class MergCBUS
 
         byte greenLed;
         byte yellowLed;
-
+        byte ledGreenState;
+        byte ledYellowState;
 };
 
 #endif // MESSAGEPARSER_H

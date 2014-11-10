@@ -51,6 +51,7 @@ class MergNodeIdentification
         byte getSuportedNodeVariables(){return suportedNodeVariables;};
 
         byte getParameter(byte inx);
+        byte getNumberOfParameters(){return 8;};
     protected:
     private:
         byte canID;

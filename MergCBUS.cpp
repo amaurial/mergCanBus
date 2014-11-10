@@ -13,19 +13,29 @@ MergCBUS::MergCBUS()
     //ctor
     messageFilter=0;
     bufferIndex=0;
-    //Can=MCP_CAN();
+    Can=MCP_CAN();
     memory=MergMemoryManagement();
     canMessage=CANMessage();
     nodeId=MergNodeIdentification();
     message=Message();
     skipMessage(RESERVED);
-    loadMemory();
     softwareEnum=false;
     DEBUG=false;
     greenLed=255;
     yellowLed=255;
+    ledGreenState=HIGH;
+    ledYellowState=LOW;
 
 
+}
+
+/** \brief
+* Start the memory reading the EEPROM values
+*
+*/
+void MergCBUS::initMemory(){
+    memory.read();
+    loadMemory();
 }
 
 /** \brief
@@ -196,9 +206,12 @@ unsigned int MergCBUS::run(){
             handleGeneralMessages();
         break;
         case (CONFIG):
-            if (message.getNodeNumber()==nodeId.getNodeNumber()){
-                handleConfigMessages();
+            if (DEBUG){
+                Serial.println("Config message");
+                printReceivedMessage();
             }
+            handleConfigMessages();
+
         break;
         default:
             return UNKNOWN_MSG_TYPE;
@@ -215,6 +228,10 @@ bool MergCBUS::readCanBus(){
     byte len=0;
     if(CAN_MSGAVAIL == Can.checkReceive()) // check if data coming
     {
+        if (DEBUG){
+            Serial.println("new message. reading");
+            delay(10);
+        }
         canMessage.clear();
         message.clear();
         Can.readMsgBuf(&len, canMessage.getData());
@@ -273,7 +290,7 @@ void MergCBUS::doSelfEnnumeration(bool softEnum){
     state_mode=SELF_ENUMERATION;
     //Can.sendRTMMessage(nodeId.getCanID());
     Can.setPriority(PRIO_LOW,PRIO_MIN_LOWEST);
-    Can.sendRTMMessage(1);
+    Can.sendRTMMessage(nodeId.getCanID());
     timeDelay=millis();
 }
 
@@ -338,6 +355,10 @@ byte MergCBUS::handleConfigMessages(){
     //config messages should be directed to node number or device id
     if (message.getNodeNumber()!=nodeId.getNodeNumber()) {
         if (state_mode!=SETUP){return OK;}
+    }
+    if (DEBUG){
+        Serial.println("Processing config message");
+        printReceivedMessage();
     }
 
     nn=nodeId.getNodeNumber();
@@ -411,14 +432,14 @@ byte MergCBUS::handleConfigMessages(){
         //answer with OPC_NNACK
         if (state_mode==SETUP){
             nodeId.setNodeNumber(message.getNodeNumber());
-            memory.setCanId(message.getNodeNumber());
+            memory.setNodeNumber(message.getNodeNumber());
             prepareMessage(OPC_NNACK);
 
             if (DEBUG){
                 Serial.println("RECEIVED OPC_SNN sending OPC_NNACK");
                 printSentMessage();
             }
-
+            setFlimMode();
             state_mode=NORMAL;
             return sendCanMessage();
         }else{
@@ -582,7 +603,12 @@ byte MergCBUS::handleConfigMessages(){
         //Request node parameter. Answer with PARAN
         clearMsgToSend();
         ind=message.getParaIndex();
-        prepareMessageBuff(OPC_PARAN,highByte(nn),lowByte(nn),ind,nodeId.getParameter(ind-1));//the CBUS index start with 1
+        if (ind==0){
+            prepareMessageBuff(OPC_PARAN,highByte(nn),lowByte(nn),ind,nodeId.getNumberOfParameters());//the CBUS index start with 1
+        }
+        else{
+            prepareMessageBuff(OPC_PARAN,highByte(nn),lowByte(nn),ind,nodeId.getParameter(ind-1));//the CBUS index start with 1
+        }
         /*mergCanData[0]=OPC_PARAN;
         mergCanData[1]=highByte(nn);
         mergCanData[2]=lowByte(nn);
@@ -665,7 +691,7 @@ byte MergCBUS::handleConfigMessages(){
         val=memory.getEventVar(evidx-1,ind-1);//the CBUS index start with 1
         nn=nodeId.getNodeNumber();
 
-        prepareMessageBuff(OPC_NEVAL,highByte(nn)lowByte(nn),evidx,ind,val);
+        prepareMessageBuff(OPC_NEVAL,highByte(nn),lowByte(nn),evidx,ind,val);
         //send a NEVAL
         /*mergCanData[0]=OPC_NEVAL;
         mergCanData[1]=highByte(nn);
@@ -931,7 +957,7 @@ void MergCBUS::prepareMessage(byte opc){
     case OPC_NAME:
         prepareMessageBuff(OPC_NAME,nodeId.getNodeName()[0],nodeId.getNodeName()[1],
                             nodeId.getNodeName()[2,nodeId.getNodeName()[3]],
-                            nodeId.getNodeName()[4],nodeId.getNodeName()[5]
+                            nodeId.getNodeName()[4],nodeId.getNodeName()[5],
                             nodeId.getNodeName()[6]);
         /*mergCanData[0]=OPC_NAME;
         mergCanData[1]=nodeId.getNodeName()[0];
@@ -1115,8 +1141,23 @@ void MergCBUS::controlLeds(){
     digitalWrite(yellowLed,LOW);
     }
     else{
-    digitalWrite(greenLed,LOW);
-    digitalWrite(yellowLed,HIGH);
+            digitalWrite(greenLed,LOW);
+            if (state_mode==SETUP){
+                delay(50);
+                if (ledYellowState==HIGH){
+                    digitalWrite(yellowLed,LOW);
+                    ledYellowState=LOW;
+                }else{
+                    digitalWrite(yellowLed,HIGH);
+                    ledYellowState=HIGH;
+                }
+
+            }
+            else{
+                digitalWrite(yellowLed,HIGH);
+            }
+
+
     }
 }
 
