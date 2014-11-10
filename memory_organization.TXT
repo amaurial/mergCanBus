@@ -9,16 +9,17 @@ Device number = 2 bytes ?
 Memory organization
 512 bytes is the max value for simple arduino
 byte=value;explanation
-1=0xaa ; indicates that it is a merg arduino memory storage
-2=can_id;store the can_id
-3=hh Node number;high byte from node number
-4=ll Node number;low byte from node number
-5=hh device number;high byte from node number
-6=ll device number;low byte from node number
-7=amount of node variables
-8=amount of learned events
-9=amount of learned event variables
-10-35=25 bytes for node variables
-36-156=120 bytes for 30 learned events
-157-307=150 bytes for learned event variables. 2 bytes for each variable. 1st is the event number index. the index is the position of the event in the memory range from 1 to 30
+0xaa ; indicates that it is a merg arduino memory storage
+can_id;store the can_id
+hh Node number;high byte from node number
+ll Node number;low byte from node number
+flags
+hh device number;high byte from node number
+ll device number;low byte from node number
+amount of node variables
+amount of learned events
+amount of learned event variables
+25 bytes for node variables
+120 bytes for 30 learned events
+150 bytes for learned event variables. 2 bytes for each variable. 1st is the event number index. the index is the position of the event in the memory range from 1 to 30
 

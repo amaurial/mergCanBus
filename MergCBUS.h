@@ -15,16 +15,40 @@
 
 
 
-#define SELF_ENUM_TIME 500
-#define TEMP_BUFFER_SIZE 100
+#define SELF_ENUM_TIME 500      /** Defines the timeout used for self ennumeration mode.*/
+#define TEMP_BUFFER_SIZE 100    /** Size of a internal buffer for general usage.*/
 
 //#define lowByte(w) ((uint8_t) ((w) & 0xff))
 //#define highByte(w) ((uint8_t) ((w) >> 8))
 
+/**
+*
+*/
+//enum process_mode{AUTOMATIC,MANUAL};
+/**
+*   Enum that contains the node state.
+*/
+enum state {LEARN,              /**< Learn mode. The node is read to learn events.*/
+            UNLEARN,            /**< Unlearn mode. The node is read to erase events.*/
+            BOOT,               /**< Boot mode. The node is prepared to receive a new firmware. Not supported by this library. Present just to be consistent with Merg modes.*/
+            NORMAL,             /**< Normal mode of operarion. Receives On/Off events and do actions based on them.*/
+            SELF_ENUMERATION,   /**< Node getting a new CAN ID for transmission.*/
+            SETUP               /**< Node getting a new Node number or device number.*/
+            };
 
-enum process_mode{AUTOMATIC,MANUAL};
-enum state {LEARN,UNLEARN,BOOT,NORMAL,SELF_ENUMERATION,SETUP};
-enum can_error {OK=0,UNKNOWN_MSG_TYPE=1,NO_MESSAGE=2};
+/**
+*   Enum that defines the return of messages.
+*/
+enum can_error {OK=0,                   /**< Message sent.*/
+                UNKNOWN_MSG_TYPE=1,     /**< Unknown message.*/
+                NO_MESSAGE=2            /**< No message received.*/
+                };
+
+/**
+*   A general class that support the MergCBUS protocol.
+*   The class is used to all operations regarding the protocol, but is flexible enough to allow you to use general can messages.
+*   It uses a modified version of mcp_can.h, that included the CAN header manipulation and RTR messages.
+*/
 
 class MergCBUS
 {
@@ -64,9 +88,9 @@ class MergCBUS
     protected:
     private:
         //let the bus level lib private
-        MCP_CAN Can;
-        byte node_mode;                         //Slim or Flim
-        void setBitMessage(byte pos,bool val);  //set or unset the bit on pos for messageFilter
+        MCP_CAN Can;                            /** The CAN object. Deal with the transport layer.*/
+        byte node_mode;                         /** Slim or Flim*/
+        void setBitMessage(byte pos,bool val);  /** set or unset the bit on pos for messageFilter*/
         CANMessage canMessage;                  //data from can bus
         byte mergCanData[CANDATA_SIZE];         //can data . CANDATA_SIZE defined in message.h
         Message message;                        //canbus message representation
@@ -104,6 +128,7 @@ class MergCBUS
 
         void sortArray(byte *a, byte n);
         void prepareMessage(byte opc);
+        void prepareMessageBuff(byte data0=0,byte data1=0,byte data2=0,byte data3=0,byte data4=0,byte data5=0,byte data6=0,byte data7=0);
         byte getMessageSize(byte opc);
 
         byte greenLed;

@@ -15,11 +15,38 @@
 #include "opcodes.h"
 
 
-#define CANDATA_SIZE 8
-#define MSGSIZE 255
+#define CANDATA_SIZE 8      /** Message size*/
+#define MSGSIZE 255         /** Amount of possible can messages.*/
 
-enum message_type {RESERVED=0,DCC=1,CONFIG=2,ACCESSORY=3,GENERAL=4};
-enum message_config_pos {NODE_NUMBER=0,DEVICE_NUMBER=1,EVENT_NUMBER=2,SESSION=3,DECODER=4,CV=5};
+/**
+* Type of MergCBUS messages. See the developer documentation for more details.
+*/
+enum message_type {
+                    RESERVED=0, /**< Reserved messages*/
+                    DCC=1,      /**< DCC messages */
+                    CONFIG=2,   /**< Config messages*/
+                    ACCESSORY=3,/**< Accessory messages*/
+                    GENERAL=4   /**< General messages*/
+                    };
+
+/**
+* Position on the filter for messages for the most common fields.
+*/
+enum message_config_pos {
+                        NODE_NUMBER=0,      /**< Node number*/
+                        DEVICE_NUMBER=1,    /**< Device Number*/
+                        EVENT_NUMBER=2,     /**< Event number */
+                        SESSION=3,          /**< Session */
+                        DECODER=4,          /**< Decoder */
+                        CV=5                /**< Decoder CV*/
+                        };
+
+/**
+* The Message class holds the detailed information about a can message.
+* If works as a wrapper class over the can bus message.
+* It extracts the information from the message based on the semantics of the message OPC.
+* Still in fase of modification and cleanning.
+*/
 
 class Message
 {
@@ -98,30 +125,27 @@ class Message
 
     protected:
     private:
-        byte canId;
-        byte opc;
-        message_type _type;
-        unsigned int _eventNumber;//2 bytes
-        unsigned int _nodeNumber;//2 bytes
-        unsigned int _deviceNumber;//2 bytes
-        unsigned int _decoder;//2 bytes
-        unsigned int _cv;//2 bytes
-        byte _session;
-        byte _data[CANDATA_SIZE] ;
-        byte _priority;
-        unsigned int _numBytes;
-        bool _RTR;
-        CANMessage* _canMessage;
-        message_type messages[MSGSIZE];//make an index of message types. opc is the array index
+        byte canId;                             /** The cand id*/
+        byte opc;                               /** The opc*/
+        message_type _type;                     /** Holds the message type @see message_type*/
+        unsigned int _eventNumber;              /** Event number 2 bytes*/
+        unsigned int _nodeNumber;               /** Node Number 2 bytes*/
+        unsigned int _deviceNumber;             /** Device Number 2 bytes*/
+        unsigned int _decoder;                  /** Decoder address*/
+        unsigned int _cv;                       /** Decoder variable*/
+        byte _session;                          /** Loc session*/
+        byte _data[CANDATA_SIZE] ;              /** Internal buffer for can message.*/
+        byte _priority;                         /** Message priority*/
+        unsigned int _numBytes;                 /** Message size*/
+        bool _RTR;                              /** If the message is a RTR message*/
+        CANMessage* _canMessage;                /** The transport can message*/
+        message_type messages[MSGSIZE];         /** Holds the message type for each opc. Make an index of message types. Opc is the array index*/
 
-        unsigned int message_params[MSGSIZE];//use each bit to hold a true false information about the message
-        bool hasThisData(byte opc, message_config_pos pos);
-        void loadMessageConfig();
-        void loadMessageType();
-        //erase later
+        unsigned int message_params[MSGSIZE];   /** Use each bit to hold a true false information about the message. Used to make the search faster.*/
+        bool hasThisData(byte opc, message_config_pos pos);/** Check if a field is present in a message.*/
+        void loadMessageConfig();               /** Load standard message config.*/
+        void loadMessageType();                 /** Load standard message types config.*/
 
-        //void bitSet(unsigned int &val,unsigned int pos){return;};
-        //byte bitRead(unsigned int &val,unsigned int pos){return 1;};
 
 
 };

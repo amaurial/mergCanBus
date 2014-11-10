@@ -5,6 +5,11 @@
 
 #define NAME_SIZE 8
 
+/**
+* Class that saves the node parameters.
+* Name, Manufactorer,Module, Can id, Node number, device number, Code Version, Supported events and variables.
+* It is set from user information and from EEPROM: can id, node number, device number.
+*/
 
 class MergNodeIdentification
 {

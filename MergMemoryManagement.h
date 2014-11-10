@@ -11,25 +11,29 @@ struct merg_event_vars{
     byte value;
 };
 
-#define MAX_AVAIL_VARS 25           //each has 1 byte
-#define MAX_NUM_EVENTS 30           //each event has 4 bytes
-#define MAX_NUM_EVENTS_VAR 75       //each var has 2 bytes. first is the index, second is the value
-#define EVENT_SIZE 4
-#define EVENT_VARS_SIZE 2
+#define MAX_AVAIL_VARS 25           /** Number of node variables. Each has 1 byte                           */
+#define MAX_NUM_EVENTS 30           /** Number of supported events. Each event has 4 bytes                  */
+#define MAX_NUM_EVENTS_VAR 75       /** Total amount of events variables. Each var has 2 bytes. first is the index, second is the value        */
+#define EVENT_SIZE 4                /** Event size.                                                        */
+#define EVENT_VARS_SIZE 2           /** Size for events vars. Each var has 2 bytes. first is the index, second is the value        */
 
+#define FAILED_INDEX 255            /** Value returned when vars or events vars not found                             */
 
-#define MERG_MEMPOS 0                                   //has the value 0xaa to mark it is from this mod
-#define CAN_ID_MEMPOS 1                                 //can id has 1 byte
-#define NN_MEMPOS 2                                      //Node mumber has 2 bytes
-#define NN_MODE_MEMPOS 3                                       //node mode SLIM=0 or FLIM=1
-#define DN_MEMPOS 4                                      //Device number has 2 bytes
-#define NUM_VARS_MEMPOS 6                               //amount of variables for this module- 1 byte
-#define NUM_EVENTS_MEMPOS 7                             //amount of learned events
-#define NUM_EVENTS_VARS_MEMPOS 8                        //amount of learned events variables
-#define VARS_MEMPOS 9                                   //start of variables written for this module
-#define EVENTS_MEMPOS VARS_MEMPOS+1+MAX_AVAIL_VARS
-#define EVENTS_VARS_MEMPOS EVENTS_MEMPOS+1+MAX_NUM_EVENTS*EVENT_SIZE
+#define MERG_MEMPOS 0                                                  /** Position in memory. has the value 0xaa to mark it is from this mod       */
+#define CAN_ID_MEMPOS MERG_MEMPOS+1                                    /**Position in memory.can id has 1 byte                                    */
+#define NN_MEMPOS CAN_ID_MEMPOS+1                                      /**Position in memory.Node mumber has 2 bytes                               */
+#define NN_MODE_MEMPOS NN_MEMPOS+1                                     /**Position in memory.node mode SLIM=0 or FLIM=1                          */
+#define DN_MEMPOS NN_MODE_MEMPOS+1                                     /**Position in memory.Device number has 2 bytes                            */
+#define NUM_VARS_MEMPOS DN_MEMPOS+1                                    /**Position in memory.amount of variables for this module- 1 byte          */
+#define NUM_EVENTS_MEMPOS NUM_VARS_MEMPOS+1                            /**Position in memory.amount of learned events                             */
+#define NUM_EVENTS_VARS_MEMPOS NUM_EVENTS_MEMPOS+1                     /**Position in memory.amount of learned events variables                   */
+#define VARS_MEMPOS NUM_EVENTS_VARS_MEMPOS+1                           /**Position in memory.start of variables written for this module           */
+#define EVENTS_MEMPOS VARS_MEMPOS+1+MAX_AVAIL_VARS                     /**Position in memory.                                                     */
+#define EVENTS_VARS_MEMPOS EVENTS_MEMPOS+1+MAX_NUM_EVENTS*EVENT_SIZE   /**Position in memory.                                                    */
 
+/**
+* Class that handles the EEPROM and maintains the data in a RAM memory.
+*/
 
 class MergMemoryManagement
 {

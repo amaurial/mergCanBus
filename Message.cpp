@@ -1,5 +1,11 @@
 #include "Message.h"
 
+
+/**
+* Constructor
+* Clear the internal buffers and load the basic configuration.
+*/
+
 Message::Message()
 {
     //ctor
@@ -8,6 +14,11 @@ Message::Message()
     loadMessageType();
     loadMessageConfig();
 }
+
+/**
+* Creates a message to be sent. Not being used.
+*/
+
 Message::Message(unsigned int canId,
                  unsigned int opc,
                  unsigned int nodeNumber,
@@ -26,23 +37,27 @@ Message::Message(unsigned int canId,
     for (i=0;i<DATA_SIZE;i++){_data[i]=data[i];}
 }
 
+/**
+* Destructor
+*/
 Message::~Message()
 {
     //dtor
 }
-/*
-unsigned int Message::setCanMessage(CANMessage *canMessage){
-    _canMessage=canMessage;
-    canId = _canMessage->getCanId();
-    opc = _canMessage->getOpc();
-    _RTR=_canMessage->getRTR();
-}*/
 
+/**
+* Get the message size. Extract it from the can frame.
+* @return message size.
+*/
 byte Message::getMessageSize(){
 
     return _canMessage->getDataSize();
 }
 
+/**
+* Set the can buffer.
+* @param val A 8 bytes array.
+*/
 void Message::setData(byte val[DATA_SIZE] )
 {
     int i=0;
@@ -50,6 +65,9 @@ void Message::setData(byte val[DATA_SIZE] )
 
 }
 
+/**
+* Clear the internal structure.
+*/
 void Message::clear(){
     setCanId(0);
     setOpc(0);
@@ -66,7 +84,9 @@ void Message::clear(){
 
 }
 
-//return 0 if OK
+/**
+* Link a can message to a message
+*/
 unsigned int Message::setCanMessage(CANMessage *canMessage){
     _canMessage=canMessage;
     if (_canMessage->getRTR()){
@@ -83,7 +103,10 @@ unsigned int Message::setCanMessage(CANMessage *canMessage){
     return 0;
 }
 
-//used to get the data fields directly
+/**
+* Used to get the data fields directly
+* @param pos Byte position.
+*/
 byte Message::getByte(byte pos){
     if (pos>=CANDATA_SIZE){
         return 0;
@@ -95,6 +118,10 @@ byte Message::getByte(byte pos){
 
 }
 
+/**
+* Get the node number
+* @return a 16 bit integer.
+*/
 unsigned int Message::getNodeNumber(){
     //node number is always at the position 1 and 2
     byte* data=_canMessage->getData();
@@ -108,6 +135,10 @@ unsigned int Message::getNodeNumber(){
     return r;
 }
 
+/**
+* Get the loc session for DCC messages
+* @return a byte.
+*/
 byte Message::getSession(){
     //session is always at the position 1
     byte* data=_canMessage->getData();
@@ -119,7 +150,10 @@ byte Message::getSession(){
     return r;
 
 }
-
+/**
+* Get the event number
+* @return a 16 bit integer.
+*/
 unsigned int Message::getEventNumber(){
     //node number is always at the position 3 and 4
     byte* data=_canMessage->getData();
@@ -133,7 +167,10 @@ unsigned int Message::getEventNumber(){
 
     return r;
 }
-
+/**
+* Get the device number
+* @return a 16 bit integer.
+*/
 unsigned int Message::getDeviceNumber(){
     //node number is always at the position 3 and 4 with exception from the messages
     //OPC_DDRS OPC_DDES OPC_RQDDS
@@ -156,7 +193,10 @@ unsigned int Message::getDeviceNumber(){
 
     return r;
 }
-
+/**
+* Get the decoder id for DCC messages
+* @return a 2 byte integer.
+*/
 unsigned int Message::getDecoder(){
     //node number is always at the position 2 and 3
     byte* data=_canMessage->getData();
@@ -170,9 +210,13 @@ unsigned int Message::getDecoder(){
 
     return r;
 }
-//CV#
+
+/**
+* Get the decoder id for DCC messages
+* @return a 2 byte integer.
+*/
 unsigned int Message::getCV(){
-    //node number is always at the position 2 and 3
+    //cv number is always at the position 2 and 3
     byte* data=_canMessage->getData();
     unsigned int r=0;
     if (hasThisData(opc,CV)){
@@ -185,7 +229,11 @@ unsigned int Message::getCV(){
     return r;
 }
 
-//CV Val
+
+/**
+* Get the cv value for DCC messages
+* @return a 1 byte integer.
+*/
 unsigned int Message::getCVValue(){
 
     byte* data=_canMessage->getData();
@@ -199,7 +247,11 @@ unsigned int Message::getCVValue(){
     return r;
 }
 
-//CV Mode
+
+/**
+* Get the cv mode value for DCC messages
+* @return a 1 byte integer.
+*/
 unsigned int Message::getCVMode(){
     //node number is always at the position 2 and 3
     byte* data=_canMessage->getData();
@@ -210,7 +262,10 @@ unsigned int Message::getCVMode(){
     return r;
 }
 
-
+/**
+* Get the consist value for DCC messages
+* @return a 1 byte integer.
+*/
 
 byte Message::getConsist(){
     byte* data=_canMessage->getData();
@@ -221,6 +276,10 @@ byte Message::getConsist(){
     return r;
 }
 
+/**
+* Get the speed direction for DCC messages
+* @return a 1 byte integer.
+*/
 byte Message::getSpeedDir(){
     byte* data=_canMessage->getData();
     byte r=0;
@@ -233,7 +292,10 @@ byte Message::getSpeedDir(){
     return r;
 
 }
-
+/**
+* Get the engine flags for DCC messages
+* @return a 1 byte integer.
+*/
 byte Message::getEngineFlag(){
     byte* data=_canMessage->getData();
     byte r=0;
@@ -246,7 +308,11 @@ byte Message::getEngineFlag(){
     return r;
 
 }
-//Space left to store events
+
+/**
+* Get the space left to store events
+* @return a 1 byte integer.
+*/
 byte Message::getAvailableEventsLeft(){
     byte* data=_canMessage->getData();
     byte r=0;
@@ -256,7 +322,10 @@ byte Message::getAvailableEventsLeft(){
     return r;
 
 }
-//Stored events
+/**
+* Get the amount of stored events
+* @return a 1 byte integer.
+*/
 byte Message::getStoredEvents(){
     byte* data=_canMessage->getData();
     byte r=0;
@@ -266,7 +335,11 @@ byte Message::getStoredEvents(){
     return r;
 
 }
-//Fn
+
+/**
+* Get the function number Fn for DCC messages
+* @return a 1 byte integer.
+*/
 byte Message::getFunctionNumber(){
     byte* data=_canMessage->getData();
     byte r=0;
@@ -275,7 +348,10 @@ byte Message::getFunctionNumber(){
     }
     return r;
 }
-//Fn value
+/**
+* Get the function value for DCC messages
+* @return a 1 byte integer.
+*/
 byte Message::functionValue(){
     byte* data=_canMessage->getData();
     byte r=0;
@@ -285,7 +361,10 @@ byte Message::functionValue(){
     return r;
 }
 
-//Status
+/**
+* Get the status field
+* @return a 1 byte integer.
+*/
 byte Message::getStatus(){
     byte* data=_canMessage->getData();
     byte r=0;
@@ -294,7 +373,10 @@ byte Message::getStatus(){
     }
     return r;
 }
-//Para#
+/**
+* Get the parameter index Para# field
+* @return a 1 byte integer.
+*/
 byte Message::getParaIndex(){
     byte* data=_canMessage->getData();
     byte r=0;
@@ -303,7 +385,10 @@ byte Message::getParaIndex(){
     }
     return r;
 }
-//Para
+/**
+* Get the parameter Para field
+* @return a 1 byte integer.
+*/
 byte Message::getParameter(){
     byte* data=_canMessage->getData();
     byte r=0;
@@ -312,7 +397,10 @@ byte Message::getParameter(){
     }
     return r;
 }
-//NV#
+/**
+* Get the node variable index NV# field
+* @return a 1 byte integer.
+*/
 byte Message::getNodeVariableIndex(){
     byte* data=_canMessage->getData();
     byte r=0;
@@ -321,7 +409,10 @@ byte Message::getNodeVariableIndex(){
     }
     return r;
 }
-//NV
+/**
+* Get the node variable NV field
+* @return a 1 byte integer.
+*/
 byte Message::getNodeVariable(){
     byte* data=_canMessage->getData();
     byte r=0;
@@ -330,7 +421,10 @@ byte Message::getNodeVariable(){
     }
     return r;
 }
-//EN#
+/**
+* Get the event index EN# field
+* @return a 1 byte integer.
+*/
 byte Message::getEventIndex(){
     byte* data=_canMessage->getData();
     byte r=0;
@@ -346,7 +440,11 @@ byte Message::getEventIndex(){
 
     return r;
 }
-//EV#
+
+/**
+* Get the event variable index EV# field
+* @return a 1 byte integer.
+*/
 byte Message::getEventVarIndex(){
     byte* data=_canMessage->getData();
     byte r=0;
@@ -362,7 +460,10 @@ byte Message::getEventVarIndex(){
 
     return r;
 }
-//EV
+/**
+* Get the event variable EV field
+* @return a 1 byte integer.
+*/
 byte Message::getEventVar(){
     byte* data=_canMessage->getData();
     byte r=0;
@@ -379,7 +480,12 @@ byte Message::getEventVar(){
     return r;
 }
 
-//check the filter for specific information
+/**
+* Check the filter if a specific information is expected in the message.
+* @param opc The message id opc
+* @param pos Which field to look
+*/
+
 bool Message::hasThisData(byte opc, message_config_pos pos){
 
     if (!((opc>=0) && (opc<MSGSIZE))){
@@ -394,7 +500,10 @@ bool Message::hasThisData(byte opc, message_config_pos pos){
     }
 
 }
-
+/**
+* Load the most commom fields for each message.
+* Used to make the search for fields faster.
+*/
 void Message::loadMessageConfig(){
 
     int i=0;
@@ -671,7 +780,9 @@ void Message::loadMessageConfig(){
 
 }
 
-
+/**
+* Index the message type to the OPC.
+*/
 
 void Message::loadMessageType()
 {
