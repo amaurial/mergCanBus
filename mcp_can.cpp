@@ -297,8 +297,12 @@ void MCP_CAN::mcp2515_initCANBuffers(void)
         a2++;
         a3++;
     }
-    mcp2515_setRegister(MCP_RXB0CTRL, 0);
-    mcp2515_setRegister(MCP_RXB1CTRL, 0);
+    //mcp2515_setRegister(MCP_RXB0CTRL, 0);
+    //mcp2515_setRegister(MCP_RXB1CTRL, 0);
+    //accept any messages - changed by amauri
+    mcp2515_setRegister(MCP_RXB0CTRL, MCP_RXB_RX_ANY);
+    mcp2515_setRegister(MCP_RXB1CTRL, MCP_RXB_RX_ANY);
+}
 }
 
 /*********************************************************************************************************
@@ -417,10 +421,10 @@ void MCP_CAN::mcp2515_write_id( const INT8U mcp_addr, const INT8U ext, const INT
         tbufdata[MCP_EID0] = 0;
         tbufdata[MCP_EID8] = 0;
 
-        Serial.print("CANHEADER:");
-        Serial.print(tbufdata[MCP_SIDH],HEX);
-        Serial.print(tbufdata[MCP_SIDL],HEX);
-        Serial.println();
+        //Serial.print("CANHEADER:");
+        //Serial.print(tbufdata[MCP_SIDH],HEX);
+        //Serial.print(tbufdata[MCP_SIDL],HEX);
+        //Serial.println();
 
     }
     mcp2515_setRegisterS( mcp_addr, tbufdata, 4 );
