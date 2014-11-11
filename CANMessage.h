@@ -11,7 +11,7 @@ class CANMessage
     public:
         CANMessage();
         CANMessage(byte data[DATA_SIZE],byte header[HEADER_SIZE]);
-        byte* getData() { return _data; }
+        byte* getData() { return &_data[0]; }
         void setData(byte val[DATA_SIZE] );
         byte* get_header() { return _header; }
         void set_header(byte val[HEADER_SIZE] );

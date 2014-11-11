@@ -25,8 +25,8 @@ MergCBUS::MergCBUS()
     yellowLed=255;
     ledGreenState=HIGH;
     ledYellowState=LOW;
-
-
+    //candata=canMessage.getData();
+    //message.setCanMessage(&canMessage);
 }
 
 /** \brief
@@ -225,25 +225,40 @@ unsigned int MergCBUS::run(){
 * @return true if a message in the can bus.
 */
 bool MergCBUS::readCanBus(){
-    byte len=0;
+    byte len,resp;
+    len=0;
     if(CAN_MSGAVAIL == Can.checkReceive()) // check if data coming
     {
         if (DEBUG){
-            Serial.println("new message. reading");
-            delay(10);
+            //Serial.println("new message. reading.");
         }
         canMessage.clear();
         message.clear();
-        Can.readMsgBuf(&len, canMessage.getData());
-        Can.getCanHeader(canMessage.get_header());
+        byte *data;
+        data=canMessage.getData();
+        Serial.println("read");
+
+        resp=Can.readMsgBuf(&len,data);
+
+        Serial.println("read ok");
+
+        byte *header;
+        header=canMessage.get_header();
+        Can.getCanHeader(header);
+
         if (Can.isRTMMessage()!=0){
             canMessage.setRTR();
         }
         else{
             canMessage.unsetRTR();
         }
+        Serial.println("ponteiros");
         canMessage.setCanMsgSize(len);
+
+        //Serial.print((int)message.getCanMessage(),HEX);
         message.setCanMessage(&canMessage);
+        //Serial.print(" ");
+        //Serial.println((int)message.getCanMessage(),HEX);
 
         if (DEBUG){
             printReceivedMessage();
@@ -601,7 +616,6 @@ byte MergCBUS::handleConfigMessages(){
 
     case OPC_RQNPN:
         //Request node parameter. Answer with PARAN
-        clearMsgToSend();
         ind=message.getParaIndex();
         if (ind==0){
             prepareMessageBuff(OPC_PARAN,highByte(nn),lowByte(nn),ind,nodeId.getNumberOfParameters());//the CBUS index start with 1
@@ -619,7 +633,6 @@ byte MergCBUS::handleConfigMessages(){
             Serial.println("RECEIVED OPC_RQNPN sending OPC_PARAN");
             printSentMessage();
         }
-
         sendCanMessage();
         break;
     case OPC_CANID:
@@ -911,6 +924,7 @@ byte MergCBUS::sendCanMessage(){
 */
 void MergCBUS::setDebug(bool debug){
     DEBUG=debug;
+    message.setDebug(debug);
 }
 
 /** \brief

@@ -157,6 +157,7 @@ class MergCBUS
         byte yellowLed;
         byte ledGreenState;
         byte ledYellowState;
+        //byte *candata;
 };
 
 #endif // MESSAGEPARSER_H

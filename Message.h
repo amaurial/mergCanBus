@@ -122,6 +122,7 @@ class Message
         byte getEventVarIndex();
         byte getEventVar();
         void clear();
+        void setDebug(bool val){debug=val;};
 
     protected:
     private:
@@ -146,7 +147,7 @@ class Message
         void loadMessageConfig();               /** Load standard message config.*/
         void loadMessageType();                 /** Load standard message types config.*/
 
-
+        bool debug;
 
 };
 

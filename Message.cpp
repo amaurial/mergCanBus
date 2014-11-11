@@ -74,7 +74,10 @@ void Message::clear(){
     setType(RESERVED);
     setEventNumber(0);
     setNodeNumber(0);
-    setData((byte*)"00000000");
+    //setData((byte*)"00000000");
+    for (int i=0;i<CANDATA_SIZE;i++){
+        _data[i]=0;
+    }
     setPriority(0);
     setNumBytes(0);
     unsetRTR();
@@ -126,7 +129,13 @@ unsigned int Message::getNodeNumber(){
     //node number is always at the position 1 and 2
     byte* data=_canMessage->getData();
     unsigned int r=0;
+    if (debug){
+        Serial.println("Getting NN");
+    }
     if (hasThisData(data[0],NODE_NUMBER)){
+            if (debug){
+                Serial.println("NN OK");
+            }
             r=data[1];
             r=r<<8;
             r=r|data[2];

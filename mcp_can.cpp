@@ -302,7 +302,7 @@ void MCP_CAN::mcp2515_initCANBuffers(void)
     //accept any messages - changed by amauri
     mcp2515_setRegister(MCP_RXB0CTRL, MCP_RXB_RX_ANY);
     mcp2515_setRegister(MCP_RXB1CTRL, MCP_RXB_RX_ANY);
-}
+
 }
 
 /*********************************************************************************************************
@@ -706,7 +706,7 @@ INT8U MCP_CAN::setMsg(INT32U id, INT8U ext, INT8U len, INT8U *pData)
     m_nDlc    = len;
     for(i = 0; i<MAX_CHAR_IN_MESSAGE; i++)
     {
-        m_nDta[i] = *(pData+i);
+        m_nDta[i] = pData[i];
     }
     return MCP2515_OK;
 }
@@ -786,33 +786,32 @@ INT8U MCP_CAN::sendMsgBuf(INT32U id, INT8U ext, INT8U len, INT8U *buf)
 INT8U MCP_CAN::readMsg()
 {
     INT8U stat, res;
+    res=CAN_OK;
     bool msgfound=false;
-    bool bf1,bf2;
 
     stat = mcp2515_readStatus();
 
     if ( stat & MCP_STAT_RX0IF )                                        /* Msg in Buffer 0              */
     {
-        bf1=true;
         mcp2515_read_canMsg( MCP_RXBUF_0);
         mcp2515_modifyRegister(MCP_CANINTF, MCP_RX0IF, 0);
-        res = CAN_OK;
+        //res = CAN_OK;
         msgfound=true;
-        Serial.println("buffer 0");
+        //Serial.println("buffer 0");
     }
     else if ( stat & MCP_STAT_RX1IF )                                   /* Msg in Buffer 1              */
     {
-        bf2=true;
         mcp2515_read_canMsg( MCP_RXBUF_1);
         mcp2515_modifyRegister(MCP_CANINTF, MCP_RX1IF, 0);
         res = CAN_OK;
         msgfound=true;
-        Serial.println("buffer 1");
+        //Serial.println("buffer 1");
     }
     if (!msgfound)
     {
         res = CAN_NOMSG;
     }
+    //Serial.println("leaving");
     return res;
 }
 
@@ -820,15 +819,17 @@ INT8U MCP_CAN::readMsg()
 ** Function name:           readMsgBuf
 ** Descriptions:            read message buf
 *********************************************************************************************************/
-INT8U MCP_CAN::readMsgBuf(INT8U *len, INT8U buf[])
+INT8U MCP_CAN::readMsgBuf(INT8U *len, INT8U* buf)
 {
     readMsg();
     *len = m_nDlc;
     for(int i = 0; i<m_nDlc; i++)
     {
       buf[i] = m_nDta[i];
+      //Serial.print(buf[i],HEX);
     }
-    return MCP2515_OK;
+    //Serial.println();
+    return CAN_OK;
 }
 
 /*********************************************************************************************************
@@ -898,11 +899,11 @@ void MCP_CAN::unsetRTMBit(void)
 INT8U MCP_CAN::sendRTMMessage(INT32U id)
 {
 	INT8U buffer[MAX_CHAR_IN_MESSAGE];
-	for(int i = 0; i<MAX_CHAR_IN_MESSAGE; i++ )
-      buffer[i] = 0x00;
-
+	for(int i = 0; i<MAX_CHAR_IN_MESSAGE; i++ ){
+      buffer[i] = 0;
+	}
 	setRTMBit();
-	INT8U r=sendMsgBuf(0xff, 0, 0, buffer);
+	INT8U r=sendMsgBuf(id, 0, 0, buffer);
 	unsetRTMBit();
 	return r;
 }
