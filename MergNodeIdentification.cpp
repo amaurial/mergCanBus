@@ -11,10 +11,19 @@ MergNodeIdentification::~MergNodeIdentification()
 {
     //dtor
 }
-void MergNodeIdentification::setNodeName(char nn[NAME_SIZE])
+void MergNodeIdentification::setNodeName(char const *nn,int csize)
 {
     int i=0;
+    int n=NAME_SIZE;
+
+    if (csize<NAME_SIZE){
+        n=csize;
+    }
     for (i=0;i<NAME_SIZE;i++){
+        nodeName[i]=0;
+    }
+
+    for (i=0;i<n;i++){
         nodeName[i]=nn[i];
     }
 }

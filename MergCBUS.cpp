@@ -79,7 +79,7 @@ MergCBUS::~MergCBUS()
 * @param retryIntervalMilliseconds is the delay in milliseconds between each retry.
 */
 
-bool MergCBUS::initCanBus(unsigned int port,unsigned int rate, int retries,unsigned int retryIntervalMilliseconds){
+bool MergCBUS::initCanBus(unsigned int port,unsigned int rate,unsigned int retries,unsigned int retryIntervalMilliseconds){
 
     unsigned int r=0;
     Can.set_cs(port);
@@ -595,7 +595,7 @@ byte MergCBUS::handleConfigMessages(){
         ind=message.getEventIndex();
         byte *event;
         event=memory.getEvent(ind-1);//the CBUS index start with 1
-        prepareMessageBuff(OPC_ENRSP,highByte(nn),lowByte(nn),event[0],event[1],event[2],event[3,ind]);
+        prepareMessageBuff(OPC_ENRSP,highByte(nn),lowByte(nn),event[0],event[1],event[2],event[3],ind);
         /*mergCanData[0]=OPC_ENRSP;
         mergCanData[1]=highByte(nn);
         mergCanData[2]=lowByte(nn);
@@ -823,7 +823,7 @@ byte MergCBUS::handleConfigMessages(){
             buffer[3]=lowByte(ev);
             resp=memory.setEvent(buffer,evidx-1);
 
-            if (resp!=(evidx-1)){
+            if ((byte)resp!=(evidx-1)){
                 //send a message error
                 sendERRMessage(CMDERR_INV_EV_IDX);
                 break;
@@ -833,7 +833,7 @@ byte MergCBUS::handleConfigMessages(){
             //the CBUS index start with 1
             resp=memory.setEventVar(evidx-1,ind-1,val);
 
-            if (resp!=(ind-1)){
+            if ((byte)resp!=(ind-1)){
                 //send a message error
                 sendERRMessage(CMDERR_INV_NV_IDX);
                 break;
@@ -940,7 +940,7 @@ byte MergCBUS::getMessageSize(byte opc){
 * Save the parameters to the message buffer.
 */
 void MergCBUS::prepareMessageBuff(byte data0,byte data1,byte data2,byte data3,byte data4,byte data5,byte data6,byte data7){
-    clearMsgToSend();
+    //clearMsgToSend();
     mergCanData[0]=data0;
     mergCanData[1]=data1;
     mergCanData[2]=data2;
@@ -970,7 +970,7 @@ void MergCBUS::prepareMessage(byte opc){
         break;
     case OPC_NAME:
         prepareMessageBuff(OPC_NAME,nodeId.getNodeName()[0],nodeId.getNodeName()[1],
-                            nodeId.getNodeName()[2,nodeId.getNodeName()[3]],
+                            nodeId.getNodeName()[2],nodeId.getNodeName()[3],
                             nodeId.getNodeName()[4],nodeId.getNodeName()[5],
                             nodeId.getNodeName()[6]);
         /*mergCanData[0]=OPC_NAME;

@@ -18,7 +18,7 @@ class MergNodeIdentification
         virtual ~MergNodeIdentification();
         void setCanID(byte val){canID=val;};
         void setNodeNumber(unsigned int val){nodeNumber=val;};
-        void setNodeName(char* nodeName);
+        void setNodeName(char const *nodeName,int csize);
         byte getCanID(){return canID;};
         unsigned int getNodeNumber(){return nodeNumber;};
         const char* getNodeName();

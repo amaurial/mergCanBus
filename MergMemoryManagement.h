@@ -50,10 +50,10 @@ class MergMemoryManagement
         void read();
         void write();
         /** \brief Check if there is some learned event.*/
-        bool hasEvents(){numEvents>0?true:false;};
+        bool hasEvents(){return (numEvents>0?true:false);};
 
         /** \brief Check if there is some learned event variables.*/
-        bool hasEventVars(){numEventVars>0?true:false;};
+        bool hasEventVars(){return (numEventVars>0?true:false);};
 
         bool hasEventVars(int eventIdx);
 
