@@ -19,8 +19,9 @@
 
 
 
-#define SELF_ENUM_TIME 500      /** Defines the timeout used for self ennumeration mode.*/
-#define TEMP_BUFFER_SIZE 100    /** Size of a internal buffer for general usage.*/
+#define SELF_ENUM_TIME 1000      /** Defines the timeout used for self ennumeration mode.*/
+#define TEMP_BUFFER_SIZE 128    /** Size of a internal buffer for general usage.*/
+#define SELF_ENUM_BUFFER_SIZE 99
 
 //#define lowByte(w) ((uint8_t) ((w) & 0xff))
 //#define highByte(w) ((uint8_t) ((w) >> 8))
@@ -32,12 +33,12 @@
 /**
 *   Enum that contains the node state.
 */
-enum state {LEARN,              /**< Learn mode. The node is read to learn events.*/
-            UNLEARN,            /**< Unlearn mode. The node is read to erase events.*/
-            BOOT,               /**< Boot mode. The node is prepared to receive a new firmware. Not supported by this library. Present just to be consistent with Merg modes.*/
-            NORMAL,             /**< Normal mode of operarion. Receives On/Off events and do actions based on them.*/
-            SELF_ENUMERATION,   /**< Node getting a new CAN ID for transmission.*/
-            SETUP               /**< Node getting a new Node number or device number.*/
+enum state {LEARN=0,              /**< Learn mode. The node is read to learn events.*/
+            UNLEARN=1,            /**< Unlearn mode. The node is read to erase events.*/
+            BOOT=2,               /**< Boot mode. The node is prepared to receive a new firmware. Not supported by this library. Present just to be consistent with Merg modes.*/
+            NORMAL=3,             /**< Normal mode of operarion. Receives On/Off events and do actions based on them.*/
+            SELF_ENUMERATION=4,   /**< Node getting a new CAN ID for transmission.*/
+            SETUP=5               /**< Node getting a new Node number or device number.*/
             };
 
 /**
@@ -87,6 +88,7 @@ class MergCBUS
         void sendERRMessage(byte code);
         bool hasThisEvent();
         bool readCanBus();
+        byte readCanBus(byte *msg,byte *header);
         void printSentMessage();
         void printReceivedMessage();
         /**\brief Set the node to slim mode.*/

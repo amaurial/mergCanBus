@@ -34,7 +34,7 @@ Message::Message(unsigned int canId,
     setEventNumber(eventNumber);
     setPriority(priority);
     int i=0;
-    for (i=0;i<DATA_SIZE;i++){_data[i]=data[i];}
+    for (i=0;i<DATA_SIZE;i++){data[i]=data[i];}
 }
 
 /**
@@ -49,19 +49,60 @@ Message::~Message()
 * Get the message size. Extract it from the can frame.
 * @return message size.
 */
-byte Message::getMessageSize(){
+byte Message::getCanMessageSize(){
 
-    return _canMessage->getDataSize();
+    return canMsgSize;
 }
 
+/**
+* Get the CBUS message size. Extract it from the opc.
+* @return message size.
+*/
+byte Message::getMessageSize(){
+    msgSize=data[0]>>5;
+    return msgSize;
+}
+
+/**
+* Get the Can id from the header.
+* @return message size.
+*/
+byte Message::getCanId(){
+  canId=0;
+  canId=(header[0]<<4)&0xF0;
+  canId=(canId)|(header[1]>>5);
+  return canId;
+
+}
+/**
+* first byte contains the opc and the number of bytes in the message
+* the first 3 bits are the number of bytes
+* the 5 last bits are the OPC
+**/
+byte Message::getOpc()
+{
+    return data[0];
+}
 /**
 * Set the can buffer.
 * @param val A 8 bytes array.
 */
-void Message::setData(byte val[DATA_SIZE] )
+void Message::setDataBuffer(byte val[DATA_SIZE] )
 {
     int i=0;
-    for (i=0;i<DATA_SIZE;i++){_data[i]=val[i];}
+    for (i=0;i<DATA_SIZE;i++){data[i]=val[i];}
+    setOpc(data[0]);
+    setType(messages[getOpc()]);
+}
+
+/**
+* Set the header buffer.
+* @param val A 8 bytes array.
+*/
+void Message::setHeaderBuffer(byte val[HEADER_SIZE] )
+{
+    int i=0;
+    for (i=0;i<HEADER_SIZE;i++){header[i]=val[i];}
 
 }
 
@@ -69,21 +110,24 @@ void Message::setData(byte val[DATA_SIZE] )
 * Clear the internal structure.
 */
 void Message::clear(){
-    setCanId(0);
-    setOpc(0);
-    setType(RESERVED);
-    setEventNumber(0);
-    setNodeNumber(0);
+    //setCanId(0);
+    //setOpc(0);
+    //setType(RESERVED);
+    //setEventNumber(0);
+    //setNodeNumber(0);
     //setData((byte*)"00000000");
     for (int i=0;i<CANDATA_SIZE;i++){
-        _data[i]=0;
+        data[i]=0;
+    }
+    for (int i=0;i<HEADER_SIZE;i++){
+        header[i]=0;
     }
     setPriority(0);
     setNumBytes(0);
     unsetRTR();
-    setSession(0);
-    setDecoder(0);
-    setDeviceNumber(0);
+    //setSession(0);
+    //setDecoder(0);
+    //setDeviceNumber(0);
 
 }
 
@@ -114,10 +158,10 @@ byte Message::getByte(byte pos){
     if (pos>=CANDATA_SIZE){
         return 0;
     }
-    if (_canMessage->getOpc()==0){
+    if (getOpc()==0){
         return 0;
     }
-    return _canMessage->getData()[pos];
+    return data[pos];
 
 }
 
@@ -127,10 +171,12 @@ byte Message::getByte(byte pos){
 */
 unsigned int Message::getNodeNumber(){
     //node number is always at the position 1 and 2
-    byte* data=_canMessage->getData();
+    //byte* data=_canMessage->getData();
     unsigned int r=0;
     if (debug){
-        Serial.println("Getting NN");
+        Serial.println("Message::getNodeNumber - Getting NN");
+        Serial.print("OPC:");
+        Serial.println(data[0],HEX);
     }
     if (hasThisData(data[0],NODE_NUMBER)){
             if (debug){
@@ -150,7 +196,7 @@ unsigned int Message::getNodeNumber(){
 */
 byte Message::getSession(){
     //session is always at the position 1
-    byte* data=_canMessage->getData();
+    //byte* data=_canMessage->getData();
     byte r=0;
     if (hasThisData(opc,SESSION)){
             r=data[1];
@@ -165,7 +211,7 @@ byte Message::getSession(){
 */
 unsigned int Message::getEventNumber(){
     //node number is always at the position 3 and 4
-    byte* data=_canMessage->getData();
+    //byte* data=_canMessage->getData();
     unsigned int r=0;
     if (hasThisData(opc,EVENT_NUMBER)){
             r=data[3];
@@ -183,7 +229,7 @@ unsigned int Message::getEventNumber(){
 unsigned int Message::getDeviceNumber(){
     //node number is always at the position 3 and 4 with exception from the messages
     //OPC_DDRS OPC_DDES OPC_RQDDS
-    byte* data=_canMessage->getData();
+    //byte* data=_canMessage->getData();
     unsigned int r=0;
     if (hasThisData(opc,DEVICE_NUMBER)){
             if ((opc==OPC_DDRS) || (opc==OPC_DDES) || (opc==OPC_RQDDS)){
@@ -208,7 +254,7 @@ unsigned int Message::getDeviceNumber(){
 */
 unsigned int Message::getDecoder(){
     //node number is always at the position 2 and 3
-    byte* data=_canMessage->getData();
+    //byte* data=_canMessage->getData();
     unsigned int r=0;
     if (hasThisData(opc,DECODER)){
             //r=(unsigned int)word(data[2],data[3]);
@@ -226,7 +272,7 @@ unsigned int Message::getDecoder(){
 */
 unsigned int Message::getCV(){
     //cv number is always at the position 2 and 3
-    byte* data=_canMessage->getData();
+    //byte* data=_canMessage->getData();
     unsigned int r=0;
     if (hasThisData(opc,CV)){
             //r=(unsigned int)word(data[2],data[3]);
@@ -245,7 +291,7 @@ unsigned int Message::getCV(){
 */
 unsigned int Message::getCVValue(){
 
-    byte* data=_canMessage->getData();
+    //byte* data=_canMessage->getData();
     byte r=0;
     if (opc==OPC_WCVO || opc==OPC_WCVB || opc==OPC_QCVS || opc==OPC_PCVS){
         return data[4];
@@ -263,7 +309,7 @@ unsigned int Message::getCVValue(){
 */
 unsigned int Message::getCVMode(){
     //node number is always at the position 2 and 3
-    byte* data=_canMessage->getData();
+    //byte* data=_canMessage->getData();
     byte r=0;
     if (opc==OPC_WCVS){
         return data[4];
@@ -277,7 +323,7 @@ unsigned int Message::getCVMode(){
 */
 
 byte Message::getConsist(){
-    byte* data=_canMessage->getData();
+    //byte* data=_canMessage->getData();
     byte r=0;
     if (opc==OPC_PCON || opc==OPC_KCON){
         return data[2];
@@ -290,7 +336,7 @@ byte Message::getConsist(){
 * @return a 1 byte integer.
 */
 byte Message::getSpeedDir(){
-    byte* data=_canMessage->getData();
+    //byte* data=_canMessage->getData();
     byte r=0;
     if (opc==OPC_DSPD){
         return data[2];
@@ -306,7 +352,7 @@ byte Message::getSpeedDir(){
 * @return a 1 byte integer.
 */
 byte Message::getEngineFlag(){
-    byte* data=_canMessage->getData();
+    //byte* data=_canMessage->getData();
     byte r=0;
     if (opc==OPC_DFLG ){
         return data[2];
@@ -323,7 +369,7 @@ byte Message::getEngineFlag(){
 * @return a 1 byte integer.
 */
 byte Message::getAvailableEventsLeft(){
-    byte* data=_canMessage->getData();
+    //byte* data=_canMessage->getData();
     byte r=0;
     if (opc==OPC_EVNLF ){
         return data[3];
@@ -336,7 +382,7 @@ byte Message::getAvailableEventsLeft(){
 * @return a 1 byte integer.
 */
 byte Message::getStoredEvents(){
-    byte* data=_canMessage->getData();
+    //byte* data=_canMessage->getData();
     byte r=0;
     if (opc==OPC_NUMEV ){
         return data[3];
@@ -350,7 +396,7 @@ byte Message::getStoredEvents(){
 * @return a 1 byte integer.
 */
 byte Message::getFunctionNumber(){
-    byte* data=_canMessage->getData();
+    //byte* data=_canMessage->getData();
     byte r=0;
     if (opc==OPC_DFNON||opc==OPC_DFNOF||opc==OPC_DFUN){
         return data[2];
@@ -362,7 +408,7 @@ byte Message::getFunctionNumber(){
 * @return a 1 byte integer.
 */
 byte Message::functionValue(){
-    byte* data=_canMessage->getData();
+    //byte* data=_canMessage->getData();
     byte r=0;
     if (opc==OPC_DFUN){
         return data[3];
@@ -375,7 +421,7 @@ byte Message::functionValue(){
 * @return a 1 byte integer.
 */
 byte Message::getStatus(){
-    byte* data=_canMessage->getData();
+    //byte* data=_canMessage->getData();
     byte r=0;
     if (opc==OPC_SSTAT||opc==OPC_DFNOF){
         return data[2];
@@ -387,19 +433,26 @@ byte Message::getStatus(){
 * @return a 1 byte integer.
 */
 byte Message::getParaIndex(){
-    byte* data=_canMessage->getData();
+    //byte* data=_canMessage->getData();
+
+    Serial.print("OPC:");Serial.print(opc,HEX);
+    Serial.print("\tPara index byte: ");
+
     byte r=0;
-    if (opc==OPC_RQNP || opc==OPC_NVSET || opc==OPC_NVANS){
+    if (opc==OPC_RQNPN){
+        Serial.println(data[3],HEX);
         return data[3];
     }
+    Serial.println(0,HEX);
     return r;
 }
+
 /**
 * Get the parameter Para field
 * @return a 1 byte integer.
 */
 byte Message::getParameter(){
-    byte* data=_canMessage->getData();
+    //byte* data=_canMessage->getData();
     byte r=0;
     if (opc==OPC_NVSET||opc==OPC_NVANS){
         return data[4];
@@ -411,7 +464,7 @@ byte Message::getParameter(){
 * @return a 1 byte integer.
 */
 byte Message::getNodeVariableIndex(){
-    byte* data=_canMessage->getData();
+    //byte* data=_canMessage->getData();
     byte r=0;
     if (opc==OPC_NVRD || opc==OPC_NVSET || opc==OPC_NVANS){
         return data[3];
@@ -423,7 +476,7 @@ byte Message::getNodeVariableIndex(){
 * @return a 1 byte integer.
 */
 byte Message::getNodeVariable(){
-    byte* data=_canMessage->getData();
+    //byte* data=_canMessage->getData();
     byte r=0;
     if (opc==OPC_NVSET||opc==OPC_NVANS){
         return data[4];
@@ -435,7 +488,7 @@ byte Message::getNodeVariable(){
 * @return a 1 byte integer.
 */
 byte Message::getEventIndex(){
-    byte* data=_canMessage->getData();
+    //byte* data=_canMessage->getData();
     byte r=0;
     if (opc==OPC_NENRD || opc==OPC_REVAL || opc==OPC_NEVAL){
         return data[3];
@@ -455,7 +508,7 @@ byte Message::getEventIndex(){
 * @return a 1 byte integer.
 */
 byte Message::getEventVarIndex(){
-    byte* data=_canMessage->getData();
+    //byte* data=_canMessage->getData();
     byte r=0;
     if ( opc==OPC_REVAL || opc==OPC_NEVAL){
         return data[4];
@@ -474,7 +527,7 @@ byte Message::getEventVarIndex(){
 * @return a 1 byte integer.
 */
 byte Message::getEventVar(){
-    byte* data=_canMessage->getData();
+    //byte* data=_canMessage->getData();
     byte r=0;
     if ( opc==OPC_NEVAL){
         return data[5];
@@ -496,12 +549,12 @@ byte Message::getEventVar(){
 */
 
 bool Message::hasThisData(byte opc, message_config_pos pos){
-
-    if (!((opc>=0) && (opc<MSGSIZE))){
+    byte topc=getOpc();
+    if (!((topc>=0) && (topc<MSGSIZE))){
         return false;
     }
 
-    if (bitRead(message_params[opc],pos)==1){
+    if (bitRead(message_params[topc],pos)==1){
         return true;
     }
     else {
@@ -822,7 +875,7 @@ void Message::loadMessageType()
     messages[OPC_EXTC]=GENERAL;
     messages[OPC_RLOC]=DCC;
     messages[OPC_QCON]=RESERVED;
-    messages[OPC_SNN]=GENERAL;
+    messages[OPC_SNN]=CONFIG;
     messages[OPC_STMOD]=DCC;
     messages[OPC_PCON]=DCC;
     messages[OPC_KCON]=DCC;

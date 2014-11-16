@@ -4,14 +4,14 @@
 #include <Arduino.h>
 
 #define DATA_SIZE 8
-#define HEADER_SIZE 2
+#define HEADER_SIZE 4
 
 class CANMessage
 {
     public:
         CANMessage();
         CANMessage(byte data[DATA_SIZE],byte header[HEADER_SIZE]);
-        byte* getData() { return &_data[0]; }
+        byte* getData() { return _data; }
         void setData(byte val[DATA_SIZE] );
         byte* get_header() { return _header; }
         void set_header(byte val[HEADER_SIZE] );

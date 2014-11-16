@@ -25,6 +25,7 @@
 
 #include "mcp_can_dfs.h"
 #define MAX_CHAR_IN_MESSAGE 8
+#define HEADER_SIZE 4
 
 class MCP_CAN
 {
@@ -39,7 +40,7 @@ class MCP_CAN
     INT8U   m_nRtr;                                                     /* rtr                          */
     INT8U   m_nfilhit;
     INT8U   SPICS;
-    INT8U canHeader[4];
+    INT8U canHeader[HEADER_SIZE];
     INT8U _prio;//priority
     INT8U _minprio;//min priority																									/*can header*/
 /*
@@ -85,8 +86,8 @@ private:
     void mcp2515_read_canMsg( const INT8U buffer_sidh_addr);            /* read can msg                 */
     void mcp2515_start_transmit(const INT8U mcp_addr);                  /* start transmit               */
     INT8U mcp2515_getNextFreeTXBuf(INT8U *txbuf_n);                     /* get Next free txbuf          */
-    void setRTMBit(void);																								/*set the bit in case need to send a Request Transfer Message	*/
-    void unsetRTMBit(void);																								/*set the bit in case need to send a Request Transfer Message	*/
+    void setRTMBit();																								/*set the bit in case need to send a Request Transfer Message	*/
+    void unsetRTMBit();																								/*set the bit in case need to send a Request Transfer Message	*/
 
 /*
 *  can operator function
@@ -106,11 +107,11 @@ public:
     INT8U init_Filt(INT8U num, INT8U ext, INT32U ulData);           /* init filters                 */
     INT8U sendMsgBuf(INT32U id, INT8U ext, INT8U len, INT8U *buf);  /* send buf                     */
     INT8U readMsgBuf(INT8U *len, INT8U *buf);                       /* read buf                     */
-    INT8U checkReceive(void);                                       /* if something received        */
-    INT8U checkError(void);                                         /* if something error           */
-    INT32U getCanId(void);                                          /* get can id when receive      */
+    INT8U checkReceive();                                       /* if something received        */
+    INT8U checkError();                                         /* if something error           */
+    INT32U getCanId();                                          /* get can id when receive      */
     INT8U sendRTMMessage(INT32U id);																/* send the request transfer message	*/
-    INT8U isRTMMessage(void);																			  /* check if received message is a request transfer message	*/
+    INT8U isRTMMessage();																			  /* check if received message is a request transfer message	*/
     void getCanHeader(INT8U *buf);
     void setPriority(INT8U prio,INT8U minprio);                                   //set the first 2 bits of can header
                                     //set the bits 8 and 7 of header

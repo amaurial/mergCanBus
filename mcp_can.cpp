@@ -267,9 +267,9 @@ void MCP_CAN::mcp2515_initCANBuffers(void)
 {
     INT8U i, a1, a2, a3;
 
-    INT8U std = 0;
-    INT8U ext = 1;
-    INT32U ulMask = 0x00, ulFilt = 0x00;
+    //INT8U std = 0;
+    //INT8U ext = 1;
+    //INT32U ulMask = 0x00, ulFilt = 0x00;
 
 
     //mcp2515_write_id(MCP_RXM0SIDH, ext, ulMask);			/*Set both masks to 0           */
@@ -836,7 +836,7 @@ INT8U MCP_CAN::readMsgBuf(INT8U *len, INT8U* buf)
 ** Function name:           checkReceive
 ** Descriptions:            check if got something
 *********************************************************************************************************/
-INT8U MCP_CAN::checkReceive(void)
+INT8U MCP_CAN::checkReceive()
 {
     INT8U res;
     res = mcp2515_readStatus();                                         /* RXnIF in Bit 1 and 0         */
@@ -854,7 +854,7 @@ INT8U MCP_CAN::checkReceive(void)
 ** Function name:           checkError
 ** Descriptions:            if something error
 *********************************************************************************************************/
-INT8U MCP_CAN::checkError(void)
+INT8U MCP_CAN::checkError()
 {
     INT8U eflg = mcp2515_readRegister(MCP_EFLG);
 
@@ -872,7 +872,7 @@ INT8U MCP_CAN::checkError(void)
 ** Function name:           getCanId
 ** Descriptions:            when receive something ,u can get the can id!!
 *********************************************************************************************************/
-INT32U MCP_CAN::getCanId(void)
+INT32U MCP_CAN::getCanId()
 {
     return m_nID;
 }
@@ -880,17 +880,17 @@ INT32U MCP_CAN::getCanId(void)
 ** Function name:           setRTMBit
 ** Descriptions:            set to 1 the Request Transfer Message Bit for RTM messages
 *********************************************************************************************************/
-void MCP_CAN::setRTMBit(void)
+void MCP_CAN::setRTMBit()
 {
-	m_nRtr=1;
+	m_nRtr=0x01;
 }
 /*********************************************************************************************************
 ** Function name:           unsetRTMBit
 ** Descriptions:            set to 0 the Request Transfer Message Bit for RTM messages
 *********************************************************************************************************/
-void MCP_CAN::unsetRTMBit(void)
+void MCP_CAN::unsetRTMBit()
 {
-	m_nRtr=0;
+	m_nRtr=0x00;
 }
 /*********************************************************************************************************
 ** Function name:           sendRTMMessage
@@ -912,7 +912,7 @@ INT8U MCP_CAN::sendRTMMessage(INT32U id)
 ** Function name:           isRTMMessage
 ** Descriptions:            return 1 if is a RTM else return 0
 *********************************************************************************************************/
-INT8U MCP_CAN::isRTMMessage(void)
+INT8U MCP_CAN::isRTMMessage()
 {
 	return m_nRtr;
 }
@@ -922,7 +922,7 @@ INT8U MCP_CAN::isRTMMessage(void)
 *********************************************************************************************************/
 void MCP_CAN::getCanHeader(INT8U buf[]){
 		int i;
-		for (i=0;i<4;i++){buf[i]=canHeader[i];}
+		for (i=0;i<HEADER_SIZE;i++){buf[i]=canHeader[i];}
 		//buf=canHeader;
 }
 /*********************************************************************************************************

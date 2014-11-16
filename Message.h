@@ -16,7 +16,8 @@
 
 
 #define CANDATA_SIZE 8      /** Message size*/
-#define MSGSIZE 255         /** Amount of possible can messages.*/
+#define HEADER_SIZE 4
+#define MSGSIZE 256         /** Amount of possible can messages.*/
 
 /**
 * Type of MergCBUS messages. See the developer documentation for more details.
@@ -63,10 +64,17 @@ class Message
         CANMessage *getCanMessage(){return _canMessage;}
         byte getByte(byte pos);
 
-        byte getCanId() { return canId; }
+
+        byte *getDataBuffer(){return data;};
+         void setDataBuffer(byte val[CANDATA_SIZE]);
+
+        byte *getHeaderBuffer(){return header;};
+        void setHeaderBuffer(byte val[HEADER_SIZE] );
+
+        byte getCanId();
         void setCanId(byte val) { canId = val; }
 
-        byte getOpc() { return opc; }
+        byte getOpc();
         void setOpc(byte val) {opc = val; }
 
         message_type getType() { return _type; }
@@ -81,8 +89,7 @@ class Message
         unsigned int getDeviceNumber();
         void setDeviceNumber(unsigned int val) { _deviceNumber = val; }
 
-        byte* getData() { return _data; }
-        void setData(byte val[CANDATA_SIZE]);
+
 
         byte getPriority() { return _priority;}
         void setPriority(byte val) { _priority = val; }
@@ -123,11 +130,15 @@ class Message
         byte getEventVar();
         void clear();
         void setDebug(bool val){debug=val;};
+        byte getCanMessageSize();
+        void setCanMessageSize(byte val) {canMsgSize=val;};
 
     protected:
     private:
         byte canId;                             /** The cand id*/
         byte opc;                               /** The opc*/
+        byte msgSize;                           /** The message size. It is the total number of bytes of message in the merg can message*/
+        byte canMsgSize;                        /** The amount of byte read from the can frame*/
         message_type _type;                     /** Holds the message type @see message_type*/
         unsigned int _eventNumber;              /** Event number 2 bytes*/
         unsigned int _nodeNumber;               /** Node Number 2 bytes*/
@@ -135,7 +146,8 @@ class Message
         unsigned int _decoder;                  /** Decoder address*/
         unsigned int _cv;                       /** Decoder variable*/
         byte _session;                          /** Loc session*/
-        byte _data[CANDATA_SIZE] ;              /** Internal buffer for can message.*/
+        byte data[CANDATA_SIZE] ;              /** Internal buffer for can message.*/
+        byte header[HEADER_SIZE] ;              /** Internal buffer for can message.*/
         byte _priority;                         /** Message priority*/
         unsigned int _numBytes;                 /** Message size*/
         bool _RTR;                              /** If the message is a RTR message*/

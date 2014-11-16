@@ -55,20 +55,20 @@ class MergMemoryManagement
         /** \brief Check if there is some learned event variables.*/
         bool hasEventVars(){return (numEventVars>0?true:false);};
 
-        bool hasEventVars(int eventIdx);
+        bool hasEventVars(unsigned int eventIdx);
 
         /** \brief Return the array of events.*/
         byte* getEvents(){return events;};
 
-        byte* getEvent(int index);
+        byte* getEvent(unsigned int index);
         /** \brief Return the array of node variables.*/
         byte* getVars(){return vars;};
 
-        byte getVar(int index);
+        byte getVar(unsigned int index);
 
         //byte* getEventVars();
-        byte getEventVar(int eventIdx,int index);
-        byte *getEventVars(int eventIdx,int &len);
+        byte getEventVar(unsigned int eventIdx,unsigned int index);
+        byte *getEventVars(unsigned int eventIdx,unsigned int &len);
         /** \brief Return the number of set node variables.*/
         byte getNumVars(){return numVars;};
         /** \brief Return the number of learned events.*/
@@ -83,7 +83,7 @@ class MergMemoryManagement
         unsigned int  eraseEvent(unsigned int nn,unsigned int ev);
 
 
-        void setVar(int index,byte val);
+        void setVar(unsigned int index,byte val);
         void setCanId(byte canId);
         void setNodeNumber(unsigned int val);                       //2 bytes representation
         void setDeviceNumber(unsigned int val);                     //2 bytes representation
@@ -124,6 +124,7 @@ class MergMemoryManagement
         void clear();
         void writeEvents();
         void newEventVar(unsigned int eventIdx,unsigned int varIdx,byte val);
+        unsigned int temp; //used to avoid new memory allocation
 
 
 };
