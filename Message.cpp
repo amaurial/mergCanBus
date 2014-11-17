@@ -81,7 +81,7 @@ byte Message::getCanId(){
 **/
 byte Message::getOpc()
 {
-    return data[0];
+    return opc;
 }
 /**
 * Set the can buffer.
@@ -131,24 +131,6 @@ void Message::clear(){
 
 }
 
-/**
-* Link a can message to a message
-*/
-unsigned int Message::setCanMessage(CANMessage *canMessage){
-    _canMessage=canMessage;
-    if (_canMessage->getRTR()){
-        setRTR();
-    }
-    if (getRTR()){
-        return 0;
-    }
-
-    setCanId(_canMessage->getCanId());
-    setOpc(_canMessage->getOpc());
-    setType(messages[getOpc()]);
-    setNumBytes(_canMessage->getDataSize());
-    return 0;
-}
 
 /**
 * Used to get the data fields directly
@@ -562,6 +544,76 @@ bool Message::hasThisData(byte opc, message_config_pos pos){
     }
 
 }
+
+/**
+* Check the if it is an ON message. Major event in CBUS.
+* @return True if is and On event, false if not
+*/
+bool Message::isAccOn(){
+
+    if (opc==OPC_ACON ||
+        opc==OPC_ACON1 ||
+        opc==OPC_ACON2 ||
+        opc==OPC_ACON3){
+        return true;
+    }
+        return false;
+
+}
+/**
+* Check the if it is an OFF message. Major event in CBUS.
+* @return True if is and OFF event, false if not
+*/
+bool Message::isAccOff(){
+
+    if (opc==OPC_ACOF ||
+        opc==OPC_ACOF1 ||
+        opc==OPC_ACOF2 ||
+        opc==OPC_ACOF3){
+        return true;
+    }
+        return false;
+}
+/**
+* Return how many bytes of extra data has the ON event.
+* @return The number of extra bytes depending on the message type. ACON,ACOF=0 ; ACON1,ACOF1=1; ACON2,ACOF2=2; ACON3,ACOF1=3
+*/
+byte Message::accExtraData(){
+
+    if (opc==OPC_ACON || opc==OPC_ACOF){
+        return 0;
+    }
+    if (opc==OPC_ACON1 || opc==OPC_ACOF1){
+        return 1;
+    }
+    if (opc==OPC_ACON2 || opc==OPC_ACOF2){
+        return 2;
+    }
+    if (opc==OPC_ACON3 || opc==OPC_ACOF3){
+        return 3;
+    }
+
+
+}
+
+/**
+* Get the extra data byte on an ON or OFF event.
+* @return Return the extra byte. The index is between 1 and 3
+*/
+byte Message::getAccExtraData(byte idx){
+
+    if (isAccOff()||isAccOn()){
+
+        if (idx==0 || idx>accExtraData()){
+            return 0;
+        }
+        else{
+            return data[4+idx];
+        }
+    }
+    return 0;
+}
+
 /**
 * Load the most commom fields for each message.
 * Used to make the search for fields faster.

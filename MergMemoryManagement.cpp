@@ -242,46 +242,23 @@ void MergMemoryManagement::read(){
     int pos=0;
     byte n=0;
     //read can id
-//    Serial.println("reading canid");
-//    Serial.println(CAN_ID_MEMPOS);
-//    delay(100);
+
     can_ID=EEPROM.read(CAN_ID_MEMPOS);
     //node number
-//    Serial.println("reading nn");
-//    Serial.println(NN_MEMPOS);
-//    delay(100);
     nn[0]=EEPROM.read(NN_MEMPOS);
     nn[1]=EEPROM.read(NN_MEMPOS+1);
     //node mode
-//    Serial.println("reading mode");
-//    Serial.println(NN_MODE_MEMPOS);
-//    delay(100);
     nodeMode=EEPROM.read(NN_MODE_MEMPOS);
     //device number
-//    Serial.println("reading dn");
-//    Serial.println(DN_MEMPOS);
-//    delay(100);
     dd[0]=EEPROM.read(DN_MEMPOS);
     dd[1]=EEPROM.read(DN_MEMPOS+1);
     //number of variables
-//    Serial.println("reading num vars");
-//    Serial.println(NUM_VARS_MEMPOS);
-//    delay(100);
     numVars=EEPROM.read(NUM_VARS_MEMPOS);
     //number of events
-//    Serial.println("reading num events");
-//    Serial.println(NUM_EVENTS_MEMPOS);
-//    delay(100);
     numEvents=EEPROM.read(NUM_EVENTS_MEMPOS);
     //number of events
-//    Serial.println("reading num events var");
-//    Serial.println(NUM_EVENTS_VARS_MEMPOS);
-//    delay(100);
     numEventVars=EEPROM.read(NUM_EVENTS_VARS_MEMPOS);
     //read the variables
-//    Serial.println("reading vars");
-//    Serial.println(VARS_MEMPOS);
-//    delay(100);
     if (numVars>0){
         pos=VARS_MEMPOS;
         while (n<numVars){
@@ -291,9 +268,6 @@ void MergMemoryManagement::read(){
         }
     }
     //read events
-//    Serial.println("reading events");
-//    Serial.println(numEvents);
-//    Serial.println(EVENTS_MEMPOS);
 
     if (numEvents>0){
         n=0;
@@ -311,9 +285,7 @@ void MergMemoryManagement::read(){
     }
      //read events vars
      //index the value in the array for fast search
-//     Serial.println("reading events vars");
-//     Serial.println(EVENTS_VARS_MEMPOS);
-//    delay(100);
+
      byte i=0;
      int positions[MAX_NUM_EVENTS];
      for (int j=0;j<MAX_NUM_EVENTS;j++){

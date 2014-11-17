@@ -813,6 +813,12 @@ byte MergCBUS::handleConfigMessages(){
                 sendERRMessage(CMDERR_INV_NV_IDX);
                 break;
             }
+
+            //get the device number in case of short event
+            if (nn==0){
+                nodeId.setDeviceNumber(ev);
+            }
+
             //send a WRACK back
             prepareMessage(OPC_WRACK);
             sendCanMessage();
@@ -894,6 +900,15 @@ byte MergCBUS::handleACCMessages(){
 * Has to handle the EXTC messages
 */
 byte MergCBUS::handleGeneralMessages(){
+
+    switch ((unsigned int) message.getOpc()){
+    case OPC_ARST:
+            //reset arduino
+            resetFunc();
+        break;
+
+    }
+
     if (userHandler!=0){
         return userHandler(&message,this);
     }
@@ -1175,4 +1190,33 @@ bool MergCBUS::isSelfEnumMode(){
 
     if (state_mode==SELF_ENUMERATION){return true;}
     return false;
+}
+/**
+* Check the if it is an ON message. Major event in CBUS.
+* @return True if is and On event, false if not
+*/
+bool MergCBUS::isAccOn(){
+    return message.isAccOn();
+}
+/**
+* Check the if it is an OFF message. Major event in CBUS.
+* @return True if is and OFF event, false if not
+*/
+bool MergCBUS::isAccOff(){
+    return message.isAccOff();
+}
+/**
+* Return how many bytes of extra data has the ON event.
+* @return The number of extra bytes depending on the message type. ACON,ACOF=0 ; ACON1,ACOF1=1; ACON2,ACOF2=2; ACON3,ACOF1=3
+*/
+byte MergCBUS::accExtraData(){
+    return message.accExtraData();
+
+}
+/**
+* Get the extra data byte on an ON or OFF event.
+* @return Return the extra byte. The index is between 1 and 3
+*/
+byte MergCBUS::getAccExtraData(byte idx){
+    return message.getAccExtraData(idx);
 }

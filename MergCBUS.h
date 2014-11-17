@@ -10,7 +10,7 @@
 #include <EEPROM.h>
 #include <SPI.h>
 
-#include "CANMessage.h"
+//#include "CANMessage.h"
 #include "Message.h"
 #include "MergNodeIdentification.h"
 #include "mcp_can.h"
@@ -77,7 +77,7 @@ class MergCBUS
         * @return Pointer to a @see MergNodeIdentification
         */
         MergNodeIdentification *getNodeId(){return &nodeId;};
-        bool sendCanMessage(CANMessage *msg);
+
         bool initCanBus(unsigned int port,unsigned int rate, unsigned int retries,unsigned int retryIntervalMilliseconds);
         /**\brief Set the user function to handle other messages.*/
         void setUserHandlerFunction(userHandlerType f) {userHandler=f;};
@@ -109,6 +109,13 @@ class MergCBUS
         * @param newstate One of states @see state
         */
         void setNodeState(state newstate){ state_mode=newstate;};
+
+        bool isAccOn();
+        bool isAccOff();
+        byte accExtraData();
+        byte getAccExtraData(byte idx);//idx starts at 1
+
+
     protected:
     private:
         //let the bus level lib private
@@ -159,7 +166,8 @@ class MergCBUS
         byte yellowLed;
         byte ledGreenState;
         byte ledYellowState;
-        //byte *candata;
+
+        void(* resetFunc) (void) = 0;           //declare reset function @ address 0
 };
 
 #endif // MESSAGEPARSER_H

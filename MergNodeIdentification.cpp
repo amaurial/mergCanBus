@@ -62,3 +62,73 @@ byte MergNodeIdentification::getParameter(byte idx){
     }
     return 0;
 }
+
+void MergNodeIdentification::setProducerNode(bool val){
+    if (val){
+        bitSet(flags,1);
+    }else {
+        bitClear(flags,1)
+    }
+}
+bool MergNodeIdentification::isProducerNode(){
+    if (bitRead(flags,1)==1){
+        return true;
+    } else{
+        return false;
+    }
+
+}
+
+void MergNodeIdentification::setConsumerNode(bool val){
+    if (val){
+        bitSet(flags,0);
+    }else {
+        bitClear(flags,0)
+    }
+}
+bool MergNodeIdentification::isConsumerNode(){
+    if (bitRead(flags,0)==0){
+        return true;
+    } else{
+        return false;
+    }
+}
+
+void MergNodeIdentification::setSlimMode(){
+    bitClear(flags,2);
+}
+void MergNodeIdentification::setFlimMode(){
+    bitSet(flags,2);
+}
+bool MergNodeIdentification::isSlimMode(){
+    if (bitRead(flags,2)==0){
+        return true;
+    } else{
+        return false;
+    }
+
+}
+bool MergNodeIdentification::isFlimMode(){
+    if (bitRead(flags,2)==1){
+        return true;
+    } else{
+        return false;
+    }
+}
+
+void MergNodeIdentification::setSuportBootLoading(bool val){
+    if (val){
+        bitSet(flags,3);
+    }else {
+        bitClear(flags,3)
+    }
+
+}
+bool MergNodeIdentification::suportBootLoading(){
+    if (bitRead(flags,3)==1){
+        return true;
+    } else{
+        return false;
+    }
+}
+

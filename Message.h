@@ -32,6 +32,8 @@ enum message_type {
 
 /**
 * Position on the filter for messages for the most common fields.
+* Each type represents the bit position in an 16 bits integer. It means it can hold 16 fields por each message.
+* The standard is to set just the information wanted. It is used to check if there is a specific field in a message.
 */
 enum message_config_pos {
                         NODE_NUMBER=0,      /**< Node number*/
@@ -60,8 +62,7 @@ class Message
                  byte data [CANDATA_SIZE] ,
                  unsigned int priority);
         virtual ~Message();
-        unsigned int setCanMessage(CANMessage *canMessage);
-        CANMessage *getCanMessage(){return _canMessage;}
+
         byte getByte(byte pos);
 
 
@@ -133,6 +134,12 @@ class Message
         byte getCanMessageSize();
         void setCanMessageSize(byte val) {canMsgSize=val;};
 
+        bool isAccOn();
+        bool isAccOff();
+        byte accExtraData();
+        byte getAccExtraData(byte idx);//idx starts at 1
+
+
     protected:
     private:
         byte canId;                             /** The cand id*/
@@ -146,14 +153,12 @@ class Message
         unsigned int _decoder;                  /** Decoder address*/
         unsigned int _cv;                       /** Decoder variable*/
         byte _session;                          /** Loc session*/
-        byte data[CANDATA_SIZE] ;              /** Internal buffer for can message.*/
+        byte data[CANDATA_SIZE] ;               /** Internal buffer for can message.*/
         byte header[HEADER_SIZE] ;              /** Internal buffer for can message.*/
         byte _priority;                         /** Message priority*/
         unsigned int _numBytes;                 /** Message size*/
         bool _RTR;                              /** If the message is a RTR message*/
-        CANMessage* _canMessage;                /** The transport can message*/
         message_type messages[MSGSIZE];         /** Holds the message type for each opc. Make an index of message types. Opc is the array index*/
-
         unsigned int message_params[MSGSIZE];   /** Use each bit to hold a true false information about the message. Used to make the search faster.*/
         bool hasThisData(byte opc, message_config_pos pos);/** Check if a field is present in a message.*/
         void loadMessageConfig();               /** Load standard message config.*/

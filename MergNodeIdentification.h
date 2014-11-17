@@ -52,6 +52,21 @@ class MergNodeIdentification
 
         byte getParameter(byte inx);
         byte getNumberOfParameters(){return 8;};
+
+        void setProducerNode(bool val);
+        bool isProducerNode();
+
+        void setConsumerNode(bool val);
+        bool isConsumerNode();
+
+        void setSlimMode();
+        void setFlimMode();
+        bool isSlimMode();
+        bool isFlimMode();
+
+        void setSuportBootLoading(bool val);
+        bool suportBootLoading();
+
     protected:
     private:
         byte canID;
