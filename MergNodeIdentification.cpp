@@ -67,7 +67,7 @@ void MergNodeIdentification::setProducerNode(bool val){
     if (val){
         bitSet(flags,1);
     }else {
-        bitClear(flags,1)
+        bitClear(flags,1);
     }
 }
 bool MergNodeIdentification::isProducerNode(){
@@ -83,7 +83,7 @@ void MergNodeIdentification::setConsumerNode(bool val){
     if (val){
         bitSet(flags,0);
     }else {
-        bitClear(flags,0)
+        bitClear(flags,0);
     }
 }
 bool MergNodeIdentification::isConsumerNode(){
@@ -120,7 +120,7 @@ void MergNodeIdentification::setSuportBootLoading(bool val){
     if (val){
         bitSet(flags,3);
     }else {
-        bitClear(flags,3)
+        bitClear(flags,3);
     }
 
 }

@@ -9,6 +9,7 @@
 #include <arduino.h>
 #include <EEPROM.h>
 #include <SPI.h>
+#include <avr/wdt.h>
 
 //#include "CANMessage.h"
 #include "Message.h"
@@ -16,6 +17,9 @@
 #include "mcp_can.h"
 #include "MergMemoryManagement.h"
 
+
+//#define Reset_AVR() wdt_enable(WDTO_30MS); while(1) {} //reset
+#define Reset_AVR() asm volatile ("  jmp 0");
 
 
 
@@ -59,7 +63,7 @@ class MergCBUS
 {
     public:
 
-        typedef unsigned int (*userHandlerType)(Message*,MergCBUS*);/**< This is the user function for processing other messages. It receives a reference to a Message and a reference to MergCBUS.*/
+        typedef void (*userHandlerType)(Message*,MergCBUS*);/**< This is the user function for processing other messages. It receives a reference to a Message and a reference to MergCBUS.*/
         MergCBUS();
         virtual ~MergCBUS();
         /**\brief Set to skip processing certain message.
@@ -88,13 +92,13 @@ class MergCBUS
         void sendERRMessage(byte code);
         bool hasThisEvent();
         bool readCanBus();
-        byte readCanBus(byte *msg,byte *header);
+        bool readCanBus(byte *msg,byte *header,byte *length);
         void printSentMessage();
         void printReceivedMessage();
         /**\brief Set the node to slim mode.*/
-        void setSlimMode(){node_mode=MTYP_SLIM;};
+        void setSlimMode();
         /**\brief Set the node to flim mode.*/
-        void setFlimMode(){node_mode=MTYP_FLIM;};
+        void setFlimMode();
         /**\brief Get the node mode.*/
         byte getNodeMode(){return node_mode;};
         void initMemory();
@@ -114,6 +118,7 @@ class MergCBUS
         bool isAccOff();
         byte accExtraData();
         byte getAccExtraData(byte idx);//idx starts at 1
+        void saveNodeFlags();
 
 
     protected:
@@ -166,8 +171,7 @@ class MergCBUS
         byte yellowLed;
         byte ledGreenState;
         byte ledYellowState;
-
-        void(* resetFunc) (void) = 0;           //declare reset function @ address 0
+        void(* resetFunc) (void);           //declare reset function @ address 0
 };
 
 #endif // MESSAGEPARSER_H

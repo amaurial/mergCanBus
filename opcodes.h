@@ -84,6 +84,7 @@ Extracted from the Developer’s Guide for CBUS (Version 5g)
 #define OPC_RQDDS 0x5B // Request short data frame
 #define OPC_BOOT 0x5C // Put node into boot mode
 #define OPC_ENUM 0x5D // Force self enumeration for CAN_ID
+#define OPC_RST  0x5E // Reset node
 #define OPC_EXTC1 0x5F // Extended opcode with 1 data byte
 // Packets with 3 data bytes
 #define OPC_DFUN 0x60 // Set engine functions

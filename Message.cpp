@@ -13,6 +13,7 @@ Message::Message()
     clear();
     loadMessageType();
     loadMessageConfig();
+
 }
 
 /**
@@ -950,6 +951,7 @@ void Message::loadMessageType()
     messages[OPC_RQDDS]=ACCESSORY;
     messages[OPC_BOOT]=CONFIG;
     messages[OPC_ENUM]=CONFIG;
+    messages[OPC_RST]=GENERAL;
     messages[OPC_EXTC1]=GENERAL;
     messages[OPC_DFUN]=DCC;
     messages[OPC_GLOC]=DCC;

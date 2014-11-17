@@ -100,8 +100,8 @@ class MergMemoryManagement
         unsigned int getEventIndex(byte ev1,byte ev2,byte ev3,byte ev4);
         unsigned int getEventIndex(unsigned int nn,unsigned int ev);
 
-        byte getNodeMode();
-        void setNodeMode(byte mode);
+        byte getNodeFlag();
+        void setNodeFlag(byte mode);
 
         void setUpNewMemory();
         void dumpMemory();

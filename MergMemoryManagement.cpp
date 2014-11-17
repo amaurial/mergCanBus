@@ -646,14 +646,14 @@ bool MergMemoryManagement::hasEventVars(unsigned int eventIdx){
 * Get the node mode retrieved from the flags.
 * @return 0 if SLIM, 1 if FLIM
 */
-byte MergMemoryManagement::getNodeMode(){
+byte MergMemoryManagement::getNodeFlag(){
     return nodeMode;
 }
 /**\brief
 * Set the node mode retrieved from the flags.
 * @param mode 0 if SLIM, 1 if FLIM
 */
-void MergMemoryManagement::setNodeMode(byte mode){
+void MergMemoryManagement::setNodeFlag(byte mode){
     nodeMode=mode;
     EEPROM.write(NN_MODE_MEMPOS,nodeMode);
 }

@@ -821,15 +821,18 @@ INT8U MCP_CAN::readMsg()
 *********************************************************************************************************/
 INT8U MCP_CAN::readMsgBuf(INT8U *len, INT8U* buf)
 {
-    readMsg();
-    *len = m_nDlc;
-    for(int i = 0; i<m_nDlc; i++)
-    {
-      buf[i] = m_nDta[i];
-      //Serial.print(buf[i],HEX);
+    if (CAN_OK==readMsg()){
+        *len = m_nDlc;
+        for(int i = 0; i<m_nDlc; i++)
+        {
+          buf[i] = m_nDta[i];
+          //Serial.print(buf[i],HEX);
+        }
+        //Serial.println();
+        return CAN_OK;
     }
-    //Serial.println();
-    return CAN_OK;
+    return CAN_NOMSG;
+
 }
 
 /*********************************************************************************************************

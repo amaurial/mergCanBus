@@ -26,6 +26,7 @@ MergCBUS::MergCBUS()
     ledGreenState=HIGH;
     ledYellowState=LOW;
     userHandler=0;
+    resetFunc=0;
     //candata=canMessage.getData();
     //message.setCanMessage(&canMessage);
 }
@@ -47,6 +48,12 @@ void MergCBUS::loadMemory(){
     nodeId.setNodeNumber(memory.getNodeNumber());
     nodeId.setDeviceNumber(memory.getDeviceNumber());
     nodeId.setCanID(memory.getCanId());
+    nodeId.setFlags(memory.getNodeFlag());
+    if (nodeId.isSlimMode()){
+        node_mode=MTYP_SLIM;
+    }else{
+        node_mode=MTYP_FLIM;
+    }
 }
 
 /** \brief
@@ -145,7 +152,7 @@ unsigned int MergCBUS::run(){
         }
     }
 
-    if (!readCanBus()){
+    if (readCanBus()==false){
         //nothing to do
         return NO_MESSAGE;
     }
@@ -185,7 +192,9 @@ unsigned int MergCBUS::run(){
     //the state can be a message or manually
 
     if (state_mode==SELF_ENUMERATION){
-        if (message.getMessageSize()==0){
+        Serial.print("other msg size:");
+        Serial.println(message.getCanMessageSize());
+        if (message.getCanMessageSize()==0){
 
             //if (message.getCanId()!=nodeId.getCanID()){
                 if (DEBUG){
@@ -239,12 +248,14 @@ unsigned int MergCBUS::run(){
 * @return true if a message in the can bus.
 */
 bool MergCBUS::readCanBus(){
-    byte len;
+    byte len=0;
+    bool resp;
     byte bufIdxdata=115;
     byte bufIdxhead=110;
-    len=readCanBus(&buffer[bufIdxdata],&buffer[bufIdxhead]);
-    if (len>0){
-       message.clear();
+    resp=readCanBus(&buffer[bufIdxdata],&buffer[bufIdxhead],&len);
+    if (resp){
+        message.clear();
+        message.setCanMessageSize(len);
         message.setDataBuffer(&buffer[bufIdxdata]);
         if (Can.isRTMMessage()==0){
             //Serial.println("readCanBus - unsetRTM");
@@ -254,34 +265,9 @@ bool MergCBUS::readCanBus(){
             //Serial.println("readCanBus - setRTM");
             message.setRTR();
         }
-
-        /*
-        Serial.print("readCanBus - get canMessage header:");
-        for (int i=0;i<4;i++){
-            Serial.print(buffer[bufIdx+i],HEX);
-            Serial.print(" ");
-        }
-        */
         message.setHeaderBuffer(&buffer[bufIdxhead]);
-        /*
-        Serial.print("\nreadCanBus get CAN header:");
-        for (int i=0;i<4;i++){
-            Serial.print(message.getHeaderBuffer()[i],HEX);
-            Serial.print(" ");
-        }
-
-        Serial.println("\nreadCanBus- set message size");
-        */
-        message.setCanMessageSize(len);
-        /*
-        if (DEBUG){
-            printReceivedMessage();
-        }
-        */
-        return true;
     }
-
-    return false;
+    return resp;
 }
 
 
@@ -289,43 +275,18 @@ bool MergCBUS::readCanBus(){
 * Read the can bus and return the buffer.
 * @return number of bytes read;
 */
-byte MergCBUS::readCanBus(byte *data,byte *header){
-    byte len,resp;
-    len=0;
+bool MergCBUS::readCanBus(byte *data,byte *header,byte *length){
+    byte resp;
     if(CAN_MSGAVAIL == Can.checkReceive()) // check if data coming
     {
-        resp=Can.readMsgBuf(&len,data);
-        /*
-        if (Can.isRTMMessage()==0){
-                Serial.println("readCanBus - unsetRTM");
+        resp=Can.readMsgBuf(length,data);
+        if (resp==CAN_OK){
+            Can.getCanHeader(header);
+            return true;
         }
-        else{
-            Serial.println("readCanBus - setRTM");
-        }
-
-        Serial.print("readCanBus - get canMessage header:");
-        */
-        Can.getCanHeader(header);
-        /*
-        Serial.print("\nreadCanBus get CAN header:");
-        for (int i=0;i<4;i++){
-            Serial.print(header[i],HEX);
-            Serial.print(" ");
-        }
-
-        if (DEBUG){
-            Serial.print ("Message ");
-            Serial.print (len);
-            Serial.print (" bytes:");
-            for (int i=0;i<len;i++){
-                Serial.print (data[i],HEX);
-                Serial.print ("\t");
-            }
-            Serial.println();
-        }
-        */
+        return false;
     }
-    return len;
+    return false;
 }
 
 /** \brief
@@ -890,7 +851,7 @@ byte MergCBUS::handleConfigMessages(){
 */
 byte MergCBUS::handleACCMessages(){
     if (userHandler!=0){
-        return userHandler(&message,this);
+        userHandler(&message,this);
     }
     return OK;
 }
@@ -904,13 +865,15 @@ byte MergCBUS::handleGeneralMessages(){
     switch ((unsigned int) message.getOpc()){
     case OPC_ARST:
             //reset arduino
-            resetFunc();
+            Reset_AVR();
         break;
-
+    case OPC_RST:
+            Reset_AVR();
+        break;
     }
 
     if (userHandler!=0){
-        return userHandler(&message,this);
+        userHandler(&message,this);
     }
     return OK;
 }
@@ -1160,27 +1123,32 @@ void MergCBUS::controlLeds(){
         return;
     }
 
-    if (getNodeMode()==0){
-        //LEARN
-        digitalWrite(greenLed,HIGH);
-        digitalWrite(yellowLed,LOW);
+    if (state_mode==SETUP){
+        delay(100);
+        if (ledYellowState==HIGH){
+            digitalWrite(yellowLed,LOW);
+            ledYellowState=LOW;
+        }else{
+            digitalWrite(yellowLed,HIGH);
+            ledYellowState=HIGH;
+        }
     }
     else{
-        digitalWrite(greenLed,LOW);
-        if (state_mode==SETUP){
-            delay(50);
-            if (ledYellowState==HIGH){
-                digitalWrite(yellowLed,LOW);
-                ledYellowState=LOW;
-            }else{
-                digitalWrite(yellowLed,HIGH);
-                ledYellowState=HIGH;
-            }
-        }
-        else{
+        if(node_mode==MTYP_FLIM){
+            digitalWrite(greenLed,LOW);
             digitalWrite(yellowLed,HIGH);
         }
+        else{
+            digitalWrite(greenLed,HIGH);
+            digitalWrite(yellowLed,LOW);
+        }
     }
+
+
+
+
+
+
 }
 
 /**\brief
@@ -1219,4 +1187,20 @@ byte MergCBUS::accExtraData(){
 */
 byte MergCBUS::getAccExtraData(byte idx){
     return message.getAccExtraData(idx);
+}
+
+void MergCBUS::setSlimMode(){
+    node_mode=MTYP_SLIM;
+    nodeId.setSlimMode();
+    memory.setNodeFlag(nodeId.getFlags());
+}
+
+void MergCBUS::setFlimMode(){
+    node_mode=MTYP_FLIM;
+    nodeId.setFlimMode();
+    memory.setNodeFlag(nodeId.getFlags());
+}
+
+void MergCBUS::saveNodeFlags(){
+    memory.setNodeFlag(nodeId.getFlags());
 }
