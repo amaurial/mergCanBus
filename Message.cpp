@@ -24,7 +24,7 @@ Message::Message(unsigned int canId,
                  unsigned int opc,
                  unsigned int nodeNumber,
                  unsigned int eventNumber,
-                 byte data [DATA_SIZE] ,
+                 byte data [CANDATA_SIZE] ,
                  unsigned int priority)
 {
     //ctor
@@ -35,7 +35,7 @@ Message::Message(unsigned int canId,
     setEventNumber(eventNumber);
     setPriority(priority);
     int i=0;
-    for (i=0;i<DATA_SIZE;i++){data[i]=data[i];}
+    for (i=0;i<CANDATA_SIZE;i++){data[i]=data[i];}
 }
 
 /**
@@ -88,10 +88,10 @@ byte Message::getOpc()
 * Set the can buffer.
 * @param val A 8 bytes array.
 */
-void Message::setDataBuffer(byte val[DATA_SIZE] )
+void Message::setDataBuffer(byte val[CANDATA_SIZE] )
 {
     int i=0;
-    for (i=0;i<DATA_SIZE;i++){data[i]=val[i];}
+    for (i=0;i<CANDATA_SIZE;i++){data[i]=val[i];}
     setOpc(data[0]);
     setType(messages[getOpc()]);
 }
@@ -594,7 +594,7 @@ byte Message::accExtraData(){
         return 3;
     }
 
-
+    return 0;
 }
 
 /**

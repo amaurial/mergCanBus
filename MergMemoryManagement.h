@@ -32,14 +32,15 @@ struct merg_event_vars{
 #define MERG_MEMPOS 0                                                  /** Position in memory. has the value 0xaa to mark it is from this mod       */
 #define CAN_ID_MEMPOS MERG_MEMPOS+1                                    /**Position in memory.can id has 1 byte                                    */
 #define NN_MEMPOS CAN_ID_MEMPOS+1                                      /**Position in memory.Node mumber has 2 bytes                               */
-#define NN_MODE_MEMPOS NN_MEMPOS+1                                     /**Position in memory.node mode SLIM=0 or FLIM=1                          */
-#define DN_MEMPOS NN_MODE_MEMPOS+1                                     /**Position in memory.Device number has 2 bytes                            */
-#define NUM_VARS_MEMPOS DN_MEMPOS+1+MAX_NUM_DEVICE_NUMBERS*NNDD_SIZE   /**Position in memory.amount of variables for this module- 1 byte          */
+#define FLAGS_MEMPOS NN_MEMPOS+NNDD_SIZE                           /**Position in memory.flags                          */
+#define DN_MEMPOS FLAGS_MEMPOS+1                                     /**Position in memory.Device number has 2 bytes                            */
+#define NUM_VARS_MEMPOS DN_MEMPOS+NNDD_SIZE                          /**Position in memory.amount of variables for this module- 1 byte          */
+//#define NUM_VARS_MEMPOS DN_MEMPOS+1+MAX_NUM_DEVICE_NUMBERS*NNDD_SIZE   /**Position in memory.amount of variables for this module- 1 byte          */
 #define NUM_EVENTS_MEMPOS NUM_VARS_MEMPOS+1                            /**Position in memory.amount of learned events                             */
 #define NUM_EVENTS_VARS_MEMPOS NUM_EVENTS_MEMPOS+1                     /**Position in memory.amount of learned events variables                   */
 #define VARS_MEMPOS NUM_EVENTS_VARS_MEMPOS+1                           /**Position in memory.start of variables written for this module           */
-#define EVENTS_MEMPOS VARS_MEMPOS+1+MAX_AVAIL_VARS                     /**Position in memory.                                                     */
-#define EVENTS_VARS_MEMPOS EVENTS_MEMPOS+1+MAX_NUM_EVENTS*EVENT_SIZE   /**Position in memory.                                                    */
+#define EVENTS_MEMPOS VARS_MEMPOS+MAX_AVAIL_VARS                     /**Position in memory.                                                     */
+#define EVENTS_VARS_MEMPOS EVENTS_MEMPOS+MAX_NUM_EVENTS*EVENT_SIZE   /**Position in memory.                                                    */
 
 /**
 * Class that handles the EEPROM and maintains the data in a RAM memory.
@@ -122,7 +123,7 @@ class MergMemoryManagement
         merg_event_vars eventVars[MAX_NUM_EVENTS_VAR];
         byte return_eventVars[MAX_NUM_EVENTS_VAR];                  //used to return all the variables of an event
         byte can_ID;
-        byte dds[NNDD_SIZE*MAX_NUM_DEVICE_NUMBERS];                 //array of device numbers
+        byte dns[NNDD_SIZE*MAX_NUM_DEVICE_NUMBERS];                 //array of device numbers
         byte nn[NNDD_SIZE];
         byte dn[NNDD_SIZE];
         byte numVars;
@@ -133,6 +134,7 @@ class MergMemoryManagement
         byte flags;
         void clear();
         void writeEvents();
+        void writeEventsVars();
         void newEventVar(unsigned int eventIdx,unsigned int varIdx,byte val);
         unsigned int temp;                                          //used to avoid new memory allocation
 

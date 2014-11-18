@@ -210,6 +210,10 @@ unsigned int MergCBUS::run(){
         return OK;
     }
 
+    if (state_mode==LEARN && node_mode==MTYP_SLIM){
+        learnEvent();
+        return OK;
+    }
 
     //treat each message individually to interpret the code
 
@@ -739,57 +743,10 @@ byte MergCBUS::handleConfigMessages(){
     case OPC_EVLRN:
         //learn event
         if (state_mode==LEARN){
-
-            //TODO: suport device number mode
-
-            if (DEBUG){
-                Serial.println("Learning event.");
-                //printSentMessage();
-            }
-
-            ev=message.getEventNumber();
-            nn=message.getNodeNumber();
-            ind=message.getEventVarIndex();
-            val=message.getEventVar();
-
-            //save event and get the index
-            buffer[0]=highByte(nn);
-            buffer[1]=lowByte(nn);
-            buffer[2]=highByte(ev);
-            buffer[3]=lowByte(ev);
-            evidx=memory.setEvent(buffer);
-
-            if (evidx>MAX_NUM_EVENTS){
-                //send a message error
-                sendERRMessage(CMDERR_TOO_MANY_EVENTS);
-                break;
-            }
-
-            //save the parameter
-            //the CBUS index start with 1
-            resp=memory.setEventVar(evidx,ind-1,val);
-
-            if (resp!=message.getEventVarIndex()){
-                //send a message error
-                sendERRMessage(CMDERR_INV_NV_IDX);
-                break;
-            }
-
-            //get the device number in case of short event
-            //TODO:not clear it this is the model
-            if (nn==0){
-                nodeId.setDeviceNumber(ev);
-            }
-
-            //send a WRACK back
-            prepareMessage(OPC_WRACK);
-            sendCanMessage();
-
+            learnEvent();
         }else{
             sendERRMessage(CMDERR_NOT_LRN);
-            break;
         }
-
         break;
 
     case OPC_EVLRNI:
@@ -1204,4 +1161,53 @@ void MergCBUS::setFlimMode(){
 
 void MergCBUS::saveNodeFlags(){
     memory.setNodeFlag(nodeId.getFlags());
+}
+
+void MergCBUS::learnEvent(){
+    //TODO: suport device number mode
+    unsigned int ev,nn,resp;
+    byte ind,val,evidx;
+        if (DEBUG){
+            Serial.println("Learning event.");
+            //printSentMessage();
+        }
+
+        ev=message.getEventNumber();
+        nn=message.getNodeNumber();
+        ind=message.getEventVarIndex();
+        val=message.getEventVar();
+
+        //save event and get the index
+        buffer[0]=highByte(nn);
+        buffer[1]=lowByte(nn);
+        buffer[2]=highByte(ev);
+        buffer[3]=lowByte(ev);
+        evidx=memory.setEvent(buffer);
+
+        if (evidx>MAX_NUM_EVENTS){
+            //send a message error
+            sendERRMessage(CMDERR_TOO_MANY_EVENTS);
+            return;
+        }
+
+        //save the parameter
+        //the CBUS index start with 1
+        resp=memory.setEventVar(evidx,ind-1,val);
+
+        if (resp!=message.getEventVarIndex()){
+            //send a message error
+            sendERRMessage(CMDERR_INV_NV_IDX);
+            return;
+        }
+
+        //get the device number in case of short event
+        //TODO:not clear it this is the model
+        if (nn==0){
+            nodeId.setDeviceNumber(ev);
+        }
+
+        //send a WRACK back
+        prepareMessage(OPC_WRACK);
+        sendCanMessage();
+
 }

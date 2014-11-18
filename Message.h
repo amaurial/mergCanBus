@@ -10,8 +10,7 @@
 //#define bitSet(val,pos){return;};
 //#define bitClear(val,pos){return;};
 
-
-#include "CANMessage.h"
+#include <arduino.h>
 #include "opcodes.h"
 
 
