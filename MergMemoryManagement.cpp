@@ -45,8 +45,8 @@ void MergMemoryManagement::clear(){
     can_ID=0;
     nn[0]=0;
     nn[1]=0;
-    dd[0]=0;
-    dd[1]=0;
+    dn[0]=0;
+    dn[1]=0;
     numVars=0;
     numEvents=0;
     numEventVars=0;
@@ -99,6 +99,7 @@ unsigned int MergMemoryManagement::setEvent(byte *event){
         //event does not exist
         //get the next index
         evidx=numEvents+1;
+        //save the event
         return setEvent(event,evidx);
     }
    return evidx;
@@ -250,8 +251,8 @@ void MergMemoryManagement::read(){
     //node mode
     nodeMode=EEPROM.read(NN_MODE_MEMPOS);
     //device number
-    dd[0]=EEPROM.read(DN_MEMPOS);
-    dd[1]=EEPROM.read(DN_MEMPOS+1);
+    dn[0]=EEPROM.read(DN_MEMPOS);
+    dn[1]=EEPROM.read(DN_MEMPOS+1);
     //number of variables
     numVars=EEPROM.read(NUM_VARS_MEMPOS);
     //number of events
@@ -326,8 +327,8 @@ void MergMemoryManagement::write(){
     //node mode
     EEPROM.write(NN_MODE_MEMPOS,nodeMode);
     //device number
-    EEPROM.write(DN_MEMPOS,dd[0]);
-    EEPROM.write(DN_MEMPOS+1,dd[1]);
+    EEPROM.write(DN_MEMPOS,dn[0]);
+    EEPROM.write(DN_MEMPOS+1,dn[1]);
     //number of variables
     //EEPROM.write(NUM_VARS_MEMPOS,numVars);
     //number of events
@@ -601,10 +602,10 @@ void MergMemoryManagement::setNodeNumber(unsigned int val){
 * @param val The node number (16 bit integer).
 */
 void MergMemoryManagement::setDeviceNumber(unsigned int val){
-    dd[0]=highByte(val);
-    dd[1]=lowByte(val);
-    EEPROM.write(DN_MEMPOS,dd[0]);
-    EEPROM.write(DN_MEMPOS+1,dd[1]);
+    dn[0]=highByte(val);
+    dn[1]=lowByte(val);
+    EEPROM.write(DN_MEMPOS,dn[0]);
+    EEPROM.write(DN_MEMPOS+1,dn[1]);
     return;
 }
 
@@ -625,7 +626,7 @@ unsigned int MergMemoryManagement::getNodeNumber(){
 * @return The node number (16 bit integer).
 */
 unsigned int MergMemoryManagement::getDeviceNumber(){
-    temp=((unsigned int)word(dd[0],dd[1]));
+    temp=((unsigned int)word(dn[0],dn[1]));
     return temp;
 }
 
@@ -647,15 +648,15 @@ bool MergMemoryManagement::hasEventVars(unsigned int eventIdx){
 * @return 0 if SLIM, 1 if FLIM
 */
 byte MergMemoryManagement::getNodeFlag(){
-    return nodeMode;
+    return flags;
 }
 /**\brief
 * Set the node mode retrieved from the flags.
 * @param mode 0 if SLIM, 1 if FLIM
 */
-void MergMemoryManagement::setNodeFlag(byte mode){
-    nodeMode=mode;
-    EEPROM.write(NN_MODE_MEMPOS,nodeMode);
+void MergMemoryManagement::setNodeFlag(byte val){
+    flags=val;
+    EEPROM.write(NN_MODE_MEMPOS,flags);
 }
 /**\brief
 * Print all memory to serial. Used for debug.
@@ -674,8 +675,8 @@ void MergMemoryManagement::dumpMemory(){
     Serial.print(nn[0],HEX);
     Serial.print(nn[1],HEX);
     Serial.print("\nDN:");
-    Serial.print(dd[0],HEX);
-    Serial.print(dd[1],HEX);
+    Serial.print(dn[0],HEX);
+    Serial.print(dn[1],HEX);
     Serial.print("\nNODE MODE:");
     Serial.print(nodeMode,HEX);
     Serial.print("\nNUM EVENTS:");

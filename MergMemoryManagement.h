@@ -19,11 +19,13 @@ struct merg_event_vars{
     byte value;/**< value of the variable */
 };
 
-#define MAX_AVAIL_VARS 25           /** Number of node variables. Each has 1 byte                           */
+#define MAX_AVAIL_VARS 20           /** Number of node variables. Each has 1 byte                           */
 #define MAX_NUM_EVENTS 30           /** Number of supported events. Each event has 4 bytes                  */
 #define MAX_NUM_EVENTS_VAR 75       /** Total amount of events variables. Each var has 2 bytes. first is the index, second is the value        */
+#define MAX_NUM_DEVICE_NUMBERS 16   /** The total number of device number if it is a producer node. Each input from the producer can be a device number. So this is the same as the total number of inputs*/
 #define EVENT_SIZE 4                /** Event size.                                                        */
 #define EVENT_VARS_SIZE 2           /** Size for events vars. Each var has 2 bytes. first is the index, second is the value        */
+#define NNDD_SIZE 2                 /** Size of a node number or device number */
 
 #define FAILED_INDEX 255            /** Value returned when vars or events vars not found                             */
 
@@ -32,7 +34,7 @@ struct merg_event_vars{
 #define NN_MEMPOS CAN_ID_MEMPOS+1                                      /**Position in memory.Node mumber has 2 bytes                               */
 #define NN_MODE_MEMPOS NN_MEMPOS+1                                     /**Position in memory.node mode SLIM=0 or FLIM=1                          */
 #define DN_MEMPOS NN_MODE_MEMPOS+1                                     /**Position in memory.Device number has 2 bytes                            */
-#define NUM_VARS_MEMPOS DN_MEMPOS+1                                    /**Position in memory.amount of variables for this module- 1 byte          */
+#define NUM_VARS_MEMPOS DN_MEMPOS+1+MAX_NUM_DEVICE_NUMBERS*NNDD_SIZE   /**Position in memory.amount of variables for this module- 1 byte          */
 #define NUM_EVENTS_MEMPOS NUM_VARS_MEMPOS+1                            /**Position in memory.amount of learned events                             */
 #define NUM_EVENTS_VARS_MEMPOS NUM_EVENTS_MEMPOS+1                     /**Position in memory.amount of learned events variables                   */
 #define VARS_MEMPOS NUM_EVENTS_VARS_MEMPOS+1                           /**Position in memory.start of variables written for this module           */
@@ -88,6 +90,12 @@ class MergMemoryManagement
         void setNodeNumber(unsigned int val);                       //2 bytes representation
         void setDeviceNumber(unsigned int val);                     //2 bytes representation
 
+        //TODO:implement
+        void setDeviceNumber(unsigned int val,byte port);           //2 bytes representation for dn
+        void getDeviceNumber(byte port);                             //2 bytes representation
+        byte getNumDeviceNumber();                                  //2 bytes representation
+
+
         byte getCanId(){return can_ID;};
         unsigned int getNodeNumber();
         unsigned int getDeviceNumber();
@@ -101,7 +109,7 @@ class MergMemoryManagement
         unsigned int getEventIndex(unsigned int nn,unsigned int ev);
 
         byte getNodeFlag();
-        void setNodeFlag(byte mode);
+        void setNodeFlag(byte val);
 
         void setUpNewMemory();
         void dumpMemory();
@@ -114,17 +122,19 @@ class MergMemoryManagement
         merg_event_vars eventVars[MAX_NUM_EVENTS_VAR];
         byte return_eventVars[MAX_NUM_EVENTS_VAR];                  //used to return all the variables of an event
         byte can_ID;
-        byte nn[2];
-        byte dd[2];
+        byte dds[NNDD_SIZE*MAX_NUM_DEVICE_NUMBERS];                 //array of device numbers
+        byte nn[NNDD_SIZE];
+        byte dn[NNDD_SIZE];
         byte numVars;
         byte numEvents;
         byte numEventVars;
+        byte numDeviceNumbers;
         byte event[EVENT_SIZE];                                     //used to return this instead of a pointer to events array
-        byte nodeMode;
+        byte flags;
         void clear();
         void writeEvents();
         void newEventVar(unsigned int eventIdx,unsigned int varIdx,byte val);
-        unsigned int temp; //used to avoid new memory allocation
+        unsigned int temp;                                          //used to avoid new memory allocation
 
 
 };

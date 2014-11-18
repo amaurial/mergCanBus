@@ -776,6 +776,7 @@ byte MergCBUS::handleConfigMessages(){
             }
 
             //get the device number in case of short event
+            //TODO:not clear it this is the model
             if (nn==0){
                 nodeId.setDeviceNumber(ev);
             }

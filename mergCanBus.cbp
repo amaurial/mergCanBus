@@ -37,8 +37,6 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
-		<Unit filename="CANMessage.cpp" />
-		<Unit filename="CANMessage.h" />
 		<Unit filename="LICENSE" />
 		<Unit filename="MergCBUS.cpp" />
 		<Unit filename="MergCBUS.h" />
