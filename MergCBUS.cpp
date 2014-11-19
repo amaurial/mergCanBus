@@ -1101,12 +1101,6 @@ void MergCBUS::controlLeds(){
             digitalWrite(yellowLed,LOW);
         }
     }
-
-
-
-
-
-
 }
 
 /**\brief
@@ -1174,8 +1168,7 @@ void MergCBUS::learnEvent(){
 
         ev=message.getEventNumber();
         nn=message.getNodeNumber();
-        ind=message.getEventVarIndex();
-        val=message.getEventVar();
+
 
         //save event and get the index
         buffer[0]=highByte(nn);
@@ -1192,22 +1185,28 @@ void MergCBUS::learnEvent(){
 
         //save the parameter
         //the CBUS index start with 1
-        resp=memory.setEventVar(evidx,ind-1,val);
+        if (message.getOpc()==OPC_EVLRN || message.getOpc()==OPC_EVLRNI){
+            ind=message.getEventVarIndex();
+            val=message.getEventVar();
 
-        if (resp!=message.getEventVarIndex()){
-            //send a message error
-            sendERRMessage(CMDERR_INV_NV_IDX);
-            return;
+            resp=memory.setEventVar(evidx,ind-1,val);
+            if (resp!=message.getEventVarIndex()){
+                //send a message error
+                sendERRMessage(CMDERR_INV_NV_IDX);
+                return;
+            }
         }
 
         //get the device number in case of short event
         //TODO:not clear it this is the model
         if (nn==0){
             nodeId.setDeviceNumber(ev);
+            //in case of setting device number there may be customized rules for that
+            if (userHandler!=0){
+                userHandler(&message,this);
+            }
         }
-
         //send a WRACK back
         prepareMessage(OPC_WRACK);
         sendCanMessage();
-
 }

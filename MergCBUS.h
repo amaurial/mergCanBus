@@ -57,6 +57,20 @@ enum can_error {OK=0,                   /**< Message sent.*/
 *   A general class that support the MergCBUS protocol.
 *   The class is used to all operations regarding the protocol, but is flexible enough to allow you to use general can messages.
 *   It uses a modified version of mcp_can.h, that included the CAN header manipulation and RTR messages.
+*   When using the CBUS the user has to set the node information:
+*   -The manufacturer ID as a HEX numeric (If the manufacturer has a NMRA number this can be used)
+*   -Minor code version as an alphabetic character (ASCII)
+*   -Manufacturer’s module identifier as a HEX numeric
+*   -Number of supported events as a HEX numeric
+*   -Number of Event Variables per event as a HEX numeric
+*   -Number of supported Node Variables as a HEX numeric
+*   -Major version as a HEX numeric. (can be 0 if no major version allocated)
+*   -Node Flags
+*   You has to start the CAN by calling initCanBus(...);
+*   If your board follows the Merg boards with on push button and red and yellow leds, you can specify then with setLeds() and setPushButton()
+*   If you want the library to take care of a lot of stuff, you need to define your user function that implements the node logic and tell the lib
+*   about it calling setUserHandlerFunction() and on the arduino loop() call the run() method. See the examples.
+*   If you want to take care of all messages by yourself just read the messages using readCanBus() or readCanBus(header[],data[]) and use the getMessage() to get a wrapper over the can message.
 */
 
 class MergCBUS
@@ -106,6 +120,8 @@ class MergCBUS
         /**\brief Print all EEPROM values.*/
         void dumpMemory(){memory.dumpMemory();};
         void setLeds(byte green,byte yellow);
+        //TODO:implement
+        void setPushButton(byte pb);
         void controlLeds();
         bool isSelfEnumMode();
         state getNodeState(){return state_mode;};
