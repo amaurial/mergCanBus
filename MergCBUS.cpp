@@ -138,6 +138,8 @@ void MergCBUS::setBitMessage(byte pos,bool val){
 unsigned int MergCBUS::run(){
 
     controlLeds();
+    unsigned int resp=NO_MESSAGE;
+    unsigned int resp1=NO_MESSAGE;
 
     if (state_mode==SELF_ENUMERATION){
         unsigned long tdelay=millis()-timeDelay;
@@ -152,12 +154,114 @@ unsigned int MergCBUS::run(){
         }
     }
 
-    if (readCanBus()==false){
-        //nothing to do
-        return NO_MESSAGE;
+    if (readCanBus(0)==true){
+       resp=mainProcess();
+    }
+    if (readCanBus(1)==true){
+       resp1=mainProcess();
+    }
+    if (resp==OK || resp1==OK){
+        return OK;
     }
 
+    return NO_MESSAGE;
+
+/*
+
+
     if (message.getRTR()){
+        //if we are a device with can id
+        //we need to answer this message
+        if (DEBUG){
+                Serial.print("RTR message received.");
+            }
+        if (nodeId.getNodeNumber()!=0){
+            //create the response message with no data
+            if (DEBUG){
+                Serial.print("RTR message received. Sending can id: ");
+                Serial.println(nodeId.getCanID(),HEX);
+            }
+            //canMessage.clear();
+            Can.sendMsgBuf(nodeId.getCanID(),0,0,mergCanData);
+            return OK;
+        }
+    }
+
+    //message for self enumeration
+    if (message.getOpc()==OPC_ENUM){
+
+        if (message.getNodeNumber()==nodeId.getNodeNumber()){
+            if (DEBUG){
+                    Serial.println("Starting message based self ennumeration.");
+                }
+            doSelfEnnumeration(true);
+        }
+        return OK;
+    }
+
+    //do self enumeration
+    //collect the canid from messages with 0 size
+    //the state can be a message or manually
+
+    if (state_mode==SELF_ENUMERATION){
+        Serial.print("other msg size:");
+        Serial.println(message.getCanMessageSize());
+        if (message.getCanMessageSize()==0){
+
+            //if (message.getCanId()!=nodeId.getCanID()){
+                if (DEBUG){
+                    Serial.println("Self ennumeration: saving others can id.");
+                }
+
+                if (bufferIndex<SELF_ENUM_BUFFER_SIZE){
+                    buffer[bufferIndex]=message.getCanId();
+                    bufferIndex++;
+                }
+            //}
+        }
+        return OK;
+    }
+
+    if (state_mode==LEARN && node_mode==MTYP_SLIM){
+        learnEvent();
+        return OK;
+    }
+
+    //treat each message individually to interpret the code
+
+    if (DEBUG){
+        Serial.print("Message type:");
+        Serial.print(message.getType());
+        Serial.print ("\t OPC:");
+        Serial.print(message.getOpc(),HEX);
+        Serial.print("\t STATE:");
+        Serial.println(state_mode);
+    }
+
+    switch (message.getType()){
+        case (DCC):
+            handleDCCMessages();
+        break;
+        case (ACCESSORY):
+            handleACCMessages();
+        break;
+        case (GENERAL):
+            handleGeneralMessages();
+        break;
+        case (CONFIG):
+            return handleConfigMessages();
+        break;
+        default:
+            return UNKNOWN_MSG_TYPE;
+    }
+*/
+    return OK;
+
+}
+
+unsigned int MergCBUS::mainProcess(){
+
+        if (message.getRTR()){
         //if we are a device with can id
         //we need to answer this message
         if (DEBUG){
@@ -251,12 +355,12 @@ unsigned int MergCBUS::run(){
 * Read the can bus and load the data in the message object.
 * @return true if a message in the can bus.
 */
-bool MergCBUS::readCanBus(){
+bool MergCBUS::readCanBus(byte buf_num){
     byte len=0;
     bool resp;
     byte bufIdxdata=115;
     byte bufIdxhead=110;
-    resp=readCanBus(&buffer[bufIdxdata],&buffer[bufIdxhead],&len);
+    resp=readCanBus(&buffer[bufIdxdata],&buffer[bufIdxhead],&len,buf_num);
     if (resp){
         message.clear();
         message.setCanMessageSize(len);
@@ -279,11 +383,11 @@ bool MergCBUS::readCanBus(){
 * Read the can bus and return the buffer.
 * @return number of bytes read;
 */
-bool MergCBUS::readCanBus(byte *data,byte *header,byte *length){
+bool MergCBUS::readCanBus(byte *data,byte *header,byte *length,byte buf_num){
     byte resp;
     if(CAN_MSGAVAIL == Can.checkReceive()) // check if data coming
     {
-        resp=Can.readMsgBuf(length,data);
+        resp=Can.readMsgBuf(length,data,buf_num);
         if (resp==CAN_OK){
             Can.getCanHeader(header);
             return true;
@@ -383,7 +487,6 @@ void MergCBUS::finishSelfEnumeration(){
 */
 byte MergCBUS::handleConfigMessages(){
 
-
     byte ind,val,evidx;
     unsigned int ev,nn,resp;
 
@@ -392,7 +495,7 @@ byte MergCBUS::handleConfigMessages(){
         if (DEBUG){
             Serial.println("handleConfigMessages- NN different from message NN");
         }
-        if (state_mode!=SETUP){
+        if (state_mode==NORMAL || state_mode==SELF_ENUMERATION || state_mode==BOOT){
                 if (DEBUG){
                     Serial.println("handleConfigMessages- not in setup mode. leaving");
                 }
@@ -543,6 +646,13 @@ byte MergCBUS::handleConfigMessages(){
         //send back all stored events in message OPC_ENRSP
         int i;
         i=(int)memory.getNumEvents();
+
+        if (DEBUG){
+            Serial.println("RECEIVED OPC_NERD sending OPC_ENRSP");
+            Serial.println(i);
+                    //printSentMessage();
+        }
+
         if (i>0){
             byte *events=memory.getEvents();
             int pos=0;
@@ -555,13 +665,6 @@ byte MergCBUS::handleConfigMessages(){
                                 (j+1)
                 );
                 pos=pos+4;
-
-
-                if (DEBUG){
-                    Serial.println("RECEIVED OPC_NERD sending OPC_ENRSP");
-                    printSentMessage();
-                }
-
                 ind=sendCanMessage();
             }
         }
@@ -706,6 +809,11 @@ byte MergCBUS::handleConfigMessages(){
         //Request for read of an event variable
         evidx=message.getEventIndex();
         ind=message.getEventVarIndex();
+        if (ind>nodeId.getSuportedEventsVariables()){
+            //index too big
+            sendERRMessage(CMDERR_INV_NV_IDX);
+            break;
+        }
         val=memory.getEventVar(evidx-1,ind-1);//the CBUS index start with 1
         nn=nodeId.getNodeNumber();
 
@@ -1166,6 +1274,12 @@ void MergCBUS::learnEvent(){
             //printSentMessage();
         }
 
+        if (message.getType()==CONFIG){
+            if (message.getOpc()!=OPC_EVLRN && message.getOpc()!=OPC_EVLRNI){
+                handleConfigMessages();
+                return;
+            }
+        }
         ev=message.getEventNumber();
         nn=message.getNodeNumber();
 
@@ -1188,9 +1302,24 @@ void MergCBUS::learnEvent(){
         if (message.getOpc()==OPC_EVLRN || message.getOpc()==OPC_EVLRNI){
             ind=message.getEventVarIndex();
             val=message.getEventVar();
-
+            /*
+            if (DEBUG){
+                    Serial.print("Saving event var ");
+                    Serial.print(ind);
+                    Serial.print(" value ");
+                    Serial.print(val);
+                    Serial. print(" of event ");
+                    Serial.println(evidx);
+            }
+            */
             resp=memory.setEventVar(evidx,ind-1,val);
-            if (resp!=message.getEventVarIndex()){
+            /*
+            if (DEBUG){
+                    Serial.print("Saving event var resp ");
+                    Serial.println(resp);
+            }
+            */
+            if (resp!=(ind-1)){
                 //send a message error
                 sendERRMessage(CMDERR_INV_NV_IDX);
                 return;

@@ -28,7 +28,7 @@ struct merg_event_vars{
 #define EVENT_VARS_SIZE 2               /** Size for events vars. Each var has 2 bytes. first is the index, second is the value        */
 #define NNDD_SIZE 2                     /** Size of a node number or device number */
 #define MAX_NUM_EV_VARS (unsigned int) MAX_EVENTS_VAR_BUFFER/MAX_NUM_EVENTS_VAR_PER_EVENT
-#define EMPTY_BYTE 0xff
+#define EMPTY_BYTE 0x00
 
 #define FAILED_INDEX 255                /** Value returned when vars or events vars not found                             */
 
@@ -74,7 +74,7 @@ class MergMemoryManagement
 
         //byte* getEventVars();
         byte getEventVar(unsigned int eventIdx,unsigned int index);
-        byte *getEventVars(unsigned int eventIdx,unsigned int &len);
+        byte *getEventVars(unsigned int eventIdx,unsigned int *len);
         /** \brief Return the number of set node variables.*/
         byte getNumVars(){return numVars;};
         /** \brief Return the number of learned events.*/
@@ -133,7 +133,7 @@ class MergMemoryManagement
         byte events[MAX_NUM_EVENTS*EVENT_SIZE];
         byte vars[MAX_AVAIL_VARS];
         //merg_event_vars eventVars[MAX_NUM_EV_VARS];
-        byte eventVars[MAX_NUM_EVENTS_VAR_PER_EVENT*MAX_NUM_EVENTS];
+        byte eventVars[MAX_EVENTS_VAR_BUFFER];
         byte return_eventVars[MAX_NUM_EVENTS_VAR_PER_EVENT];                  //used to return all the variables of an event
         byte can_ID;
         byte dns[NNDD_SIZE*MAX_NUM_DEVICE_NUMBERS];                 //array of device numbers
@@ -153,6 +153,8 @@ class MergMemoryManagement
         byte nodeVariablesSize;     //max supported number of node variables
         byte eventVarsPerEvent;     //number of supported vars per event
         byte amountSuportedEvents;  //number of supported events
+        unsigned int resolveEvVarArrayPos(byte evidx,byte varidx);
+
 
 
 };

@@ -783,30 +783,34 @@ INT8U MCP_CAN::sendMsgBuf(INT32U id, INT8U ext, INT8U len, INT8U *buf)
 ** Function name:           readMsg
 ** Descriptions:            read message
 *********************************************************************************************************/
-INT8U MCP_CAN::readMsg()
+INT8U MCP_CAN::readMsg(INT8U buf_num)
 {
     INT8U stat, res;
     res=CAN_OK;
     bool msgfound=false;
 
     stat = mcp2515_readStatus();
+    if (buf_num==0){
+        if ( stat & MCP_STAT_RX0IF )                                        /* Msg in Buffer 0              */
+        {
+            mcp2515_read_canMsg( MCP_RXBUF_0);
+            mcp2515_modifyRegister(MCP_CANINTF, MCP_RX0IF, 0);
+            //res = CAN_OK;
+            msgfound=true;
+            //Serial.println("buffer 0");
+        }
+    }
+    else{
+        if ( stat & MCP_STAT_RX1IF )                                   /* Msg in Buffer 1              */
+        {
+            mcp2515_read_canMsg( MCP_RXBUF_1);
+            mcp2515_modifyRegister(MCP_CANINTF, MCP_RX1IF, 0);
+            res = CAN_OK;
+            msgfound=true;
+            //Serial.println("buffer 1");
+        }
+    }
 
-    if ( stat & MCP_STAT_RX0IF )                                        /* Msg in Buffer 0              */
-    {
-        mcp2515_read_canMsg( MCP_RXBUF_0);
-        mcp2515_modifyRegister(MCP_CANINTF, MCP_RX0IF, 0);
-        //res = CAN_OK;
-        msgfound=true;
-        //Serial.println("buffer 0");
-    }
-    else if ( stat & MCP_STAT_RX1IF )                                   /* Msg in Buffer 1              */
-    {
-        mcp2515_read_canMsg( MCP_RXBUF_1);
-        mcp2515_modifyRegister(MCP_CANINTF, MCP_RX1IF, 0);
-        res = CAN_OK;
-        msgfound=true;
-        //Serial.println("buffer 1");
-    }
     if (!msgfound)
     {
         res = CAN_NOMSG;
@@ -819,9 +823,9 @@ INT8U MCP_CAN::readMsg()
 ** Function name:           readMsgBuf
 ** Descriptions:            read message buf
 *********************************************************************************************************/
-INT8U MCP_CAN::readMsgBuf(INT8U *len, INT8U* buf)
+INT8U MCP_CAN::readMsgBuf(INT8U *len, INT8U* buf,INT8U buf_num)
 {
-    if (CAN_OK==readMsg()){
+    if (CAN_OK==readMsg(buf_num)){
         *len = m_nDlc;
         for(int i = 0; i<m_nDlc; i++)
         {

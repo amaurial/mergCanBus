@@ -40,18 +40,15 @@ void MergMemoryManagement::clear(){
         vars[i]=EMPTY_BYTE;
     }
 
-    for (i=0;i<(MAX_NUM_EV_VARS);i++){
-        eventVars[i].event_index=EMPTY_BYTE;
-        eventVars[i].index=EMPTY_BYTE;
-        eventVars[i].mem_index=EMPTY_BYTE;
-        eventVars[i].value=EMPTY_BYTE;
+    for (i=0;i<(MAX_EVENTS_VAR_BUFFER);i++){
+        eventVars[i]=EMPTY_BYTE;
     }
 
     for (i=0;i<(MAX_NUM_EVENTS_VAR_PER_EVENT);i++){
         return_eventVars[i]=0;
     }
 
-    can_ID=EMPTY_BYTE;
+    can_ID=0;
     nn[0]=EMPTY_BYTE;
     nn[1]=EMPTY_BYTE;
     dn[0]=EMPTY_BYTE;
@@ -128,10 +125,10 @@ unsigned int MergMemoryManagement::setEvent(byte *event,unsigned int index){
         return (MAX_NUM_EVENTS+1) ;
     }
     int j;
-    j=index*(EVENT_SIZE+MAX_NUM_EVENTS_VAR_PER_EVENT);
+    j=index*EVENT_SIZE;
 
     for (int i=0;i<EVENT_SIZE;i++){
-            events[index+i+j]=event[i];
+            events[i+j]=event[i];
     }
     numEvents++;
     //number of events
@@ -140,8 +137,10 @@ unsigned int MergMemoryManagement::setEvent(byte *event,unsigned int index){
 
      //Serial.print("MEM: writing. idx:");
      //Serial.println(j);
+     j=resolveEvVarArrayPos(index,0)-EVENT_SIZE;
      for (int i=0;i<EVENT_SIZE;i++){
-        EEPROM.write(EVENTS_MEMPOS+j+i,event[i]);
+        EEPROM.write(j,event[i]);
+        j++;
      }
      return index;
 }
@@ -221,7 +220,7 @@ byte MergMemoryManagement::getEventVar(unsigned int eventIdx,unsigned int index)
 * @param eventIdx is the event index starting on 0.
 * @param len indicates how many variables
 */
-byte* MergMemoryManagement::getEventVars(unsigned int eventIdx,unsigned int &len){
+byte* MergMemoryManagement::getEventVars(unsigned int eventIdx,unsigned int *len){
     //populate the array to return
     *len=0;
     int j=resolveEvVarArrayPos(eventIdx,0);
@@ -229,7 +228,7 @@ byte* MergMemoryManagement::getEventVars(unsigned int eventIdx,unsigned int &len
         return_eventVars[i]=eventVars[j];
         j++;
     }
-
+    *len=MAX_NUM_EVENTS_VAR_PER_EVENT;
     /*
     for (int i=0;i<MAX_NUM_EVENTS_VAR_PER_EVENT;i++){
         if (eventVars[i].event_index==(byte)eventIdx ){
@@ -315,13 +314,13 @@ void MergMemoryManagement::read(){
             //read events
             for (int i=0;i<EVENT_SIZE;i++){
                 events[n*EVENT_SIZE+i]=EEPROM.read(pos);
-                pos++
+                pos++;
             }
             //read event vars
             for (int i=0;i<MAX_NUM_EVENTS_VAR_PER_EVENT;i++){
                 eventVars[m]=EEPROM.read(pos);
                 m++;
-                pos++
+                pos++;
             }
             n++;
         }
@@ -442,7 +441,7 @@ void MergMemoryManagement::eraseAllEvents(){
 
     //erase the events var
     //number of events
-     EEPROM.write(NUM_EVENTS_MEMPOS,0x00);
+     EEPROM.write(NUM_EVENTS_MEMPOS,0);
     //number of events vars
     /*
     if (numEventVars>0){
@@ -459,7 +458,7 @@ void MergMemoryManagement::eraseAllEvents(){
     for (int i=0;i<(MAX_NUM_EVENTS*EVENT_SIZE);i++){
         events[i]=EMPTY_BYTE;
     }
-    for (int i=0;i<(MAX_NUM_EVENTS_VAR_PER_EVENT*MAX_NUM_EVENTS);i++){
+    for (int i=0;i<(MAX_EVENTS_VAR_BUFFER);i++){
         eventVars[i]=EMPTY_BYTE;
     }
     numEventVars=0;
@@ -510,7 +509,7 @@ unsigned int MergMemoryManagement::eraseEvent(unsigned int eventIdx){
 
     pos=eventIdx*MAX_NUM_EVENTS_VAR_PER_EVENT;
     i=eventIdx;
-    while (i<(numEvents-1){
+    while (i<(numEvents-1)){
         for (j=0;j<MAX_NUM_EVENTS_VAR_PER_EVENT;j++){
             eventVars[pos]=eventVars[pos+MAX_NUM_EVENTS_VAR_PER_EVENT];
             pos++;
@@ -521,7 +520,7 @@ unsigned int MergMemoryManagement::eraseEvent(unsigned int eventIdx){
     //write events to eprom
     numEvents--;
      //write number of events
-    EEPROM.write(NUM_EVENTS_MEMPOS,(numEvents);
+    EEPROM.write(NUM_EVENTS_MEMPOS,numEvents);
     writeEvents();
     writeEventsVars();
 
@@ -599,13 +598,12 @@ void MergMemoryManagement::setVar(unsigned int index,byte val){
 */
 unsigned int MergMemoryManagement::setEventVar(unsigned int eventIdx,unsigned int varIdx,byte val){
 
-    bool exist=false;
 
     if (eventIdx<0 || eventIdx>numEvents){
         return (varIdx+1);
     }
 
-    if (varIdx<0 || varIdx>numEventVars){
+    if (varIdx<0 || varIdx>eventVarsPerEvent){
         return (varIdx+1);
     }
 
@@ -691,8 +689,8 @@ void MergMemoryManagement::setDeviceNumber(unsigned int val){
 
 unsigned int MergMemoryManagement::getNodeNumber(){
     temp=((unsigned int)word(nn[0],nn[1]));
-    Serial.print("MEM: Getting NN:");
-    Serial.println(temp,HEX);
+    //Serial.print("MEM: Getting NN:");
+    //Serial.println(temp,HEX);
     return temp;
 }
 
@@ -748,8 +746,7 @@ void MergMemoryManagement::dumpMemory(){
     Serial.print("\nCAN_ID:");
     Serial.print(can_ID,HEX);
     Serial.print("\nNN:");
-    Serial.print(nn[0],HEX);
-    Serial.print(nn[1],HEX);
+    Serial.print(getNodeNumber());
     Serial.print("\nDN:");
     Serial.print(dn[0],HEX);
     Serial.print(dn[1],HEX);
@@ -769,21 +766,21 @@ void MergMemoryManagement::dumpMemory(){
 
     Serial.println("\nEVENTS:");
     int n=0;
+    int m=0;
     for (int i=0;i<MAX_NUM_EVENTS;i++){
-        Serial.print(events[n],HEX);n++;
-        Serial.print(events[n],HEX);n++;
-        Serial.print(events[n],HEX);n++;
-        Serial.print(events[n],HEX);n++;
+        for (int j=0;j<EVENT_SIZE;j++){
+            Serial.print(events[n],HEX);
+            n++;
+            Serial.print(" ");
+        }
+        for (int j=0;j<MAX_NUM_EVENTS_VAR_PER_EVENT;j++){
+            Serial.print(eventVars[m],HEX);
+            m++;
+            Serial.print(" ");
+        }
         Serial.println();
     }
 
-    Serial.println("EVENTS VARS:");
-    for (int i=0;i<MAX_NUM_EV_VARS;i++){
-        Serial.print(eventVars[i].event_index);
-        Serial.print(" ");
-        Serial.print(eventVars[i].value);
-        Serial.println();
-    }
 
 }
 unsigned int MergMemoryManagement::resolveEvVarArrayPos(byte evidx,byte varidx){

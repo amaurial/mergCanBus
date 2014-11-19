@@ -105,8 +105,8 @@ class MergCBUS
         void doOutOfService();
         void sendERRMessage(byte code);
         bool hasThisEvent();
-        bool readCanBus();
-        bool readCanBus(byte *msg,byte *header,byte *length);
+        bool readCanBus(byte buf_num);
+        bool readCanBus(byte *msg,byte *header,byte *length,byte buf_num);
         void printSentMessage();
         void printReceivedMessage();
         /**\brief Set the node to slim mode.*/
@@ -188,6 +188,7 @@ class MergCBUS
         byte ledYellowState;
         void(* resetFunc) (void);           //declare reset function @ address 0
         void learnEvent();
+        unsigned int mainProcess();
 };
 
 #endif // MESSAGEPARSER_H

@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
 	<ActiveTarget name="Debug" />
-	<File name="mcp_can.cpp" open="0" top="0" tabpos="10" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="mcp_can.cpp" open="1" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="28071" topLine="792" />
+			<Cursor1 position="28217" topLine="795" />
 		</Cursor>
 	</File>
-	<File name="mcp_can.h" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="mcp_can.h" open="1" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="4080" topLine="57" />
+			<Cursor1 position="4718" topLine="78" />
 		</Cursor>
 	</File>
 	<File name="mcp_can_dfs.h" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -26,24 +26,24 @@
 			<Cursor1 position="4000" topLine="45" />
 		</Cursor>
 	</File>
-	<File name="MergCBUS.cpp" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="MergCBUS.cpp" open="1" top="1" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="14234" topLine="496" />
+			<Cursor1 position="36733" topLine="1267" />
 		</Cursor>
 	</File>
 	<File name="MergCBUS.h" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="4246" topLine="90" />
+			<Cursor1 position="8004" topLine="149" />
 		</Cursor>
 	</File>
-	<File name="MergMemoryManagement.cpp" open="1" top="1" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="MergMemoryManagement.cpp" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="12924" topLine="472" />
+			<Cursor1 position="16198" topLine="588" />
 		</Cursor>
 	</File>
 	<File name="MergMemoryManagement.h" open="1" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="6858" topLine="5" />
+			<Cursor1 position="8002" topLine="114" />
 		</Cursor>
 	</File>
 	<File name="MergNodeIdentification.cpp" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
