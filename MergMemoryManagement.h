@@ -19,15 +19,18 @@ struct merg_event_vars{
     byte value;/**< value of the variable */
 };
 
-#define MAX_AVAIL_VARS 20           /** Number of node variables. Each has 1 byte                           */
-#define MAX_NUM_EVENTS 30           /** Number of supported events. Each event has 4 bytes                  */
-#define MAX_NUM_EVENTS_VAR 75       /** Total amount of events variables. Each var has 2 bytes. first is the index, second is the value        */
-#define MAX_NUM_DEVICE_NUMBERS 16   /** The total number of device number if it is a producer node. Each input from the producer can be a device number. So this is the same as the total number of inputs*/
-#define EVENT_SIZE 4                /** Event size.                                                        */
-#define EVENT_VARS_SIZE 2           /** Size for events vars. Each var has 2 bytes. first is the index, second is the value        */
-#define NNDD_SIZE 2                 /** Size of a node number or device number */
+#define MAX_AVAIL_VARS 20               /** Number of node variables. Each has 1 byte                           */
+#define MAX_NUM_EVENTS 20               /** Number of supported events. Each event has 4 bytes                  */
+#define MAX_NUM_EVENTS_VAR_PER_EVENT 8  /** Total amount of events variables per event. Each var has 2 bytes. first is the index, second is the value        */
+#define MAX_EVENTS_VAR_BUFFER 376       /** Total amount of events variables that can be stored. Each var has 2 bytes. first is the index, second is the value        */
+#define MAX_NUM_DEVICE_NUMBERS 12       /** The total number of device number if it is a producer node. Each input from the producer can be a device number. So this is the same as the total number of inputs*/
+#define EVENT_SIZE 4                    /** Event size.                                                        */
+#define EVENT_VARS_SIZE 2               /** Size for events vars. Each var has 2 bytes. first is the index, second is the value        */
+#define NNDD_SIZE 2                     /** Size of a node number or device number */
+#define MAX_NUM_EV_VARS (unsigned int) MAX_EVENTS_VAR_BUFFER/MAX_NUM_EVENTS_VAR_PER_EVENT
+#define EMPTY_BYTE 0xff
 
-#define FAILED_INDEX 255            /** Value returned when vars or events vars not found                             */
+#define FAILED_INDEX 255                /** Value returned when vars or events vars not found                             */
 
 #define MERG_MEMPOS 0                                                  /** Position in memory. has the value 0xaa to mark it is from this mod       */
 #define CAN_ID_MEMPOS MERG_MEMPOS+1                                    /**Position in memory.can id has 1 byte                                    */
@@ -56,7 +59,7 @@ class MergMemoryManagement
         bool hasEvents(){return (numEvents>0?true:false);};
 
         /** \brief Check if there is some learned event variables.*/
-        bool hasEventVars(){return (numEventVars>0?true:false);};
+        //bool hasEventVars(){return (numEventVars>0?true:false);};
 
         bool hasEventVars(unsigned int eventIdx);
 
@@ -91,7 +94,7 @@ class MergMemoryManagement
         void setNodeNumber(unsigned int val);                       //2 bytes representation
         void setDeviceNumber(unsigned int val);                     //2 bytes representation
 
-        //TODO:implement
+        //TODO:implement support for multiple device numbers
         void setDeviceNumber(unsigned int val,byte port);           //2 bytes representation for dn
         void getDeviceNumber(byte port);                             //2 bytes representation
         byte getNumDeviceNumber();                                  //2 bytes representation
@@ -115,13 +118,23 @@ class MergMemoryManagement
         void setUpNewMemory();
         void dumpMemory();
 
+        void setNodeVariablesSize(byte val){nodeVariablesSize=val;};
+        void setEventVarsPerEvent(byte val){eventVarsPerEvent=val;};
+        void setAmountSuportedEvents(byte val){amountSuportedEvents=val;};
+
+        byte getNodeVariablesSize(){return nodeVariablesSize;};
+        byte getEventVarsPerEvent(){return eventVarsPerEvent;};
+        byte getAmountSuportedEvents(){return amountSuportedEvents;};
+
+
     protected:
 
     private:
         byte events[MAX_NUM_EVENTS*EVENT_SIZE];
         byte vars[MAX_AVAIL_VARS];
-        merg_event_vars eventVars[MAX_NUM_EVENTS_VAR];
-        byte return_eventVars[MAX_NUM_EVENTS_VAR];                  //used to return all the variables of an event
+        //merg_event_vars eventVars[MAX_NUM_EV_VARS];
+        byte eventVars[MAX_NUM_EVENTS_VAR_PER_EVENT*MAX_NUM_EVENTS];
+        byte return_eventVars[MAX_NUM_EVENTS_VAR_PER_EVENT];                  //used to return all the variables of an event
         byte can_ID;
         byte dns[NNDD_SIZE*MAX_NUM_DEVICE_NUMBERS];                 //array of device numbers
         byte nn[NNDD_SIZE];
@@ -135,8 +148,11 @@ class MergMemoryManagement
         void clear();
         void writeEvents();
         void writeEventsVars();
-        void newEventVar(unsigned int eventIdx,unsigned int varIdx,byte val);
+        //void newEventVar(unsigned int eventIdx,unsigned int varIdx,byte val);
         unsigned int temp;                                          //used to avoid new memory allocation
+        byte nodeVariablesSize;     //max supported number of node variables
+        byte eventVarsPerEvent;     //number of supported vars per event
+        byte amountSuportedEvents;  //number of supported events
 
 
 };

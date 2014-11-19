@@ -13,13 +13,25 @@ byte=value;explanation
 can_id;store the can_id
 hh Node number;high byte from node number
 ll Node number;low byte from node number
-flags
-hh device number;high byte from node number
-ll device number;low byte from node number
-amount of node variables
-amount of learned events
-amount of learned event variables
-25 bytes for node variables
-120 bytes for 30 learned events
-150 bytes for learned event variables. 2 bytes for each variable. 1st is the event number index. the index is the position of the event in the memory range from 1 to 30
+flags ; 1 byte
+device number:32 bytes allowing 16 device numbers
+amount of node variables ; 1 byte
+amount of learned events;1 byte
+?amount of learned event variables;1 byte
+20 bytes for node variables
+100 bytes for 25 learned events
+450 bytes for learned event variables. 2 bytes for each variable. max of 8 vars per event. 1st is the event number index. the index is the position of the event in the memory range from 0 to 24
 
+
+merg var	1byte
+canid	1byte
+nn	2byte
+flags	1byte
+dn	24byte	12 device numbers
+nv count	1byte
+ev count	1byte
+ev ev vars	1byte
+vars	16byte
+evs	80byte	20 events
+ev vars	376byte
+reserve	8byte
