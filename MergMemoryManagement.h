@@ -111,6 +111,7 @@ class MergMemoryManagement
 
         unsigned int getEventIndex(byte ev1,byte ev2,byte ev3,byte ev4);
         unsigned int getEventIndex(unsigned int nn,unsigned int ev);
+        bool hasEvent(byte ev1,byte ev2,byte ev3,byte ev4);
 
         byte getNodeFlag();
         void setNodeFlag(byte val);

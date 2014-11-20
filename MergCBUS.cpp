@@ -27,6 +27,7 @@ MergCBUS::MergCBUS()
     ledYellowState=LOW;
     userHandler=0;
     resetFunc=0;
+    eventmatch=false;
 }
 
 /** \brief
@@ -263,6 +264,7 @@ bool MergCBUS::readCanBus(byte buf_num){
     bool resp;
     byte bufIdxdata=115;
     byte bufIdxhead=110;
+    eventmatch=false;
     resp=readCanBus(&buffer[bufIdxdata],&buffer[bufIdxhead],&len,buf_num);
     if (resp){
         message.clear();
@@ -277,7 +279,8 @@ bool MergCBUS::readCanBus(byte buf_num){
             message.setRTR();
         }
         message.setHeaderBuffer(&buffer[bufIdxhead]);
-    }
+        eventmatch=memory.hasEvent(buffer[bufIdxdata],buffer[bufIdxdata+1],buffer[bufIdxdata+2],buffer[bufIdxdata+3])
+     }
     return resp;
 }
 

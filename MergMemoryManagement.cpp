@@ -176,6 +176,20 @@ unsigned int MergMemoryManagement::getEventIndex(byte ev1,byte ev2,byte ev3,byte
 }
 
 /**\brief
+* Check if the given event is present in the memory.
+* @return Return true if the event is present in memory, else return false.
+*/
+bool MergMemoryManagement::hasEvent(byte ev1,byte ev2,byte ev3,byte ev4){
+    if (numEvents<1){
+        return false;
+    }
+    if (getEventIndex(ev1,ev2,ev3,ev4)>MAX_NUM_EVENTS){
+        return false;
+    }
+    return true;
+}
+
+/**\brief
 * Return the node variable pointed by the index
 * @return FAILED_INDEX if index is out of bounds
 */

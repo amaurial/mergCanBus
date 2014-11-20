@@ -122,7 +122,7 @@ class MergCBUS
         void setLeds(byte green,byte yellow);
         //TODO:implement
         void setPushButton(byte pb);
-        void controlLeds();
+
         bool isSelfEnumMode();
         state getNodeState(){return state_mode;};
         /**\brief Set the node state to a new state.
@@ -135,6 +135,7 @@ class MergCBUS
         byte accExtraData();
         byte getAccExtraData(byte idx);//idx starts at 1
         void saveNodeFlags();
+        bool eventMatch(){return eventmatch;};
 
 
     protected:
@@ -149,6 +150,7 @@ class MergCBUS
         MergMemoryManagement memory;            //organize the eeprom memory and maintain a copy in RAM
         bool softwareEnum;
         bool DEBUG;
+        bool eventmatch;
 
         state state_mode;                       //actual state of the node
         unsigned long timeDelay;                //used for self ennumeration
@@ -180,6 +182,7 @@ class MergCBUS
         void prepareMessageBuff(byte data0=0,byte data1=0,byte data2=0,byte data3=0,byte data4=0,byte data5=0,byte data6=0,byte data7=0);
         byte getMessageSize(byte opc);
 
+        void controlLeds();
         byte greenLed;
         byte yellowLed;
         byte ledGreenState;
