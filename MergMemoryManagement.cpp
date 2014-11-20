@@ -135,8 +135,6 @@ unsigned int MergMemoryManagement::setEvent(byte *event,unsigned int index){
      EEPROM.write(NUM_EVENTS_MEMPOS,numEvents);
      //write event
 
-     //Serial.print("MEM: writing. idx:");
-     //Serial.println(j);
      j=resolveEvVarArrayPos(index,0)-EVENT_SIZE;
      for (int i=0;i<EVENT_SIZE;i++){
         EEPROM.write(j,event[i]);
@@ -205,13 +203,6 @@ byte MergMemoryManagement::getEventVar(unsigned int eventIdx,unsigned int index)
     //position in the array
     int i=resolveEvVarArrayPos(eventIdx,index);
     return eventVars[i];
-/*
-    for (int i=0;i<MAX_NUM_EVENTS_VAR_PER_EVENT;i++){
-        if (eventVars[i].event_index==(byte)eventIdx && eventVars[i].index==index){
-            return eventVars[i].value;
-        }
-    }
-*/
     //return FAILED_INDEX;
 }
 
@@ -229,14 +220,6 @@ byte* MergMemoryManagement::getEventVars(unsigned int eventIdx,unsigned int *len
         j++;
     }
     *len=MAX_NUM_EVENTS_VAR_PER_EVENT;
-    /*
-    for (int i=0;i<MAX_NUM_EVENTS_VAR_PER_EVENT;i++){
-        if (eventVars[i].event_index==(byte)eventIdx ){
-            return_eventVars[eventVars[i].index]=eventVars[i].value;
-            *len++;
-        }
-    }
-    */
     return return_eventVars;
 }
 
@@ -325,32 +308,6 @@ void MergMemoryManagement::read(){
             n++;
         }
     }
-     //read events vars
-     //index the value in the array for fast search
-    /*
-     byte i=0;
-     int positions[MAX_NUM_EVENTS];
-     for (int j=0;j<MAX_NUM_EVENTS;j++){
-        positions[j]=0;
-     }
-
-    //TODO
-    n=0;//array index
-    pos=EVENTS_VARS_MEMPOS;//memory index
-    while (n<(MAX_EVENTS_VAR_BUFFER)){
-        i=EEPROM.read(pos);
-        if (i==0xFF){
-            //we have something saved here
-            eventVars[n].mem_index=pos;
-            eventVars[n].event_index=i;
-            eventVars[n].value=EEPROM.read(pos+1);
-            eventVars[n].index=positions[i];
-            positions[i]=positions[i]+1;
-            n++;
-        }
-        pos++;
-    }
-    */
 }
 
 /**\brief
@@ -443,18 +400,6 @@ void MergMemoryManagement::eraseAllEvents(){
     //number of events
      EEPROM.write(NUM_EVENTS_MEMPOS,0);
     //number of events vars
-    /*
-    if (numEventVars>0){
-        EEPROM.write(NUM_EVENTS_VARS_MEMPOS,0x00);
-        for (int i=0;i<(MAX_NUM_EVENTS_VAR*EVENT_VARS_SIZE);i++){
-            eventVars[i].event_index=0;
-            eventVars[i].index=0;
-            eventVars[i].mem_index=0;
-            eventVars[i].value=0;
-            return_eventVars[i]=0;
-        }
-    }
-    */
     for (int i=0;i<(MAX_NUM_EVENTS*EVENT_SIZE);i++){
         events[i]=EMPTY_BYTE;
     }
@@ -481,12 +426,7 @@ unsigned int MergMemoryManagement::eraseEvent(unsigned int eventIdx){
     //erase event on the array
     int j,i;
     int pos=eventIdx*EVENT_SIZE;
-    /*
-    for (j=pos;j<EVENT_SIZE;j++){
-        events[j]=EMPTY_BYTE;
-        j++;
-    }
-    */
+
     //move the other events to one position less
     //if it is the last event don't need organize the array
     for (i=eventIdx;i<(numEvents-1);i++){
@@ -495,14 +435,6 @@ unsigned int MergMemoryManagement::eraseEvent(unsigned int eventIdx){
             pos++;
         }
     }
-
-    //clear the last not moved event
-    /*
-    for (j=pos;j<EVENT_SIZE;j++){
-        events[pos]=0;
-        pos++;
-    }
-    */
 
     //organize the events_var array
     //each var belonging to an event greater or equal the event index being erased has to have the index decreased
@@ -523,38 +455,6 @@ unsigned int MergMemoryManagement::eraseEvent(unsigned int eventIdx){
     EEPROM.write(NUM_EVENTS_MEMPOS,numEvents);
     writeEvents();
     writeEventsVars();
-
-    /*
-    int f=0;
-    for (int i=0;i<numEventVars;i++){
-
-        if (eventVars[i].event_index==eventIdx){
-            //clear the event index on the eprom
-            EEPROM.write(eventVars[i].mem_index,0);
-            f++;
-        }
-        if (eventVars[i].event_index>eventIdx){
-            //decrease the other indexes of vars
-            eventVars[i].event_index--;
-            EEPROM.write(eventVars[i].mem_index,eventVars[i].event_index);
-        }
-    }
-
-    //write number of events vars
-    if (f>0){
-        //there were events vars
-        numEventVars=numEventVars-f;
-        EEPROM.write(NUM_EVENTS_VARS_MEMPOS,numEventVars);
-
-    }
-
-    //write the new indexes to the memory
-    for (int i=0;i<numEventVars;i++){
-        if (eventVars[i].event_index>=eventIdx){
-                EEPROM.write(eventVars[i].mem_index,eventVars[i].event_index);
-        }
-    }
-    */
     return eventIdx;
 }
 
@@ -610,43 +510,10 @@ unsigned int MergMemoryManagement::setEventVar(unsigned int eventIdx,unsigned in
     //look the var in the array vars
     eventVars[eventIdx*MAX_NUM_EVENTS_VAR_PER_EVENT+varIdx]=val;
     EEPROM.write(resolveEvVarArrayPos(eventIdx,varIdx),val);
-    /*
-    for (int i=0;i<numEventVars;i++){
-        if (eventVars[i].event_index==eventIdx && eventVars[i].index==varIdx){
-            eventVars[i].value=val;
-            EEPROM.write(eventVars[i].mem_index,val);
-            exist=true;
-        }
-    }
 
-    if (!exist){
-        newEventVar(eventIdx,varIdx,val);
-    }
-    */
     return varIdx;
 }
-/**\brief
-* Create a new variable for an event.
-* @param eventIdx Event index starting on 0.
-* @param varIdx Variable index starting on 0.
-* @param val Value of the variable.
-*/
-/*
-void MergMemoryManagement::newEventVar(unsigned int eventIdx,unsigned int varIdx,byte val){
 
-    eventVars[numEventVars].event_index=eventIdx;
-    eventVars[numEventVars].index=varIdx;
-    eventVars[numEventVars].value=val;
-    eventVars[numEventVars].mem_index=numEventVars+EVENTS_VARS_MEMPOS;
-
-    EEPROM.write(eventVars[numEventVars].mem_index,eventIdx);
-    EEPROM.write(eventVars[numEventVars].mem_index+1,val);
-
-    numEventVars++;
-    EEPROM.write(NUM_EVENTS_VARS_MEMPOS,numEventVars);
-
-}
-*/
 /**\brief
 * Set the can id.
 * @param canId The can id
@@ -689,8 +556,6 @@ void MergMemoryManagement::setDeviceNumber(unsigned int val){
 
 unsigned int MergMemoryManagement::getNodeNumber(){
     temp=((unsigned int)word(nn[0],nn[1]));
-    //Serial.print("MEM: Getting NN:");
-    //Serial.println(temp,HEX);
     return temp;
 }
 
@@ -703,20 +568,7 @@ unsigned int MergMemoryManagement::getDeviceNumber(){
     return temp;
 }
 
-/**\brief
-* Check if an event has any variables.
-* @param eventIdx Event index starting on 0
-*/
-/*
-bool MergMemoryManagement::hasEventVars(unsigned int eventIdx){
-    for (int i=0;i<numEventVars;i++){
-        if (eventVars[i].event_index==(byte)eventIdx){
-            return true;
-        }
-    }
-    return false;
-}
-*/
+
 /**\brief
 * Get the node mode retrieved from the flags.
 * @return 0 if SLIM, 1 if FLIM

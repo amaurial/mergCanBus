@@ -930,7 +930,7 @@ INT8U MCP_CAN::isRTMMessage()
 void MCP_CAN::getCanHeader(INT8U buf[]){
 		int i;
 		for (i=0;i<HEADER_SIZE;i++){buf[i]=canHeader[i];}
-		//buf=canHeader;
+
 }
 /*********************************************************************************************************
   END FILE

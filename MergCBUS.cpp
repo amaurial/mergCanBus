@@ -27,8 +27,6 @@ MergCBUS::MergCBUS()
     ledYellowState=LOW;
     userHandler=0;
     resetFunc=0;
-    //candata=canMessage.getData();
-    //message.setCanMessage(&canMessage);
 }
 
 /** \brief
@@ -166,97 +164,6 @@ unsigned int MergCBUS::run(){
 
     return NO_MESSAGE;
 
-/*
-
-
-    if (message.getRTR()){
-        //if we are a device with can id
-        //we need to answer this message
-        if (DEBUG){
-                Serial.print("RTR message received.");
-            }
-        if (nodeId.getNodeNumber()!=0){
-            //create the response message with no data
-            if (DEBUG){
-                Serial.print("RTR message received. Sending can id: ");
-                Serial.println(nodeId.getCanID(),HEX);
-            }
-            //canMessage.clear();
-            Can.sendMsgBuf(nodeId.getCanID(),0,0,mergCanData);
-            return OK;
-        }
-    }
-
-    //message for self enumeration
-    if (message.getOpc()==OPC_ENUM){
-
-        if (message.getNodeNumber()==nodeId.getNodeNumber()){
-            if (DEBUG){
-                    Serial.println("Starting message based self ennumeration.");
-                }
-            doSelfEnnumeration(true);
-        }
-        return OK;
-    }
-
-    //do self enumeration
-    //collect the canid from messages with 0 size
-    //the state can be a message or manually
-
-    if (state_mode==SELF_ENUMERATION){
-        Serial.print("other msg size:");
-        Serial.println(message.getCanMessageSize());
-        if (message.getCanMessageSize()==0){
-
-            //if (message.getCanId()!=nodeId.getCanID()){
-                if (DEBUG){
-                    Serial.println("Self ennumeration: saving others can id.");
-                }
-
-                if (bufferIndex<SELF_ENUM_BUFFER_SIZE){
-                    buffer[bufferIndex]=message.getCanId();
-                    bufferIndex++;
-                }
-            //}
-        }
-        return OK;
-    }
-
-    if (state_mode==LEARN && node_mode==MTYP_SLIM){
-        learnEvent();
-        return OK;
-    }
-
-    //treat each message individually to interpret the code
-
-    if (DEBUG){
-        Serial.print("Message type:");
-        Serial.print(message.getType());
-        Serial.print ("\t OPC:");
-        Serial.print(message.getOpc(),HEX);
-        Serial.print("\t STATE:");
-        Serial.println(state_mode);
-    }
-
-    switch (message.getType()){
-        case (DCC):
-            handleDCCMessages();
-        break;
-        case (ACCESSORY):
-            handleACCMessages();
-        break;
-        case (GENERAL):
-            handleGeneralMessages();
-        break;
-        case (CONFIG):
-            return handleConfigMessages();
-        break;
-        default:
-            return UNKNOWN_MSG_TYPE;
-    }
-*/
-    return OK;
-
 }
 
 unsigned int MergCBUS::mainProcess(){
@@ -273,7 +180,6 @@ unsigned int MergCBUS::mainProcess(){
                 Serial.print("RTR message received. Sending can id: ");
                 Serial.println(nodeId.getCanID(),HEX);
             }
-            //canMessage.clear();
             Can.sendMsgBuf(nodeId.getCanID(),0,0,mergCanData);
             return OK;
         }
@@ -299,17 +205,14 @@ unsigned int MergCBUS::mainProcess(){
         Serial.print("other msg size:");
         Serial.println(message.getCanMessageSize());
         if (message.getCanMessageSize()==0){
+            if (DEBUG){
+                Serial.println("Self ennumeration: saving others can id.");
+            }
 
-            //if (message.getCanId()!=nodeId.getCanID()){
-                if (DEBUG){
-                    Serial.println("Self ennumeration: saving others can id.");
-                }
-
-                if (bufferIndex<SELF_ENUM_BUFFER_SIZE){
-                    buffer[bufferIndex]=message.getCanId();
-                    bufferIndex++;
-                }
-            //}
+            if (bufferIndex<SELF_ENUM_BUFFER_SIZE){
+                buffer[bufferIndex]=message.getCanId();
+                bufferIndex++;
+            }
         }
         return OK;
     }
@@ -428,7 +331,6 @@ void MergCBUS::doSelfEnnumeration(bool softEnum){
     bufferIndex=0;
     softwareEnum=softEnum;
     state_mode=SELF_ENUMERATION;
-    //Can.sendRTMMessage(nodeId.getCanID());
     Can.setPriority(PRIO_LOW,PRIO_MIN_LOWEST);
     Can.sendRTMMessage(nodeId.getCanID());
     timeDelay=millis();
@@ -862,10 +764,8 @@ byte MergCBUS::handleConfigMessages(){
         if (state_mode==LEARN){
 
             //TODO: suport device number mode
-
             if (DEBUG){
                 Serial.println("Learning event by index.");
-                //printSentMessage();
             }
 
             ev=message.getEventNumber();
@@ -1102,9 +1002,7 @@ void MergCBUS::prepareMessage(byte opc){
 */
 void MergCBUS::sendERRMessage(byte code){
     prepareMessageBuff(OPC_CMDERR,highByte(nodeId.getNodeNumber()),lowByte(nodeId.getNodeNumber()),code);
-
     sendCanMessage();
-
 }
 
 /**\brief

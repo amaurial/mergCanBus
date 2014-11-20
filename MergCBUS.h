@@ -142,7 +142,6 @@ class MergCBUS
         //let the bus level lib private
         MCP_CAN Can;                            /** The CAN object. Deal with the transport layer.*/
         byte node_mode;                         /** Slim or Flim*/
-        void setBitMessage(byte pos,bool val);  /** set or unset the bit on pos for messageFilter*/
         byte mergCanData[CANDATA_SIZE];         //can data . CANDATA_SIZE defined in message.h
         Message message;                        //canbus message representation
         MergNodeIdentification nodeId;          //node identification:name,manufacuter , ...
@@ -157,9 +156,8 @@ class MergCBUS
         byte bufferIndex;                     //index that indicates the buffer size
         //unsigned int (*userHandler)(message*);  //pointer to function
         userHandlerType userHandler;
-
         bool messageToHandle;
-
+        void setBitMessage(byte pos,bool val);  /** set or unset the bit on pos for messageFilter*/
         //void sendCanMessage();
         void getStoredEvents();                 //events that were learned
         void getStoredIDs();                    //node number,canId,device Number
@@ -186,6 +184,7 @@ class MergCBUS
         byte yellowLed;
         byte ledGreenState;
         byte ledYellowState;
+
         void(* resetFunc) (void);           //declare reset function @ address 0
         void learnEvent();
         unsigned int mainProcess();
