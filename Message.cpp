@@ -555,11 +555,14 @@ bool Message::isAccOn(){
     if (opc==OPC_ACON ||
         opc==OPC_ACON1 ||
         opc==OPC_ACON2 ||
-        opc==OPC_ACON3){
+        opc==OPC_ACON3 ||
+        opc==OPC_ASON ||
+        opc==OPC_ASON1 ||
+        opc==OPC_ASON2 ||
+        opc==OPC_ASON3){
         return true;
     }
         return false;
-
 }
 /**
 * Check the if it is an OFF message. Major event in CBUS.
@@ -570,7 +573,11 @@ bool Message::isAccOff(){
     if (opc==OPC_ACOF ||
         opc==OPC_ACOF1 ||
         opc==OPC_ACOF2 ||
-        opc==OPC_ACOF3){
+        opc==OPC_ACOF3||
+        opc==OPC_ASOF ||
+        opc==OPC_ASOF1 ||
+        opc==OPC_ASOF2 ||
+        opc==OPC_ASOF3){
         return true;
     }
         return false;
