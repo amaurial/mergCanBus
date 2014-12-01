@@ -163,6 +163,9 @@ unsigned int MergCBUS::run(){
         return OK;
     }
 
+    if (userHandler!=0){
+        userHandler(&message,this);
+    }
     return NO_MESSAGE;
 
 }
@@ -279,7 +282,7 @@ bool MergCBUS::readCanBus(byte buf_num){
             message.setRTR();
         }
         message.setHeaderBuffer(&buffer[bufIdxhead]);
-        eventmatch=memory.hasEvent(buffer[bufIdxdata],buffer[bufIdxdata+1],buffer[bufIdxdata+2],buffer[bufIdxdata+3])
+        eventmatch=memory.hasEvent(buffer[bufIdxdata],buffer[bufIdxdata+1],buffer[bufIdxdata+2],buffer[bufIdxdata+3]);
      }
     return resp;
 }
