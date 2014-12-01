@@ -121,7 +121,7 @@ class MergCBUS
         void dumpMemory(){memory.dumpMemory();};
         void setLeds(byte green,byte yellow);
         //TODO:implement
-        void setPushButton(byte pb);
+        void setPushButton(byte pb) {push_button=pb;};
 
         bool isSelfEnumMode();
         state getNodeState(){return state_mode;};
@@ -129,6 +129,16 @@ class MergCBUS
         * @param newstate One of states @see state
         */
         void setNodeState(state newstate){ state_mode=newstate;};
+        /**\brief Set the standard node number for slim mode.
+        * The user of this library has to create its own way of letting a customer set a node number in SLIM mode.
+        * If a standard value is not set and a push button is set then the library will use the value 0 if it is a consumer and 4444 if it is a producer.
+        * @param new node number
+        */
+        void setStdNN(unsigned int val){std_nn=val;};
+        /**\brief Get the standard node number.
+        * @return node number
+        */
+        unsigned int getStdNN(){return std_nn;};
 
         bool isAccOn();
         bool isAccOff();
@@ -151,14 +161,16 @@ class MergCBUS
         bool softwareEnum;
         bool DEBUG;
         bool eventmatch;
+        unsigned long std_nn;                   //standard node number for slim
 
         state state_mode;                       //actual state of the node
-        unsigned long timeDelay;                //used for self ennumeration
+        unsigned long startTime;                //used for self ennumeration
         byte buffer[TEMP_BUFFER_SIZE];          //buffer to store can ids for self enum
         byte bufferIndex;                     //index that indicates the buffer size
         //unsigned int (*userHandler)(message*);  //pointer to function
         userHandlerType userHandler;
         bool messageToHandle;
+
         void setBitMessage(byte pos,bool val);  /** set or unset the bit on pos for messageFilter*/
         //void sendCanMessage();
         void getStoredEvents();                 //events that were learned
@@ -187,6 +199,9 @@ class MergCBUS
         byte yellowLed;
         byte ledGreenState;
         byte ledYellowState;
+        void controlPushButton();
+        byte push_button;
+        byte pb_state;
 
         void(* resetFunc) (void);           //declare reset function @ address 0
         void learnEvent();

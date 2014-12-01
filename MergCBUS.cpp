@@ -18,16 +18,26 @@ MergCBUS::MergCBUS()
     //canMessage=CANMessage();
     nodeId=MergNodeIdentification();
     message=Message();
+    //skip RESERVED messages
     skipMessage(RESERVED);
+
     softwareEnum=false;
     DEBUG=false;
+    //LED vars
     greenLed=255;
     yellowLed=255;
     ledGreenState=HIGH;
     ledYellowState=LOW;
+    //user handler function var
     userHandler=0;
+    //reset function pointer
     resetFunc=0;
+    //flag to match if an event is in memory
     eventmatch=false;
+    //pusch button vars
+    push_button=255;
+    pb_state=LOW;
+    std_nn=4444;//std node number for a producer
 }
 
 /** \brief
@@ -141,7 +151,7 @@ unsigned int MergCBUS::run(){
     unsigned int resp1=NO_MESSAGE;
 
     if (state_mode==SELF_ENUMERATION){
-        unsigned long tdelay=millis()-timeDelay;
+        unsigned long tdelay=millis()-startTime;
         if (DEBUG){
             Serial.println("Processing self ennumeration.");
         }
@@ -339,7 +349,7 @@ void MergCBUS::doSelfEnnumeration(bool softEnum){
     state_mode=SELF_ENUMERATION;
     Can.setPriority(PRIO_LOW,PRIO_MIN_LOWEST);
     Can.sendRTMMessage(nodeId.getCanID());
-    timeDelay=millis();
+    startTime=millis();
 }
 
 /** \brief
@@ -1242,4 +1252,69 @@ void MergCBUS::learnEvent(){
         //send a WRACK back
         prepareMessage(OPC_WRACK);
         sendCanMessage();
+}
+
+void MergCBUS::controlPushButton(){
+    if (push_button==255){ return;}
+
+    //HIGH means pressed
+    //LOW is released
+
+    if (digitalRead(push_button)==HIGH){
+        //start the timer
+        if (pb_state==LOW){
+            timeDelay=millis();
+            pb_state=HIGH;
+        }
+    }
+    else {
+        //user had pressed it before and now released
+        if (pb_state==HIGH){
+            pb_state=LOW;
+
+            //check the timer to define what to do next
+            //between 3 and 8 secs is just to get another node number
+            //more than 8 secs is to change from slim to flim or vice-versa
+            unsigned long tdelay=millis()-startTime;
+            if (tdelay>2000 && tdelay<8000){
+                //request a new node number
+                //request node number
+                if (node_mode==MTYP_FLIM){
+                    doSetup();
+                }
+
+            } else if (tdelay>8000){
+                //change from flim to slim
+                if (node_mode==MTYP_SLIM){
+                    //turn the green led down
+                    digitalWrite(greenLed,LOW);
+                    //start self ennumeration
+                    doSelfEnnumeration();
+                    //wait until the self enum is node
+                    while (state_mode==SELF_ENUMERATION){
+                        run();
+                    }
+                    //request node number
+                    doSetup();
+                } else{
+                    //back to SLIM mode
+                    node_mode=MTYP_SLIM;
+                    nodeId.setSlimMode();
+                    memory.setNodeFlag(nodeId.getFlags());
+                    //get standard node number
+                    if (nodeId.isProducerNode()){
+                        nodeId.setNodeNumber(std_nn);
+                        memory.setNodeNumber(std_nn);
+                    }
+                    else{
+                        nodeId.setNodeNumber(0);
+                        memory.setNodeNumber(0);
+                    }
+
+                }
+            }
+        }
+
+    }
+
 }
