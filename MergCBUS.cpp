@@ -1263,7 +1263,7 @@ void MergCBUS::controlPushButton(){
     if (digitalRead(push_button)==HIGH){
         //start the timer
         if (pb_state==LOW){
-            timeDelay=millis();
+            startTime=millis();
             pb_state=HIGH;
         }
     }
@@ -1289,7 +1289,7 @@ void MergCBUS::controlPushButton(){
                     //turn the green led down
                     digitalWrite(greenLed,LOW);
                     //start self ennumeration
-                    doSelfEnnumeration();
+                    doSelfEnnumeration(false);
                     //wait until the self enum is node
                     while (state_mode==SELF_ENUMERATION){
                         run();
