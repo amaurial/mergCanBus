@@ -12,7 +12,7 @@ MergCBUS cbus=MergCBUS();
 #define SENSORS 15
 byte sensors[SENSORS];
 byte sensors_state[SENSORS];
-byte buffer[8];
+
 
 int pb_state=LOW;
 
@@ -59,10 +59,6 @@ void myUserFunc(Message *msg,MergCBUS *mcbus){
           if (sensors_state[i]==LOW){
               //transition. generate an on event
               sensors_state[i]=HIGH;
-              msg->clear();
-              msg->      
-              
-              
           }
       }else{
         if (sensors_state[i]==HIGH){

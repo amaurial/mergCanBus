@@ -6,7 +6,7 @@
 #ifndef MESSAGEPARSER_H
 #define MESSAGEPARSER_H
 
-#include <arduino.h>
+#include <Arduino.h>
 #include <EEPROM.h>
 #include <SPI.h>
 #include <avr/wdt.h>

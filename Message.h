@@ -10,7 +10,7 @@
 //#define bitSet(val,pos){return;};
 //#define bitClear(val,pos){return;};
 
-#include <arduino.h>
+#include <Arduino.h>
 #include "opcodes.h"
 
 

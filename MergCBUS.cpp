@@ -147,6 +147,7 @@ void MergCBUS::setBitMessage(byte pos,bool val){
 unsigned int MergCBUS::run(){
 
     controlLeds();
+    controlPushButton();
     unsigned int resp=NO_MESSAGE;
     unsigned int resp1=NO_MESSAGE;
 
