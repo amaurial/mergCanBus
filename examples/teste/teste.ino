@@ -17,15 +17,15 @@ byte buffer[8];
 int pb_state=LOW;
 
 void setup(){
-  
+
   loadSensorsPorts();
-  
-  
+
+
   Serial.begin(115200);
   //pinMode(GREEN_LED,OUTPUT);
   //pinMode(YELLOW_LED,OUTPUT);
   pinMode(PUSH_BUTTON,INPUT);
-  
+
   //canbus.setUpNewMemory();
   //id config
   cbus.getNodeId()->setNodeName("MODTESTE",8);
@@ -35,24 +35,24 @@ void setup(){
   cbus.getNodeId()->setMaxCodeVersion(0);
   cbus.getNodeId()->setSuportedEvents(20);
   cbus.getNodeId()->setSuportedEventsVariables(8);
-  cbus.getNodeId()->setSuportedNodeVariables(20);   
-  cbus.setStdNN(4444); 
+  cbus.getNodeId()->setSuportedNodeVariables(20);
+  cbus.setStdNN(4444);
 
   cbus.setLeds(GREEN_LED,YELLOW_LED);
   cbus.setPushButton(PUSH_BUTTON);
   cbus.setDebug(true);
   cbus.setUserHandlerFunction(&myUserFunc);
-  cbus.initCanBus(53,CAN_125KBPS,10,200);  
+  cbus.initCanBus(53,CAN_125KBPS,10,200);
 }
 
 void loop (){
-  
+
   cbus.run();
-  
+
 }
 
 void myUserFunc(Message *msg,MergCBUS *mcbus){
-  
+
   //check if there is something on some port and send and event
   for (int i=0;i<SENSORS;i++){
       if (digitalRead(sensors[i]==HIGH)){
@@ -60,28 +60,29 @@ void myUserFunc(Message *msg,MergCBUS *mcbus){
               //transition. generate an on event
               sensors_state[i]=HIGH;
               msg->clear();
-              msg->      
-              
-              
+              msg->createOnEvent(mcbus->getNodeId()->getNodeNumber(),
+                                  true,i,0,null);
+                                  );
+              mcbus->sendMessage(msg);
           }
       }else{
         if (sensors_state[i]==HIGH){
               //transition. generate an off event
               sensors_state[i]=LOW;
           }
-        
+
       }
   }
-  
-  
+
+
 }
 
 void loadSensorsPorts(){
-  
-  byte p=20; 
-  
+
+  byte p=20;
+
   for (int i=0;i<SENSORS;i++){
      sensors[i]=p+i;
-     pinMode(p+i,INPUT);     
-  }  
+     pinMode(p+i,INPUT);
+  }
 }

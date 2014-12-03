@@ -1319,3 +1319,9 @@ void MergCBUS::controlPushButton(){
     }
 
 }
+
+void MergCBUS::sendMessage(Message *msg){
+    for (int i=0;i<CANDATA_SIZE;i++){
+        mergCanData[i]=msg->getDataBuffer()[i];
+    }
+}

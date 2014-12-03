@@ -622,6 +622,110 @@ byte Message::getAccExtraData(byte idx){
     return 0;
 }
 
+void Message::createOnEvent(unsigned int nodeNumber,bool longEvent,unsigned int eventNumber,byte numDataBytes,byte* data){
+
+
+    switch (numDataBytes){
+    case (0):
+        if (longEvent){
+            data[0]=OPC_ACON;
+        }else {
+            data[0]=OPC_ASON;
+        }
+        break;
+    case (1):
+        data[5]=data[0];
+        if (longEvent){
+            data[0]=OPC_ACON1;
+        }else {
+            data[0]=OPC_ASON1;
+        }
+        break;
+    case(2):
+        data[5]=data[0];
+        data[6]=data[1];
+        if (longEvent){
+            data[0]=OPC_ACON2;
+        }else {
+            data[0]=OPC_ASON2;
+        }
+        break;
+    case(3):
+        data[5]=data[0];
+        data[6]=data[1];
+        data[7]=data[2];
+        if (longEvent){
+            data[0]=OPC_ACON3;
+        }else {
+            data[0]=OPC_ASON3;
+        }
+        break;
+    default:
+        return;
+        break;
+    }
+    data[1]=highByte(nodeNumber);
+    data[2]=lowByte(nodeNumber);
+    data[3]=highByte(eventNumber);
+    data[4]=lowByte(eventNumber);
+
+}
+
+void Message::createOffEvent(unsigned int nodeNumber,bool longEvent,unsigned int eventNumber,byte numDataBytes,byte* msgdata){
+    switch (numDataBytes){
+    case (0):
+        if (longEvent){
+            data[0]=OPC_ACOF;
+        }else {
+            data[0]=OPC_ASOF;
+        }
+        break;
+    case (1):
+        if (msgdata!=null){
+            data[5]=msgdata[0];
+        }
+
+        if (longEvent){
+            data[0]=OPC_ACOF1;
+        }else {
+            data[0]=OPC_ASOF1;
+        }
+        break;
+    case(2):
+        if (msgdata!=null){
+            data[5]=msgdata[0];
+            data[6]=msgdata[1];
+        }
+
+        if (longEvent){
+            data[0]=OPC_ACOF2;
+        }else {
+            data[0]=OPC_ASOF2;
+        }
+        break;
+    case(3):
+        if (msgdata!=null){
+            data[5]=msgdata[0];
+            data[6]=msgdata[1];
+            data[7]=msgdata[2];
+        }
+
+        if (longEvent){
+            data[0]=OPC_ACOF3;
+        }else {
+            data[0]=OPC_ASOF3;
+        }
+        break;
+    default:
+        return;
+        break;
+    }
+    data[1]=highByte(nodeNumber);
+    data[2]=lowByte(nodeNumber);
+    data[3]=highByte(eventNumber);
+    data[4]=lowByte(eventNumber);
+}
+
 /**
 * Load the most commom fields for each message.
 * Used to make the search for fields faster.

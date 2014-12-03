@@ -146,7 +146,7 @@ class MergCBUS
         byte getAccExtraData(byte idx);//idx starts at 1
         void saveNodeFlags();
         bool eventMatch(){return eventmatch;};
-
+        void sendMessage(Message *msg);
 
     protected:
     private:

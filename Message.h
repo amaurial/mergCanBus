@@ -137,6 +137,8 @@ class Message
         bool isAccOff();
         byte accExtraData();
         byte getAccExtraData(byte idx);//idx starts at 1
+        void createOnEvent(unsigned int nodeNumber,bool longEvent,unsigned int eventNumber,byte numDataBytes,byte* data);
+        void createOffEvent(unsigned int nodeNumber,bool longEvent,unsigned int eventNumber,byte numDataBytes,byte* data);
 
 
     protected:
