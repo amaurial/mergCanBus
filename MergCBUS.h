@@ -121,7 +121,7 @@ class MergCBUS
         void dumpMemory(){memory.dumpMemory();};
         void setLeds(byte green,byte yellow);
         //TODO:implement
-        void setPushButton(byte pb) {push_button=pb;};
+        void setPushButton(byte pb) {push_button=pb;pinMode(pb,INPUT_PULLUP);};
 
         bool isSelfEnumMode();
         state getNodeState(){return state_mode;};

@@ -36,8 +36,9 @@ MergCBUS::MergCBUS()
     eventmatch=false;
     //pusch button vars
     push_button=255;
-    pb_state=LOW;
-    std_nn=4444;//std node number for a producer
+    pb_state=HIGH;
+    std_nn=300;//std node number for a producer
+    initMemory();
 }
 
 /** \brief
@@ -60,8 +61,10 @@ void MergCBUS::loadMemory(){
     nodeId.setFlags(memory.getNodeFlag());
     if (nodeId.isSlimMode()){
         node_mode=MTYP_SLIM;
+        Serial.println("SLIM mode");
     }else{
         node_mode=MTYP_FLIM;
+        Serial.println("SLIM mode");
     }
 }
 
@@ -506,9 +509,9 @@ byte MergCBUS::handleConfigMessages(){
             memory.setNodeNumber(nodeId.getNodeNumber());
             prepareMessage(OPC_NNACK);
 
-
-            setFlimMode();
             state_mode=NORMAL;
+            setFlimMode();
+            saveNodeFlags();
             return sendCanMessage();
         }else{
 
@@ -1115,6 +1118,7 @@ void MergCBUS::controlLeds(){
         }
     }
     else{
+
         if(node_mode==MTYP_FLIM){
             digitalWrite(greenLed,LOW);
             digitalWrite(yellowLed,HIGH);
@@ -1165,15 +1169,17 @@ byte MergCBUS::getAccExtraData(byte idx){
 }
 
 void MergCBUS::setSlimMode(){
+    Serial.println("Setting SLIM mode");
     node_mode=MTYP_SLIM;
     nodeId.setSlimMode();
-    memory.setNodeFlag(nodeId.getFlags());
+    saveNodeFlags();
 }
 
 void MergCBUS::setFlimMode(){
+    Serial.println("Setting FLIM mode");
     node_mode=MTYP_FLIM;
     nodeId.setFlimMode();
-    memory.setNodeFlag(nodeId.getFlags());
+    saveNodeFlags();
 }
 
 void MergCBUS::saveNodeFlags(){
@@ -1258,35 +1264,41 @@ void MergCBUS::learnEvent(){
 void MergCBUS::controlPushButton(){
     if (push_button==255){ return;}
 
-    //HIGH means pressed
-    //LOW is released
+    //LOW means pressed
+    //HIGH is released
 
-    if (digitalRead(push_button)==HIGH){
+    if (digitalRead(push_button)==LOW){
         //start the timer
-        if (pb_state==LOW){
+        //Serial.println("Button pressed");
+        if (pb_state==HIGH){
             startTime=millis();
-            pb_state=HIGH;
+            pb_state=LOW;
+            Serial.println("Start timer");
         }
     }
     else {
         //user had pressed it before and now released
-        if (pb_state==HIGH){
-            pb_state=LOW;
+        if (pb_state==LOW){
+            //Serial.println("Button released");
+            pb_state=HIGH;
 
             //check the timer to define what to do next
             //between 3 and 8 secs is just to get another node number
             //more than 8 secs is to change from slim to flim or vice-versa
             unsigned long tdelay=millis()-startTime;
-            if (tdelay>2000 && tdelay<8000){
+            Serial.println(tdelay);
+            if (tdelay>1000 && tdelay<6000){
                 //request a new node number
                 //request node number
                 if (node_mode==MTYP_FLIM){
+                    Serial.println("Mode FLIM. Request NN");
                     doSetup();
                 }
 
-            } else if (tdelay>8000){
+            } else if (tdelay>6000){
                 //change from flim to slim
                 if (node_mode==MTYP_SLIM){
+                    Serial.println("Mode SLIM. Changing to FLIM");
                     //turn the green led down
                     digitalWrite(greenLed,LOW);
                     //start self ennumeration
@@ -1299,9 +1311,11 @@ void MergCBUS::controlPushButton(){
                     doSetup();
                 } else{
                     //back to SLIM mode
+                    Serial.println("Mode FLIM. Changing to SLIM");
                     node_mode=MTYP_SLIM;
                     nodeId.setSlimMode();
-                    memory.setNodeFlag(nodeId.getFlags());
+                    saveNodeFlags();
+                    //memory.setNodeFlag(nodeId.getFlags());
                     //get standard node number
                     if (nodeId.isProducerNode()){
                         nodeId.setNodeNumber(std_nn);
@@ -1324,4 +1338,5 @@ void MergCBUS::sendMessage(Message *msg){
     for (int i=0;i<CANDATA_SIZE;i++){
         mergCanData[i]=msg->getDataBuffer()[i];
     }
+    sendCanMessage();
 }

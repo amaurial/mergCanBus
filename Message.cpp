@@ -622,7 +622,7 @@ byte Message::getAccExtraData(byte idx){
     return 0;
 }
 
-void Message::createOnEvent(unsigned int nodeNumber,bool longEvent,unsigned int eventNumber,byte numDataBytes,byte* data){
+void Message::createOnEvent(unsigned int nodeNumber,bool longEvent,unsigned int eventNumber,byte numDataBytes,byte* msgdata){
 
 
     switch (numDataBytes){
@@ -634,7 +634,9 @@ void Message::createOnEvent(unsigned int nodeNumber,bool longEvent,unsigned int 
         }
         break;
     case (1):
-        data[5]=data[0];
+        if (msgdata!=0){
+            data[5]=msgdata[0];
+        }
         if (longEvent){
             data[0]=OPC_ACON1;
         }else {
@@ -642,8 +644,10 @@ void Message::createOnEvent(unsigned int nodeNumber,bool longEvent,unsigned int 
         }
         break;
     case(2):
-        data[5]=data[0];
-        data[6]=data[1];
+        if (msgdata!=0){
+            data[5]=msgdata[0];
+            data[6]=msgdata[1];
+        }
         if (longEvent){
             data[0]=OPC_ACON2;
         }else {
@@ -651,9 +655,11 @@ void Message::createOnEvent(unsigned int nodeNumber,bool longEvent,unsigned int 
         }
         break;
     case(3):
-        data[5]=data[0];
-        data[6]=data[1];
-        data[7]=data[2];
+        if (msgdata!=0){
+            data[5]=msgdata[0];
+            data[6]=msgdata[1];
+            data[7]=msgdata[2];
+        }
         if (longEvent){
             data[0]=OPC_ACON3;
         }else {
@@ -681,7 +687,7 @@ void Message::createOffEvent(unsigned int nodeNumber,bool longEvent,unsigned int
         }
         break;
     case (1):
-        if (msgdata!=null){
+        if (msgdata!=0){
             data[5]=msgdata[0];
         }
 
@@ -692,7 +698,7 @@ void Message::createOffEvent(unsigned int nodeNumber,bool longEvent,unsigned int
         }
         break;
     case(2):
-        if (msgdata!=null){
+        if (msgdata!=0){
             data[5]=msgdata[0];
             data[6]=msgdata[1];
         }
@@ -704,7 +710,7 @@ void Message::createOffEvent(unsigned int nodeNumber,bool longEvent,unsigned int
         }
         break;
     case(3):
-        if (msgdata!=null){
+        if (msgdata!=0){
             data[5]=msgdata[0];
             data[6]=msgdata[1];
             data[7]=msgdata[2];

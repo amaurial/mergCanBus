@@ -603,7 +603,7 @@ void MergMemoryManagement::setNodeFlag(byte val){
 */
 void MergMemoryManagement::dumpMemory(){
 
-    //read();
+    read();
     byte a;
     Serial.println("MEMORY DUMP");
     Serial.print("IDENT:");
