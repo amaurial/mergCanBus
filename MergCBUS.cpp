@@ -1291,8 +1291,13 @@ void MergCBUS::controlPushButton(){
                 //request a new node number
                 //request node number
                 if (node_mode==MTYP_FLIM){
-                    Serial.println("Mode FLIM. Request NN");
-                    doSetup();
+                        if (state_mode==SETUP){
+                            //back to normal
+                            state_mode==NORMAL;
+                        }else{
+                            Serial.println("Mode FLIM. Request NN");
+                            doSetup();
+                        }
                 }
 
             } else if (tdelay>6000){
