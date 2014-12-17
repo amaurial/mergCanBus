@@ -46,6 +46,8 @@
 		<Unit filename="MergNodeIdentification.h" />
 		<Unit filename="Message.cpp" />
 		<Unit filename="Message.h" />
+		<Unit filename="MessageBuffer.cpp" />
+		<Unit filename="MessageBuffer.h" />
 		<Unit filename="README.md" />
 		<Unit filename="mcp_can.cpp" />
 		<Unit filename="mcp_can.h" />
