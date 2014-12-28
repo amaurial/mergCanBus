@@ -26,6 +26,7 @@
 #define SELF_ENUM_TIME 1000      /** Defines the timeout used for self ennumeration mode.*/
 #define TEMP_BUFFER_SIZE 128    /** Size of a internal buffer for general usage.*/
 #define SELF_ENUM_BUFFER_SIZE 99
+#define BLINK_RATE 100
 
 //#define lowByte(w) ((uint8_t) ((w) & 0xff))
 //#define highByte(w) ((uint8_t) ((w) >> 8))
@@ -78,7 +79,8 @@ class MergCBUS
     public:
 
         typedef void (*userHandlerType)(Message*,MergCBUS*);/**< This is the user function for processing other messages. It receives a reference to a Message and a reference to MergCBUS.*/
-        MergCBUS();
+
+        MergCBUS(byte num_node_vars,byte num_events,byte num_events_vars,byte max_device_numbers);
         virtual ~MergCBUS();
         /**\brief Set to skip processing certain message.
         * @param msg Message type not to process.
@@ -199,6 +201,7 @@ class MergCBUS
         byte yellowLed;
         byte ledGreenState;
         byte ledYellowState;
+        long ledtimer;
         void controlPushButton();
         byte push_button;
         byte pb_state;

@@ -418,15 +418,15 @@ byte Message::getStatus(){
 byte Message::getParaIndex(){
     //byte* data=_canMessage->getData();
 
-    Serial.print("OPC:");Serial.print(opc,HEX);
-    Serial.print("\tPara index byte: ");
+    //Serial.print("OPC:");Serial.print(opc,HEX);
+    //Serial.print("\tPara index byte: ");
 
     byte r=0;
     if (opc==OPC_RQNPN){
-        Serial.println(data[3],HEX);
+        //Serial.println(data[3],HEX);
         return data[3];
     }
-    Serial.println(0,HEX);
+    //Serial.println(0,HEX);
     return r;
 }
 

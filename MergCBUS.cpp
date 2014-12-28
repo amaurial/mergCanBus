@@ -8,15 +8,18 @@
 */
 
 
-MergCBUS::MergCBUS()
+MergCBUS::MergCBUS(byte num_node_vars,byte num_events,byte num_events_var,byte max_device_numbers)
 {
     //ctor
     messageFilter=0;
     bufferIndex=0;
     Can=MCP_CAN();
-    memory=MergMemoryManagement();
-    //canMessage=CANMessage();
+    memory=MergMemoryManagement(num_node_vars,num_events,num_events_var,max_device_numbers);
     nodeId=MergNodeIdentification();
+    nodeId.setSuportedEvents(num_events);
+    nodeId.setSuportedNodeVariables(num_node_vars);
+    nodeId.setSuportedEventsVariables(num_events_var);
+
     message=Message();
     //skip RESERVED messages
     skipMessage(RESERVED);
@@ -28,6 +31,7 @@ MergCBUS::MergCBUS()
     yellowLed=255;
     ledGreenState=HIGH;
     ledYellowState=LOW;
+    ledtimer=millis();
     //user handler function var
     userHandler=0;
     //reset function pointer
@@ -61,10 +65,10 @@ void MergCBUS::loadMemory(){
     nodeId.setFlags(memory.getNodeFlag());
     if (nodeId.isSlimMode()){
         node_mode=MTYP_SLIM;
-        Serial.println("SLIM mode");
+        //Serial.println("SLIM mode");
     }else{
         node_mode=MTYP_FLIM;
-        Serial.println("SLIM mode");
+        //Serial.println("FLIM mode");
     }
 }
 
@@ -576,17 +580,17 @@ byte MergCBUS::handleConfigMessages(){
         }
 
         if (i>0){
-            byte *events=memory.getEvents();
+            //byte *events=memory.getEvents();
             int pos=0;
             for (int j=0;j<i;j++){
+                byte *event=memory.getEvent(j);
                 prepareMessageBuff(OPC_ENRSP,highByte(nn),lowByte(nn),
-                                events[pos],
-                                events[pos+1],
-                                events[pos+2],
-                                events[pos+3],
-                                (j+1)
-                );
-                pos=pos+4;
+                                event[pos],
+                                event[pos+1],
+                                event[pos+2],
+                                event[pos+3],
+                                (j+1));
+                pos=0;
                 ind=sendCanMessage();
             }
         }
@@ -690,7 +694,7 @@ byte MergCBUS::handleConfigMessages(){
             nn=message.getNodeNumber();
             evidx=memory.getEventIndex(nn,ev);
 
-            if (evidx<0){
+            if (evidx>nodeId.getSuportedEvents()){
                 sendERRMessage(CMDERR_INVALID_EVENT);
                 break;
             }
@@ -1106,17 +1110,21 @@ void MergCBUS::controlLeds(){
     if (yellowLed==255 && greenLed==255){
         return;
     }
+    if ((millis()-ledtimer)<BLINK_RATE){
+        return;
+    }
 
     if (state_mode==SETUP){
-        delay(100);
-        if (ledYellowState==HIGH){
+
+            if (ledYellowState==HIGH){
             digitalWrite(yellowLed,LOW);
             ledYellowState=LOW;
-        }else{
-            digitalWrite(yellowLed,HIGH);
-            ledYellowState=HIGH;
+            }else{
+                digitalWrite(yellowLed,HIGH);
+                ledYellowState=HIGH;
+            }
         }
-    }
+
     else{
 
         if(node_mode==MTYP_FLIM){
@@ -1128,6 +1136,7 @@ void MergCBUS::controlLeds(){
             digitalWrite(yellowLed,LOW);
         }
     }
+    ledtimer=millis();
 }
 
 /**\brief
@@ -1169,14 +1178,19 @@ byte MergCBUS::getAccExtraData(byte idx){
 }
 
 void MergCBUS::setSlimMode(){
-    Serial.println("Setting SLIM mode");
+    if (DEBUG){
+        Serial.println("Setting SLIM mode");
+    }
+
     node_mode=MTYP_SLIM;
     nodeId.setSlimMode();
     saveNodeFlags();
 }
 
 void MergCBUS::setFlimMode(){
-    Serial.println("Setting FLIM mode");
+    if (DEBUG){
+        Serial.println("Setting FLIM mode");
+    }
     node_mode=MTYP_FLIM;
     nodeId.setFlimMode();
     saveNodeFlags();
@@ -1212,7 +1226,7 @@ void MergCBUS::learnEvent(){
         buffer[3]=lowByte(ev);
         evidx=memory.setEvent(buffer);
 
-        if (evidx>MAX_NUM_EVENTS){
+        if (evidx>nodeId.getSuportedEvents()){
             //send a message error
             sendERRMessage(CMDERR_TOO_MANY_EVENTS);
             return;
@@ -1273,7 +1287,7 @@ void MergCBUS::controlPushButton(){
         if (pb_state==HIGH){
             startTime=millis();
             pb_state=LOW;
-            Serial.println("Start timer");
+            //Serial.println("Start timer");
         }
     }
     else {
@@ -1286,7 +1300,7 @@ void MergCBUS::controlPushButton(){
             //between 3 and 8 secs is just to get another node number
             //more than 8 secs is to change from slim to flim or vice-versa
             unsigned long tdelay=millis()-startTime;
-            Serial.println(tdelay);
+            //Serial.println(tdelay);
             if (tdelay>1000 && tdelay<6000){
                 //request a new node number
                 //request node number
@@ -1295,7 +1309,7 @@ void MergCBUS::controlPushButton(){
                             //back to normal
                             state_mode==NORMAL;
                         }else{
-                            Serial.println("Mode FLIM. Request NN");
+                            //Serial.println("Mode FLIM. Request NN");
                             doSetup();
                         }
                 }
@@ -1303,7 +1317,7 @@ void MergCBUS::controlPushButton(){
             } else if (tdelay>6000){
                 //change from flim to slim
                 if (node_mode==MTYP_SLIM){
-                    Serial.println("Mode SLIM. Changing to FLIM");
+                    //Serial.println("Mode SLIM. Changing to FLIM");
                     //turn the green led down
                     digitalWrite(greenLed,LOW);
                     //start self ennumeration
@@ -1316,7 +1330,7 @@ void MergCBUS::controlPushButton(){
                     doSetup();
                 } else{
                     //back to SLIM mode
-                    Serial.println("Mode FLIM. Changing to SLIM");
+                    //Serial.println("Mode FLIM. Changing to SLIM");
                     node_mode=MTYP_SLIM;
                     nodeId.setSlimMode();
                     saveNodeFlags();

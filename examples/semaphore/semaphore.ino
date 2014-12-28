@@ -29,34 +29,37 @@ See MemoryManagement.h for memory configuration
 #define RED 12        //green led
 #define TRANSITION_TIME  2000 //time in milli to keep the yellow light on
 
-MergCBUS cbus=MergCBUS();
+MergCBUS cbus=MergCBUS(5,20,1,0);
 byte lighton;//control the state
 byte nextlighton;//control the state
 unsigned long starttime;
 
 void setup(){
-  
+
   setLedPorts();     //setup the sensor ports
   pinMode(PUSH_BUTTON1,INPUT_PULLUP);//debug push button
   Serial.begin(115200);
 
-  //cbus.setUpNewMemory(); //uncomment this line to setup a new node and then comment it again
+
   //Configuration data for the node
   cbus.getNodeId()->setNodeName("MODTESTE",8);  //node name
   cbus.getNodeId()->setModuleId(55);            //module number
   cbus.getNodeId()->setManufacturerId(0xA5);    //merg code
   cbus.getNodeId()->setMinCodeVersion(1);       //Version 1
   cbus.getNodeId()->setMaxCodeVersion(0);
-  cbus.getNodeId()->setSuportedEvents(20);      //max supported events. this can be changed in the memory config
-  cbus.getNodeId()->setSuportedEventsVariables(8);
-  cbus.getNodeId()->setSuportedNodeVariables(20);
-  cbus.getNodeId()->setProducerNode(true);
-  cbus.getNodeId()->setConsumerNode(false);
+  cbus.getNodeId()->setProducerNode(false);
+  cbus.getNodeId()->setConsumerNode(true);
   cbus.setStdNN(999); //standard node number
+
+  if (digitalRead(PUSH_BUTTON1)==LOW){
+    Serial.println("Setup new memory");
+    cbus.setUpNewMemory();
+    cbus.saveNodeFlags();
+  }
 
   cbus.setLeds(GREEN_LED,YELLOW_LED);//set the led ports
   cbus.setPushButton(PUSH_BUTTON);//set the push button ports
-  cbus.setDebug(true);//print some messages on the serial port
+  cbus.setDebug(false);//print some messages on the serial port
   cbus.setUserHandlerFunction(&myUserFunc);//function that implements the node logic
   cbus.initCanBus(53,CAN_125KBPS,10,200);  //initiate the transport layer
 
@@ -73,33 +76,33 @@ void loop (){
 }
 
 void myUserFunc(Message *msg,MergCBUS *mcbus){
-  
+
   //getting standard on/off events
   if (mcbus->eventMatch()){
       lighton=YELLOW;
       turnLightsOn();
       starttime=millis();
-      
+
       if (mcbus->isAccOn()){
-        nextlighton=GREEN;      
+        nextlighton=GREEN;
       }
       else {
         nextlighton=RED;
-      }      
-  }    
+      }
+  }
   if (lighton==YELLOW){
     if ((millis()-starttime)>TRANSITION_TIME){
       lighton=nextlighton;
     }
-  }    
-  turnLightsOn();  
+  }
+  turnLightsOn();
 }
 //config the leds ports and the initial state
 void setLedPorts(){
 
   pinMode(GREEN,OUTPUT);
   pinMode(YELLOW,OUTPUT);
-  pinMode(RED,OUTPUT);  
+  pinMode(RED,OUTPUT);
   lighton=GREEN;
   turnLightsOn();
 }
@@ -121,5 +124,5 @@ void turnLightsOn(){
       digitalWrite(RED,LOW);
       digitalWrite(GREEN,LOW);
     break;
-  }  
+  }
 }
