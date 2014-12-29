@@ -1307,7 +1307,7 @@ void MergCBUS::controlPushButton(){
                 if (node_mode==MTYP_FLIM){
                         if (state_mode==SETUP){
                             //back to normal
-                            state_mode==NORMAL;
+                            state_mode=NORMAL;
                         }else{
                             //Serial.println("Mode FLIM. Request NN");
                             doSetup();
@@ -1359,3 +1359,41 @@ void MergCBUS::sendMessage(Message *msg){
     }
     sendCanMessage();
 }
+/** \brief Get the Index in memory of an event
+ *
+ * \param msg Pointer to a received message. It will use the node number and the event number from the msg *
+ * \return Returns the index of the event in memory
+ *
+ */
+
+unsigned int MergCBUS::getEventIndex(Message *msg){
+    return memory.getEventIndex(msg->getNodeNumber(),msg->getEventNumber());
+}
+
+/** \brief Get node variable by index
+ *
+ * \param varIndex index of the variable
+ * \return Returns the variable. One byte
+ *
+ */
+
+byte MergCBUS::getNodeVar(byte varIndex){
+    return memory.getVar(varIndex);
+}
+
+/** \brief Get the variable of a learned event
+ *
+ * \param msg Pointer to a received message. It will use the node number and the event number from the msg *
+ * \param varIndex the index in the variable to be retrieved.
+ * \return Returns the variable value.
+ *
+ */
+byte MergCBUS::getEventVar(Message *msg,byte varIndex){
+    unsigned int idx=memory.getEventIndex(msg->getNodeNumber(),msg->getEventNumber());
+    if (idx<nodeId.getSuportedEvents()){
+            return memory.getEventVar(idx,varIndex);
+    }
+    return 0x00;
+
+}
+

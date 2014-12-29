@@ -141,14 +141,18 @@ class MergCBUS
         * @return node number
         */
         unsigned int getStdNN(){return std_nn;};
-
-        bool isAccOn();
-        bool isAccOff();
         byte accExtraData();
         byte getAccExtraData(byte idx);//idx starts at 1
         void saveNodeFlags();
-        bool eventMatch(){return eventmatch;};
         void sendMessage(Message *msg);
+        //methods for getthing parameters
+        bool isAccOn();
+        bool isAccOff();
+        bool eventMatch(){return eventmatch;};
+        unsigned int getEventIndex(Message *msg);
+        byte getNodeVar(byte varIndex);
+        byte getEventVar(Message *msg,byte varIndex);
+
 
     protected:
     private:

@@ -271,9 +271,7 @@ void MergMemoryManagement::read(){
         write();
         return;
     }
-    int pos=0;
-    int n=0;
-    int m=0;
+
     //read can id
     can_ID=EEPROM.read(CAN_ID_MEMPOS);
     //node number
@@ -298,8 +296,6 @@ void MergMemoryManagement::read(){
 * Write all data to memory. it overwrites the all the previous information.
 */
 void MergMemoryManagement::write(){
-
-    int pos=0;
 
     //Serial.println("write function called");
 
@@ -544,7 +540,7 @@ void MergMemoryManagement::dumpMemory(){
 
     Serial.println("\nEVENTS:");
     int n=resolveEventPos(0);
-    int m=0;
+
     for (int i=0;i<MAX_NUM_EVENTS;i++){
         for (int j=0;j<EVENT_SIZE;j++){
             Serial.print(EEPROM.read(n),HEX);
