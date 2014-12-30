@@ -23,9 +23,10 @@ See MemoryManagement.h for memory configuration
 #include <EEPROM.h> //required by the library
 #include <VarSpeedServo.h>
 
+
 //Module definitions
-#define NUM_SERVOS 20
-#define VAR_PER_SERVO 3
+#define NUM_SERVOS 20      //number of servos
+#define VAR_PER_SERVO 3    //variables per servo
 
 
 //CBUS definitions
@@ -46,7 +47,9 @@ See MemoryManagement.h for memory configuration
 MergCBUS cbus=MergCBUS(NODE_VARS,NODE_EVENTS,EVENTS_VARS,DEVICE_NUMBERS);
 //servo controler
 VarSpeedServo servos[NUM_SERVOS];
+//pins where the servos are attached
 byte servopins[]={11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30};
+
 
 
 void setup(){
@@ -102,7 +105,7 @@ void myUserFunc(Message *msg,MergCBUS *mcbus){
      onEvent=mcbus->isAccOn();
       //get the events var and control the servos
       for (int i=0;i<NUM_SERVOS;i++){
-        
+        //get the speed. the first byte
         servo_speed=mcbus->getEventVar(msg,varidx);
         
         if (servo_speed>0){
@@ -115,14 +118,14 @@ void myUserFunc(Message *msg,MergCBUS *mcbus){
           else{
             servos[i].write(servo_start,converted_speed);            
           }
+          //jump to the other servos variables
           varidx=varidx+3;
         }        
       }
   }  
 }
 
-void setUpServos(){
-  
+void setUpServos(){  
   for (int i=0;i<NUM_SERVOS;i++){
     servos[i].attach(servopins[i]);    
   }

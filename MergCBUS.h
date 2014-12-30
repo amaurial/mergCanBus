@@ -101,10 +101,8 @@ class MergCBUS
         bool initCanBus(unsigned int port,unsigned int rate, unsigned int retries,unsigned int retryIntervalMilliseconds);
         /**\brief Set the user function to handle other messages.*/
         void setUserHandlerFunction(userHandlerType f) {userHandler=f;};
-        void doSelfEnnumeration(bool soft);
+
         void setDebug(bool debug);
-        void doSetup();
-        void doOutOfService();
         void sendERRMessage(byte code);
         bool hasThisEvent();
         bool readCanBus(byte buf_num);
@@ -117,20 +115,15 @@ class MergCBUS
         void setFlimMode();
         /**\brief Get the node mode.*/
         byte getNodeMode(){return node_mode;};
-        void initMemory();
+        /**\brief Reset EEPROM.*/
         void setUpNewMemory();
         /**\brief Print all EEPROM values.*/
         void dumpMemory(){memory.dumpMemory();};
+        /**\brief Set the CBUS modules stardard leds.*/
         void setLeds(byte green,byte yellow);
-        //TODO:implement
+        /**\brief Set the CBUS modules stardard push button.*/
         void setPushButton(byte pb) {push_button=pb;pinMode(pb,INPUT_PULLUP);};
 
-        bool isSelfEnumMode();
-        state getNodeState(){return state_mode;};
-        /**\brief Set the node state to a new state.
-        * @param newstate One of states @see state
-        */
-        void setNodeState(state newstate){ state_mode=newstate;};
         /**\brief Set the standard node number for slim mode.
         * The user of this library has to create its own way of letting a customer set a node number in SLIM mode.
         * If a standard value is not set and a push button is set then the library will use the value 0 if it is a consumer and 4444 if it is a producer.
@@ -141,8 +134,6 @@ class MergCBUS
         * @return node number
         */
         unsigned int getStdNN(){return std_nn;};
-        byte accExtraData();
-        byte getAccExtraData(byte idx);//idx starts at 1
         void saveNodeFlags();
         void sendMessage(Message *msg);
         //methods for getthing parameters
@@ -164,9 +155,9 @@ class MergCBUS
         MergNodeIdentification nodeId;          //node identification:name,manufacuter , ...
         byte messageFilter;                     //bit filter about each message to handle. by default avoid reserved messages
         MergMemoryManagement memory;            //organize the eeprom memory and maintain a copy in RAM
-        bool softwareEnum;
-        bool DEBUG;
-        bool eventmatch;
+        bool softwareEnum;                      //true if the node is doing self ennumeration
+        bool DEBUG;                             //true if debug mode
+        bool eventmatch;                        //true if the received message is found on learned events
         unsigned long std_nn;                   //standard node number for slim
 
         state state_mode;                       //actual state of the node
@@ -175,7 +166,7 @@ class MergCBUS
         byte bufferIndex;                     //index that indicates the buffer size
         //unsigned int (*userHandler)(message*);  //pointer to function
         userHandlerType userHandler;
-        bool messageToHandle;
+        bool messageToHandle;                   //true if the message was not automatically handled
 
         void setBitMessage(byte pos,bool val);  /** set or unset the bit on pos for messageFilter*/
         //void sendCanMessage();
@@ -184,21 +175,21 @@ class MergCBUS
         bool matchEvent();                      //
         unsigned int runAutomatic();            //process the majority of events automatic
 
-        byte handleConfigMessages();
-        byte handleDCCMessages();
-        byte handleACCMessages();
-        byte handleGeneralMessages();
+        byte handleConfigMessages();            //process config messages
+        byte handleDCCMessages();               //process dcc messages
+        byte handleACCMessages();               //process accessory messages
+        byte handleGeneralMessages();           //process general messages
 
 
-        void finishSelfEnumeration();
-        void clearMsgToSend();
-        byte sendCanMessage();
-        void loadMemory();
+        void finishSelfEnumeration();           //finish the self ennumeration procedures
+        void clearMsgToSend();                  //clear internal buffer
+        byte sendCanMessage();                  //send the message in the buffer
+        void loadMemory();                      //load the saved data to ram. not the events
 
-        void sortArray(byte *a, byte n);
-        void prepareMessage(byte opc);
-        void prepareMessageBuff(byte data0=0,byte data1=0,byte data2=0,byte data3=0,byte data4=0,byte data5=0,byte data6=0,byte data7=0);
-        byte getMessageSize(byte opc);
+        void sortArray(byte *a, byte n);        //used in selfennum
+        void prepareMessage(byte opc);          //fill the buffer with specific messages
+        void prepareMessageBuff(byte data0=0,byte data1=0,byte data2=0,byte data3=0,byte data4=0,byte data5=0,byte data6=0,byte data7=0);//fill the buffer byte by byte
+        byte getMessageSize(byte opc);          //return the
 
         void controlLeds();
         byte greenLed;
@@ -213,6 +204,18 @@ class MergCBUS
         void(* resetFunc) (void);           //declare reset function @ address 0
         void learnEvent();
         unsigned int mainProcess();
+        void doSelfEnnumeration(bool soft);
+        void doSetup();
+        void doOutOfService();
+        void initMemory();
+        bool isSelfEnumMode();
+        state getNodeState(){return state_mode;};
+        /**\brief Set the node state to a new state.
+        * @param newstate One of states @see state
+        */
+        void setNodeState(state newstate){ state_mode=newstate;};
+        byte accExtraData();
+        byte getAccExtraData(byte idx);//idx starts at 1
 };
 
 #endif // MESSAGEPARSER_H
