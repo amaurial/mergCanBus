@@ -140,9 +140,13 @@ class MergCBUS
         bool isAccOn();
         bool isAccOff();
         bool eventMatch(){return eventmatch;};
+        bool isLongEvent(){return typeEventMatch;};
         unsigned int getEventIndex(Message *msg);
         byte getNodeVar(byte varIndex);
         byte getEventVar(Message *msg,byte varIndex);
+
+        void setDeviceNumber(unsigned int val,byte port);           //2 bytes representation for dn
+        unsigned int getDeviceNumber(byte port);                             //2 bytes representation
 
 
     protected:
@@ -159,6 +163,7 @@ class MergCBUS
         bool DEBUG;                             //true if debug mode
         bool eventmatch;                        //true if the received message is found on learned events
         unsigned long std_nn;                   //standard node number for slim
+        bool typeEventMatch;                    //true is long event, false is short event
 
         state state_mode;                       //actual state of the node
         unsigned long startTime;                //used for self ennumeration

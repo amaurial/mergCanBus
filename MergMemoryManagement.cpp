@@ -15,16 +15,15 @@ MergMemoryManagement::MergMemoryManagement(byte num_node_vars,byte num_events,by
     MAX_VAR_PER_EVENT=num_events_vars;
     //MAX_EVENTS_VAR_BUFFER= MAX_NUM_EVENTS*MAX_VAR_PER_EVENT;
     MAX_NUM_DEVICE_NUMBERS=max_device_numbers;
-    EVENTS_MEMPOS=VARS_MEMPOS+MAX_AVAIL_VARS;
+    DN_MEMPOS=VARS_MEMPOS+MAX_AVAIL_VARS;
+    EVENTS_MEMPOS=DN_MEMPOS+NNDD_SIZE*MAX_NUM_DEVICE_NUMBERS;
 
-    dns=new byte[NNDD_SIZE*MAX_NUM_DEVICE_NUMBERS];
     return_eventVars=new byte[MAX_VAR_PER_EVENT];
     clear();
     read();
 }
 
 MergMemoryManagement::~MergMemoryManagement(){
-    delete [] dns;
     delete [] return_eventVars;
 }
 
@@ -51,20 +50,11 @@ void MergMemoryManagement::clear(){
     can_ID=0;
     nn[0]=EMPTY_BYTE;
     nn[1]=EMPTY_BYTE;
-    dn[0]=EMPTY_BYTE;
-    dn[1]=EMPTY_BYTE;
     numEvents=0;
     flags=0;
 
 }
 
-//byte MergMemoryManagement::getMemoryModel(){
-//    return EEPROM.read(MERG_MEMORY_MODEL);
-//}
-//
-//void MergMemoryManagement::setMemoryModel(byte val){
-//    EEPROM.write(MERG_MEMORY_MODEL,val);
-//}
 
 /**\brief
 * Return the event pointed by the index
@@ -279,9 +269,6 @@ void MergMemoryManagement::read(){
     nn[1]=EEPROM.read(NN_MEMPOS+1);
     //node mode
     flags=EEPROM.read(FLAGS_MEMPOS);
-    //device number
-    dn[0]=EEPROM.read(DN_MEMPOS);
-    dn[1]=EEPROM.read(DN_MEMPOS+1);
     //number of node variables
     //numVars=EEPROM.read(NUM_VARS_MEMPOS);
     //number of events
@@ -308,9 +295,6 @@ void MergMemoryManagement::write(){
     EEPROM.write(NN_MEMPOS+1,nn[1]);
     //node mode
     EEPROM.write(FLAGS_MEMPOS,flags);
-    //device number
-    EEPROM.write(DN_MEMPOS,dn[0]);
-    EEPROM.write(DN_MEMPOS+1,dn[1]);
     //number of variables
     //EEPROM.write(NUM_VARS_MEMPOS,numVars);
     //number of events
@@ -463,12 +447,26 @@ void MergMemoryManagement::setNodeNumber(unsigned int val){
 * Set the device number.
 * @param val The node number (16 bit integer).
 */
-void MergMemoryManagement::setDeviceNumber(unsigned int val){
-    dn[0]=highByte(val);
-    dn[1]=lowByte(val);
-    EEPROM.write(DN_MEMPOS,dn[0]);
-    EEPROM.write(DN_MEMPOS+1,dn[1]);
+void MergMemoryManagement::setDeviceNumber(unsigned int val,byte port){
+
+    if (port>MAX_NUM_DEVICE_NUMBERS){
+        return;
+    }
+    EEPROM.write(DN_MEMPOS+port*NNDD_SIZE,highByte(val));
+    EEPROM.write(DN_MEMPOS+port*NNDD_SIZE+1,lowByte(val));
     return;
+}
+
+/**\brief
+* Get the device number.
+* @return The node number (16 bit integer).
+*/
+unsigned int MergMemoryManagement::getDeviceNumber(byte port){
+    if (port >MAX_NUM_DEVICE_NUMBERS){
+        return 0;
+    }
+    temp=((unsigned int)word(EEPROM.read(DN_MEMPOS+port*NNDD_SIZE),EEPROM.read(DN_MEMPOS+port*NNDD_SIZE+1)));
+    return temp;
 }
 
 /**\brief
@@ -478,15 +476,6 @@ void MergMemoryManagement::setDeviceNumber(unsigned int val){
 
 unsigned int MergMemoryManagement::getNodeNumber(){
     temp=((unsigned int)word(nn[0],nn[1]));
-    return temp;
-}
-
-/**\brief
-* Get the device number.
-* @return The node number (16 bit integer).
-*/
-unsigned int MergMemoryManagement::getDeviceNumber(){
-    temp=((unsigned int)word(dn[0],dn[1]));
     return temp;
 }
 
@@ -511,6 +500,10 @@ void MergMemoryManagement::setNodeFlag(byte val){
 */
 void MergMemoryManagement::dumpMemory(){
 
+/**\brief
+* Find the event variable position in memory
+*/
+
     read();
     byte a;
     Serial.println("MEMORY DUMP");
@@ -521,9 +514,6 @@ void MergMemoryManagement::dumpMemory(){
     Serial.print(can_ID,HEX);
     Serial.print("\nNN:");
     Serial.print(getNodeNumber());
-    Serial.print("\nDN:");
-    Serial.print(dn[0],HEX);
-    Serial.print(dn[1],HEX);
     Serial.print("\nFlags:");
     Serial.print(flags,HEX);
     Serial.print("\nNUM EVENTS:");
@@ -535,6 +525,12 @@ void MergMemoryManagement::dumpMemory(){
     Serial.print("\nNODE VARS:");
     for (int i=0;i<MAX_AVAIL_VARS;i++){
         Serial.print(EEPROM.read(VARS_MEMPOS+i),HEX);
+        Serial.print(" ");
+    }
+    Serial.print("\nDEVICE NUMBERS:");
+    for (int i=0;i<MAX_NUM_DEVICE_NUMBERS;i++){
+        Serial.print(EEPROM.read(DN_MEMPOS+i*NNDD_SIZE),HEX);
+        Serial.print(EEPROM.read(DN_MEMPOS+i*NNDD_SIZE+1),HEX);
         Serial.print(" ");
     }
 
@@ -556,16 +552,20 @@ void MergMemoryManagement::dumpMemory(){
         Serial.println();
     }
 
-
 }
 unsigned int MergMemoryManagement::resolveEvVarArrayPos(byte evidx,byte varidx){
 
     return (resolveEventPos(evidx)+EVENT_SIZE+varidx);
 }
+/**\brief
+* Increment the event position in memory
+*/
 unsigned int MergMemoryManagement::incEventPos(unsigned int val){
     return (val+MAX_VAR_PER_EVENT+EVENT_SIZE);
 }
-
+/**\brief
+* Find the event position in memory
+*/
 unsigned int MergMemoryManagement::resolveEventPos(byte evidx){
     return (EVENTS_MEMPOS+evidx*(MAX_VAR_PER_EVENT+EVENT_SIZE));
 }

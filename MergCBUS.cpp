@@ -38,6 +38,7 @@ MergCBUS::MergCBUS(byte num_node_vars,byte num_events,byte num_events_var,byte m
     resetFunc=0;
     //flag to match if an event is in memory
     eventmatch=false;
+    typeEventMatch=true;//long event
     //pusch button vars
     push_button=255;
     pb_state=HIGH;
@@ -60,7 +61,7 @@ void MergCBUS::initMemory(){
 
 void MergCBUS::loadMemory(){
     nodeId.setNodeNumber(memory.getNodeNumber());
-    nodeId.setDeviceNumber(memory.getDeviceNumber());
+    //nodeId.setDeviceNumber(memory.getDeviceNumber());
     nodeId.setCanID(memory.getCanId());
     nodeId.setFlags(memory.getNodeFlag());
     if (nodeId.isSlimMode()){
@@ -300,7 +301,8 @@ bool MergCBUS::readCanBus(byte buf_num){
             message.setRTR();
         }
         message.setHeaderBuffer(&buffer[bufIdxhead]);
-        eventmatch=memory.hasEvent(buffer[bufIdxdata],buffer[bufIdxdata+1],buffer[bufIdxdata+2],buffer[bufIdxdata+3]);
+        //eventmatch=memory.hasEvent(buffer[bufIdxdata],buffer[bufIdxdata+1],buffer[bufIdxdata+2],buffer[bufIdxdata+3]);
+        eventmatch=hasThisEvent();
      }
     return resp;
 }
@@ -837,7 +839,7 @@ byte MergCBUS::handleConfigMessages(){
 * Deals with accessory functions. No automatic response of events once the user function determines the behaviour.
 * The accessory messages has to be threated by the user function
 * once it is related to the module function
-* has to deal with ACON,SCOF, ARON ,AROF, AREQ, ASON, ASOF
+* has to deal with ACON,ACOF,ARON,AROF, AREQ,ASON,ASOF
 */
 byte MergCBUS::handleACCMessages(){
     if (userHandler!=0){
@@ -1036,15 +1038,27 @@ void MergCBUS::sendERRMessage(byte code){
 
 bool MergCBUS::hasThisEvent(){
     byte opc=message.getOpc();
-
+    //long events
     if (opc==OPC_ACON || opc==OPC_ACON1 || opc==OPC_ACON2 || opc==OPC_ACON3 ||
-        opc==OPC_ACOF || opc==OPC_ACOF1 || opc==OPC_ACOF2 || opc==OPC_ACOF3 ||
-        opc==OPC_ASON || opc==OPC_ASON1 || opc==OPC_ASON2 || opc==OPC_ASON3 ||
-        opc==OPC_ASOF || opc==OPC_ASOF1 || opc==OPC_ASOF2 || opc==OPC_ASOF3
+        opc==OPC_ACOF || opc==OPC_ACOF1 || opc==OPC_ACOF2 || opc==OPC_ACOF3
         ){
              if (memory.getEventIndex(message.getNodeNumber(),message.getEventNumber())>=0){
+                typeEventMatch=true;
                 return true;
              }
+    }
+    //short events has to check the device number
+    if (opc==OPC_ASON || opc==OPC_ASON1 || opc==OPC_ASON2 || opc==OPC_ASON3 ||
+        opc==OPC_ASOF || opc==OPC_ASOF1 || opc==OPC_ASOF2 || opc==OPC_ASOF3
+        ){
+            unsigned int dn=message.getDeviceNumber();
+
+            for (byte i=0;i<memory.getNumDeviceNumber();i++){
+                if (memory.getDeviceNumber(i)==dn){
+                    typeEventMatch=false;
+                    return true;
+                }
+            }
     }
     return false;
 }
@@ -1201,7 +1215,6 @@ void MergCBUS::saveNodeFlags(){
 }
 
 void MergCBUS::learnEvent(){
-    //TODO: suport device number mode
     unsigned int ev,nn,resp;
     byte ind,val,evidx;
         if (DEBUG){
@@ -1218,58 +1231,70 @@ void MergCBUS::learnEvent(){
         ev=message.getEventNumber();
         nn=message.getNodeNumber();
 
+        //get the device number in case of short event
+        //TODO:TEST
+        if (nn==0){
+            //check if the node support device number
+            if (memory.getNumDeviceNumber()>0){
+                ind=message.getEventVarIndex();
+                val=message.getEventVar();
 
-        //save event and get the index
-        buffer[0]=highByte(nn);
-        buffer[1]=lowByte(nn);
-        buffer[2]=highByte(ev);
-        buffer[3]=lowByte(ev);
-        evidx=memory.setEvent(buffer);
+                if (ind>0){
+                    ind=ind-1;//internal buffers start at position 0
+                }
+                memory.setDeviceNumber(ev,ind);
+                //in case of setting device number there may be customized rules for that
+//                if (userHandler!=0){
+//                    userHandler(&message,this);
+//                }
+            }
 
-        if (evidx>nodeId.getSuportedEvents()){
-            //send a message error
-            sendERRMessage(CMDERR_TOO_MANY_EVENTS);
-            return;
         }
+        else{
 
-        //save the parameter
-        //the CBUS index start with 1
-        if (message.getOpc()==OPC_EVLRN || message.getOpc()==OPC_EVLRNI){
-            ind=message.getEventVarIndex();
-            val=message.getEventVar();
-            /*
-            if (DEBUG){
-                    Serial.print("Saving event var ");
-                    Serial.print(ind);
-                    Serial.print(" value ");
-                    Serial.print(val);
-                    Serial. print(" of event ");
-                    Serial.println(evidx);
-            }
-            */
-            resp=memory.setEventVar(evidx,ind-1,val);
-            /*
-            if (DEBUG){
-                    Serial.print("Saving event var resp ");
-                    Serial.println(resp);
-            }
-            */
-            if (resp!=(ind-1)){
+            //save event and get the index
+            buffer[0]=highByte(nn);
+            buffer[1]=lowByte(nn);
+            buffer[2]=highByte(ev);
+            buffer[3]=lowByte(ev);
+            evidx=memory.setEvent(buffer);
+
+            if (evidx>nodeId.getSuportedEvents()){
                 //send a message error
-                sendERRMessage(CMDERR_INV_NV_IDX);
+                sendERRMessage(CMDERR_TOO_MANY_EVENTS);
                 return;
             }
-        }
 
-        //get the device number in case of short event
-        //TODO:not clear it this is the model
-        if (nn==0){
-            nodeId.setDeviceNumber(ev);
-            //in case of setting device number there may be customized rules for that
-            if (userHandler!=0){
-                userHandler(&message,this);
+            //save the parameter
+            //the CBUS index start with 1
+            if (message.getOpc()==OPC_EVLRN || message.getOpc()==OPC_EVLRNI){
+                ind=message.getEventVarIndex();
+                val=message.getEventVar();
+                /*
+                if (DEBUG){
+                        Serial.print("Saving event var ");
+                        Serial.print(ind);
+                        Serial.print(" value ");
+                        Serial.print(val);
+                        Serial. print(" of event ");
+                        Serial.println(evidx);
+                }
+                */
+                resp=memory.setEventVar(evidx,ind-1,val);
+                /*
+                if (DEBUG){
+                        Serial.print("Saving event var resp ");
+                        Serial.println(resp);
+                }
+                */
+                if (resp!=(ind-1)){
+                    //send a message error
+                    sendERRMessage(CMDERR_INV_NV_IDX);
+                    return;
+                }
             }
         }
+
         //send a WRACK back
         prepareMessage(OPC_WRACK);
         sendCanMessage();
@@ -1396,4 +1421,23 @@ byte MergCBUS::getEventVar(Message *msg,byte varIndex){
     return 0x00;
 
 }
+/** \brief Set the device number for a specific port
+ *
+ * \param val The device number
+ * \param port Port assigned to the device number
+ *
+ */
+void MergCBUS::setDeviceNumber(unsigned int val,byte port){
+    memory.setDeviceNumber(val,port);
+}
+/** \brief Get the device number for a specific port
+ *
+ * \param port Port assigned to the device number
+ * \return The device number for the port or 0 if the index is out of bounds
+ *
+ */
+unsigned int MergCBUS::getDeviceNumber(byte port){
+    return memory.getDeviceNumber(port);
+}
+
 

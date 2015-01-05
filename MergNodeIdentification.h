@@ -23,8 +23,8 @@ class MergNodeIdentification
         unsigned int getNodeNumber(){return nodeNumber;};
         const char* getNodeName();
 
-        void setDeviceNumber(unsigned int val){deviceNumber=val;};
-        unsigned int getDeviceNumber(){return deviceNumber;};
+        //void setDeviceNumber(unsigned int val){deviceNumber=val;};
+        //unsigned int getDeviceNumber(){return deviceNumber;};
 
         void setManufacturerId(byte val){manufacturerId=val;};
         byte getManufacturerId(){return manufacturerId;};
@@ -72,7 +72,7 @@ class MergNodeIdentification
         byte canID;
         unsigned int nodeNumber;
         char nodeName[NAME_SIZE];
-        unsigned int deviceNumber;
+        //unsigned int deviceNumber;
         byte manufacturerId;
         byte moduleId;
         byte flags;

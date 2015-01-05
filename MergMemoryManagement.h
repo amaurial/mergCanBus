@@ -12,23 +12,11 @@
  *
  */
 
-//struct merg_event_vars{
-//    unsigned int index;/**< index of this variable */
-//    unsigned int event_index;/**< index of the event this variable belongs */
-//    unsigned int mem_index;/**< position in the eeprom */
-//    byte value;/**< value of the variable */
-//};
-
-
-//#define MAX_AVAIL_VARS 20               /** Number of node variables. Each has 1 byte                           */
-//#define MAX_NUM_EVENTS 20               /** Number of supported events. Each event has 4 bytes                  */
-//#define MAX_VAR_PER_EVENT 8  /** Total amount of events variables per event. Each var has 2 bytes. first is the index, second is the value        */
-//#define MAX_EVENTS_VAR_BUFFER MAX_NUM_EVENTS*MAX_VAR_PER_EVENT       /** Total amount of events variables that can be stored. Each var has 2 bytes. first is the index, second is the value        */
-//#define MAX_NUM_DEVICE_NUMBERS 12       /** The total number of device number if it is a producer node. Each input from the producer can be a device number. So this is the same as the total number of inputs*/
 
 #define EVENT_SIZE 4                    /** Event size.                                                        */
 #define EVENT_VARS_SIZE 2               /** Size for events vars. Each var has 2 bytes. first is the index, second is the value        */
 #define NNDD_SIZE 2                     /** Size of a node number or device number */
+#define FLAG_SIZE 1
 #define EMPTY_BYTE 0x00
 
 #define FAILED_INDEX 255                /** Value returned when vars or events vars not found                             */
@@ -38,12 +26,14 @@
 #define CAN_ID_MEMPOS MERG_MEMORY_MODEL+1                                    /**Position in memory.can id has 1 byte                                    */
 #define NN_MEMPOS CAN_ID_MEMPOS+1                                      /**Position in memory.Node mumber has 2 bytes                               */
 #define FLAGS_MEMPOS NN_MEMPOS+NNDD_SIZE                           /**Position in memory.flags                          */
-#define DN_MEMPOS FLAGS_MEMPOS+1                                     /**Position in memory.Device number has 2 bytes                            */
-#define NUM_VARS_MEMPOS DN_MEMPOS+NNDD_SIZE                          /**Position in memory.amount of variables for this module- 1 byte          */
+#define NUM_VARS_MEMPOS FLAGS_MEMPOS+FLAG_SIZE                          /**Position in memory.amount of variables for this module- 1 byte          */
 #define NUM_EVENTS_MEMPOS NUM_VARS_MEMPOS+1                            /**Position in memory.amount of learned events                             */
 #define NUM_EVENTS_VARS_MEMPOS NUM_EVENTS_MEMPOS+1                     /**Position in memory.amount of learned events variables                   */
 #define VARS_MEMPOS NUM_EVENTS_VARS_MEMPOS+1                           /**Position in memory.start of variables written for this module           */
+//device numbers
+//events with its variables
 //#define EVENTS_MEMPOS VARS_MEMPOS+MAX_AVAIL_VARS                     /**Position in memory.                                                     */
+
 
 /**
 * Class that handles the EEPROM and maintains the data in a RAM memory.
@@ -80,17 +70,14 @@ class MergMemoryManagement
         void setVar(unsigned int index,byte val);
         void setCanId(byte canId);
         void setNodeNumber(unsigned int val);                       //2 bytes representation
-        void setDeviceNumber(unsigned int val);                     //2 bytes representation
 
-        //TODO:implement support for multiple device numbers
         void setDeviceNumber(unsigned int val,byte port);           //2 bytes representation for dn
-        void getDeviceNumber(byte port);                             //2 bytes representation
-        byte getNumDeviceNumber();                                  //2 bytes representation
+        unsigned int getDeviceNumber(byte port);                             //2 bytes representation
+        byte getNumDeviceNumber(){return MAX_NUM_DEVICE_NUMBERS;};                                  //2 bytes representation
 
 
         byte getCanId(){return can_ID;};
         unsigned int getNodeNumber();
-        unsigned int getDeviceNumber();
 
         unsigned int setEvent(byte *event);//return the index
         unsigned int setEvent(byte *event,unsigned int eventIdx);
@@ -110,13 +97,9 @@ class MergMemoryManagement
     protected:
 
     private:
-        //byte return_eventVars[MAX_VAR_PER_EVENT];                  //used to return all the variables of an event
         byte *return_eventVars;                  //used to return all the variables of an event
         byte can_ID;
-        //byte dns[NNDD_SIZE*MAX_NUM_DEVICE_NUMBERS];                 //array of device numbers
-        byte *dns;                 //array of device numbers
         byte nn[NNDD_SIZE];
-        byte dn[NNDD_SIZE];
         byte numEvents;
         byte numDeviceNumbers;
         byte MAX_AVAIL_VARS;               /** Number of node variables. Each has 1 byte                           */
@@ -124,13 +107,14 @@ class MergMemoryManagement
         byte MAX_VAR_PER_EVENT;  /** Total amount of events variables per event. Each var has 2 bytes. first is the index, second is the value        */
         //int MAX_EVENTS_VAR_BUFFER;= MAX_NUM_EVENTS*MAX_VAR_PER_EVENT;       /** Total amount of events variables that can be stored. Each var has 2 bytes. first is the index, second is the value        */
         byte MAX_NUM_DEVICE_NUMBERS;       /** The total number of device number if it is a producer node. Each input from the producer can be a device number. So this is the same as the total number of inputs*/
-        int EVENTS_MEMPOS;                     /**Position in memory.                                                     */
+        int EVENTS_MEMPOS;                     /**Position in memory.   */
+        byte DN_MEMPOS;                     /** Position of device numbers in memory */
+
         //specify the memory model. it is like a module id identification. if the memory model is not equal to the eeprom it creates one. basic it reorganizes the
         //the events and events vars
         byte event[EVENT_SIZE];                                     //used to return this instead of a pointer to events array
         byte flags;
         void clear();
-        //void newEventVar(unsigned int eventIdx,unsigned int varIdx,byte val);
         unsigned int temp;                                          //used to avoid new memory allocation
         byte nodeVariablesSize;     //max supported number of node variables
         byte eventVarsPerEvent;     //number of supported vars per event
