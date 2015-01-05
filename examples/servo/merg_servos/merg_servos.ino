@@ -25,8 +25,9 @@ See MemoryManagement.h for memory configuration
 
 
 //Module definitions
-#define NUM_SERVOS 20      //number of servos
-#define VAR_PER_SERVO 3    //variables per servo
+#define NUM_SERVOS 8      //number of servos
+#define VAR_PER_SERVO 20  //variables per servo
+#define SPEED 50
 
 
 //CBUS definitions
@@ -34,12 +35,14 @@ See MemoryManagement.h for memory configuration
 #define YELLOW_LED 4                      //merg yellow led port
 #define PUSH_BUTTON 3                     //std merg push button
 #define PUSH_BUTTON1 9                    //debug push button
-#define NODE_VARS 5                        //number o node variables
+//number o node variables. first 2 are to indicate which servo is on. 2 bytes to indicate to togle. 1 for standard speed
+#define NODE_VARS 5                        
 #define NODE_EVENTS 30                     //max number of events
-#define EVENTS_VARS NUM_SERVOS*VAR_PER_SERVO   //number of variables per event
+#define EVENTS_VARS VAR_PER_SERVO   //number of variables per event
 #define DEVICE_NUMBERS 0                   //number of device numbers. used in case of a producer module
+#define START_ANGLE_VAR 5
+#define END_ANGLE_VAR 6
 
-//this will use (4+60)*30 bytes of eprom = 1920 bytes
 //arduino mega has 4K, so it is ok.
 
 
@@ -48,7 +51,9 @@ MergCBUS cbus=MergCBUS(NODE_VARS,NODE_EVENTS,EVENTS_VARS,DEVICE_NUMBERS);
 //servo controler
 VarSpeedServo servos[NUM_SERVOS];
 //pins where the servos are attached
-byte servopins[]={11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30};
+byte servopins[]={11,12,13,14,15,16,17,18};//,19,20,21,22,23,24,25,26,27,28,29,30};
+byte active_servo[2];
+byte togle_servo[2];
 
 
 
@@ -58,7 +63,7 @@ void setup(){
   Serial.begin(115200);
 
   //Configuration data for the node
-  cbus.getNodeId()->setNodeName("MODSERVO",8);  //node name
+  cbus.getNodeId()->setNodeName("MODSERV",7);  //node name
   cbus.getNodeId()->setModuleId(56);            //module number
   cbus.getNodeId()->setManufacturerId(0xA5);    //merg code
   cbus.getNodeId()->setMinCodeVersion(1);       //Version 1
@@ -75,7 +80,7 @@ void setup(){
   }
   cbus.setLeds(GREEN_LED,YELLOW_LED);//set the led ports
   cbus.setPushButton(PUSH_BUTTON);//set the push button ports
-  cbus.setDebug(false);//print some messages on the serial port
+  cbus.setDebug(true);//print some messages on the serial port
   cbus.setUserHandlerFunction(&myUserFunc);//function that implements the node logic
   cbus.initCanBus(53,CAN_125KBPS,10,200);  //initiate the transport layer. pin=53, rate=125Kbps,10 tries,200 millis between each try
   
@@ -103,31 +108,79 @@ void myUserFunc(Message *msg,MergCBUS *mcbus){
   byte servo_start,servo_end,servo_speed;
   if (mcbus->eventMatch()){
      onEvent=mcbus->isAccOn();
+     getServosArray(msg,mcbus);
       //get the events var and control the servos
-      for (int i=0;i<NUM_SERVOS;i++){
-        //get the speed. the first byte
-        servo_speed=mcbus->getEventVar(msg,varidx);
+      for (int i=0;i<NUM_SERVOS;i++){        
         
-        if (servo_speed>0){
-          converted_speed=map(servo_speed,0,10,1,255);
-          servo_start=mcbus->getEventVar(msg,varidx+1);
-          servo_end=mcbus->getEventVar(msg,varidx+2);
+        if (isServoActive(i)){          
+          servo_start=mcbus->getEventVar(msg,START_ANGLE_VAR);
+          servo_end=mcbus->getEventVar(msg,END_ANGLE_VAR);
           if (onEvent){
-            servos[i].write(servo_end,converted_speed);            
+            if (isServoToTogle(i)){              
+              servos[i].write(servo_start,SPEED);       
+            }  
+            else {
+              servos[i].write(servo_end,SPEED);
+            }   
           }
           else{
-            servos[i].write(servo_start,converted_speed);            
-          }
-          //jump to the other servos variables
-          varidx=varidx+3;
+            if (isServoToTogle(i)){              
+              servos[i].write(servo_end,SPEED);       
+            }  
+            else {
+              servos[i].write(servo_start,SPEED);
+            }              
+          }          
         }        
       }
-  }  
+  }
+  else{
+    //feedback messages
+    
+    //learn device number    
+    
+  } 
 }
-
+//create the objects for each servo
 void setUpServos(){  
   for (int i=0;i<NUM_SERVOS;i++){
-    servos[i].attach(servopins[i]);    
+    servos[i].attach(servopins[i]); 
+   servos[i].write(0,127); 
   }
+}
+//is the servo to be activated or not
+boolean isServoActive(int index){  
+  return checkBit(active_servo,index);
+}
+//is the servo by index to togle or not
+boolean isServoToTogle(int index){
+  return checkBit(togle_servo,index);
+}
+
+//check the if a bit is set or not
+boolean checkBit(byte *array,int index){
+  byte a,i;
+  if (index<8){
+    a=array[0];
+    i=index;
+  }
+  else{
+    a=array[1];    
+    i=index-8;
+  }
+  
+  if (bitRead(a,i)==1){
+    return true;
+  }
+  else{
+     return false;
+  }  
+}
+//get the events vars for activate servos and to togle the servos:invert behaviour on on/off events
+void getServosArray(Message *msg,MergCBUS *mcbus){
+  active_servo[0]=mcbus->getEventVar(msg,1);
+  active_servo[1]=mcbus->getEventVar(msg,2);
+  togle_servo[0]=mcbus->getEventVar(msg,3);
+  togle_servo[1]=mcbus->getEventVar(msg,4);
 }
 

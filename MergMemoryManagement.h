@@ -22,8 +22,8 @@
 
 //#define MAX_AVAIL_VARS 20               /** Number of node variables. Each has 1 byte                           */
 //#define MAX_NUM_EVENTS 20               /** Number of supported events. Each event has 4 bytes                  */
-//#define MAX_NUM_EVENTS_VAR_PER_EVENT 8  /** Total amount of events variables per event. Each var has 2 bytes. first is the index, second is the value        */
-//#define MAX_EVENTS_VAR_BUFFER MAX_NUM_EVENTS*MAX_NUM_EVENTS_VAR_PER_EVENT       /** Total amount of events variables that can be stored. Each var has 2 bytes. first is the index, second is the value        */
+//#define MAX_VAR_PER_EVENT 8  /** Total amount of events variables per event. Each var has 2 bytes. first is the index, second is the value        */
+//#define MAX_EVENTS_VAR_BUFFER MAX_NUM_EVENTS*MAX_VAR_PER_EVENT       /** Total amount of events variables that can be stored. Each var has 2 bytes. first is the index, second is the value        */
 //#define MAX_NUM_DEVICE_NUMBERS 12       /** The total number of device number if it is a producer node. Each input from the producer can be a device number. So this is the same as the total number of inputs*/
 
 #define EVENT_SIZE 4                    /** Event size.                                                        */
@@ -67,7 +67,7 @@ class MergMemoryManagement
         /** \brief Return the number of learned events.*/
         byte getNumEvents(){return numEvents;};
         /** \brief Return the number of learned events variables.*/
-        byte getNumEventVars(){return MAX_NUM_EVENTS_VAR_PER_EVENT;};
+        byte getNumEventVars(){return MAX_VAR_PER_EVENT;};
 
         void eraseAllEvents();
         void read();
@@ -110,7 +110,7 @@ class MergMemoryManagement
     protected:
 
     private:
-        //byte return_eventVars[MAX_NUM_EVENTS_VAR_PER_EVENT];                  //used to return all the variables of an event
+        //byte return_eventVars[MAX_VAR_PER_EVENT];                  //used to return all the variables of an event
         byte *return_eventVars;                  //used to return all the variables of an event
         byte can_ID;
         //byte dns[NNDD_SIZE*MAX_NUM_DEVICE_NUMBERS];                 //array of device numbers
@@ -121,8 +121,8 @@ class MergMemoryManagement
         byte numDeviceNumbers;
         byte MAX_AVAIL_VARS;               /** Number of node variables. Each has 1 byte                           */
         byte MAX_NUM_EVENTS;               /** Number of supported events. Each event has 4 bytes                  */
-        byte MAX_NUM_EVENTS_VAR_PER_EVENT;  /** Total amount of events variables per event. Each var has 2 bytes. first is the index, second is the value        */
-        //int MAX_EVENTS_VAR_BUFFER;= MAX_NUM_EVENTS*MAX_NUM_EVENTS_VAR_PER_EVENT;       /** Total amount of events variables that can be stored. Each var has 2 bytes. first is the index, second is the value        */
+        byte MAX_VAR_PER_EVENT;  /** Total amount of events variables per event. Each var has 2 bytes. first is the index, second is the value        */
+        //int MAX_EVENTS_VAR_BUFFER;= MAX_NUM_EVENTS*MAX_VAR_PER_EVENT;       /** Total amount of events variables that can be stored. Each var has 2 bytes. first is the index, second is the value        */
         byte MAX_NUM_DEVICE_NUMBERS;       /** The total number of device number if it is a producer node. Each input from the producer can be a device number. So this is the same as the total number of inputs*/
         int EVENTS_MEMPOS;                     /**Position in memory.                                                     */
         //specify the memory model. it is like a module id identification. if the memory model is not equal to the eeprom it creates one. basic it reorganizes the

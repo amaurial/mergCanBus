@@ -12,13 +12,13 @@ MergMemoryManagement::MergMemoryManagement()
 MergMemoryManagement::MergMemoryManagement(byte num_node_vars,byte num_events,byte num_events_vars,byte max_device_numbers){
     MAX_AVAIL_VARS=num_node_vars;
     MAX_NUM_EVENTS=num_events;
-    MAX_NUM_EVENTS_VAR_PER_EVENT=num_events_vars;
-    //MAX_EVENTS_VAR_BUFFER= MAX_NUM_EVENTS*MAX_NUM_EVENTS_VAR_PER_EVENT;
+    MAX_VAR_PER_EVENT=num_events_vars;
+    //MAX_EVENTS_VAR_BUFFER= MAX_NUM_EVENTS*MAX_VAR_PER_EVENT;
     MAX_NUM_DEVICE_NUMBERS=max_device_numbers;
     EVENTS_MEMPOS=VARS_MEMPOS+MAX_AVAIL_VARS;
 
     dns=new byte[NNDD_SIZE*MAX_NUM_DEVICE_NUMBERS];
-    return_eventVars=new byte[MAX_NUM_EVENTS_VAR_PER_EVENT];
+    return_eventVars=new byte[MAX_VAR_PER_EVENT];
     clear();
     read();
 }
@@ -44,7 +44,7 @@ void MergMemoryManagement::setUpNewMemory(){
 void MergMemoryManagement::clear(){
 
 
-    for (int i=0;i<(MAX_NUM_EVENTS_VAR_PER_EVENT);i++){
+    for (int i=0;i<(MAX_VAR_PER_EVENT);i++){
         return_eventVars[i]=0;
     }
 
@@ -215,7 +215,7 @@ byte MergMemoryManagement::getEventVar(unsigned int eventIdx,unsigned int index)
         return FAILED_INDEX;
     }
 
-    if (index>MAX_NUM_EVENTS_VAR_PER_EVENT){
+    if (index>MAX_VAR_PER_EVENT){
         return FAILED_INDEX;
     }
 
@@ -234,11 +234,11 @@ byte* MergMemoryManagement::getEventVars(unsigned int eventIdx,unsigned int *len
     //populate the array to return
     *len=0;
     int j=resolveEvVarArrayPos(eventIdx,0);
-    for (int i=0;i<MAX_NUM_EVENTS_VAR_PER_EVENT;i++){
+    for (int i=0;i<MAX_VAR_PER_EVENT;i++){
         return_eventVars[i]=EEPROM.read(j);
         j++;
     }
-    *len=MAX_NUM_EVENTS_VAR_PER_EVENT;
+    *len=MAX_VAR_PER_EVENT;
     return return_eventVars;
 }
 
@@ -316,7 +316,7 @@ void MergMemoryManagement::write(){
     //number of events
      EEPROM.write(NUM_EVENTS_MEMPOS,numEvents);
     //number of events vars
-     EEPROM.write(NUM_EVENTS_VARS_MEMPOS,MAX_NUM_EVENTS_VAR_PER_EVENT);
+     EEPROM.write(NUM_EVENTS_VARS_MEMPOS,MAX_VAR_PER_EVENT);
 
 }
 
@@ -370,7 +370,7 @@ void MergMemoryManagement::copyEvent(unsigned int fromIndex,unsigned int toIndex
     memposOld=resolveEventPos(fromIndex);
     memposNew=resolveEventPos(toIndex);
 
-    for (int i=0;i<(EVENT_SIZE+MAX_NUM_EVENTS_VAR_PER_EVENT);i++){
+    for (int i=0;i<(EVENT_SIZE+MAX_VAR_PER_EVENT);i++){
         EEPROM.write(memposNew,EEPROM.read(memposOld));
         memposNew++;
         memposOld++;
@@ -425,12 +425,12 @@ unsigned int MergMemoryManagement::setEventVar(unsigned int eventIdx,unsigned in
         return (varIdx+1);
     }
 
-    if (varIdx<0 || varIdx>MAX_NUM_EVENTS_VAR_PER_EVENT){
+    if (varIdx<0 || varIdx>MAX_VAR_PER_EVENT){
         return (varIdx+1);
     }
 
     //look the var in the array vars
-    //eventVars[eventIdx*MAX_NUM_EVENTS_VAR_PER_EVENT+varIdx]=val;
+    //eventVars[eventIdx*MAX_VAR_PER_EVENT+varIdx]=val;
     EEPROM.write(resolveEvVarArrayPos(eventIdx,varIdx),val);
 
     return varIdx;
@@ -529,7 +529,7 @@ void MergMemoryManagement::dumpMemory(){
     Serial.print("\nNUM EVENTS:");
     Serial.print(numEvents,HEX);
     Serial.print("\nNUM EVENTS VARS:");
-    Serial.print(MAX_NUM_EVENTS_VAR_PER_EVENT,HEX);
+    Serial.print(MAX_VAR_PER_EVENT,HEX);
     Serial.print("\nNUM VARS:");
     Serial.print(MAX_AVAIL_VARS,HEX);
     Serial.print("\nNODE VARS:");
@@ -548,7 +548,7 @@ void MergMemoryManagement::dumpMemory(){
             Serial.print(" ");
         }
         Serial.print("VARS ");
-        for (int j=0;j<MAX_NUM_EVENTS_VAR_PER_EVENT;j++){
+        for (int j=0;j<MAX_VAR_PER_EVENT;j++){
             Serial.print(EEPROM.read(n),HEX);
             n++;
             Serial.print(" ");
@@ -563,9 +563,9 @@ unsigned int MergMemoryManagement::resolveEvVarArrayPos(byte evidx,byte varidx){
     return (resolveEventPos(evidx)+EVENT_SIZE+varidx);
 }
 unsigned int MergMemoryManagement::incEventPos(unsigned int val){
-    return (val+MAX_NUM_EVENTS_VAR_PER_EVENT+EVENT_SIZE);
+    return (val+MAX_VAR_PER_EVENT+EVENT_SIZE);
 }
 
 unsigned int MergMemoryManagement::resolveEventPos(byte evidx){
-    return (EVENTS_MEMPOS+evidx*(MAX_NUM_EVENTS_VAR_PER_EVENT+EVENT_SIZE));
+    return (EVENTS_MEMPOS+evidx*(MAX_VAR_PER_EVENT+EVENT_SIZE));
 }

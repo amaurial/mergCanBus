@@ -784,7 +784,7 @@ byte MergCBUS::handleConfigMessages(){
         break;
 
     case OPC_EVLRNI:
-        //lear event by index. like an update
+        //learn event by index. like an update
         if (state_mode==LEARN){
 
             //TODO: suport device number mode
