@@ -697,6 +697,7 @@ byte MergCBUS::handleConfigMessages(){
             evidx=memory.getEventIndex(nn,ev);
 
             if (evidx>nodeId.getSuportedEvents()){
+                //Serial.println("Error unlearn event");
                 sendERRMessage(CMDERR_INVALID_EVENT);
                 break;
             }
@@ -809,6 +810,7 @@ byte MergCBUS::handleConfigMessages(){
 
             if ((byte)resp!=(evidx-1)){
                 //send a message error
+                Serial.println("Error EVLRNI");
                 sendERRMessage(CMDERR_INV_EV_IDX);
                 break;
             }
@@ -819,6 +821,7 @@ byte MergCBUS::handleConfigMessages(){
 
             if ((byte)resp!=(ind-1)){
                 //send a message error
+                Serial.println("Error EVLRNI 2");
                 sendERRMessage(CMDERR_INV_NV_IDX);
                 break;
             }
@@ -1272,17 +1275,25 @@ void MergCBUS::learnEvent(){
             if (message.getOpc()==OPC_EVLRN || message.getOpc()==OPC_EVLRNI){
                 ind=message.getEventVarIndex();
                 val=message.getEventVar();
-                /*
-                if (DEBUG){
-                        Serial.print("Saving event var ");
-                        Serial.print(ind);
-                        Serial.print(" value ");
-                        Serial.print(val);
-                        Serial. print(" of event ");
-                        Serial.println(evidx);
-                }
-                */
+
+                //if (DEBUG){
+                        //Serial.print("Saving event var ");
+                        //Serial.print(ind);
+                        //Serial.print(" value ");
+                        //Serial.print(val);
+                        //Serial. print(" of event ");
+                        //Serial.println(evidx);
+                        //Serial.print("max events: ");
+                        //Serial.println(memory.getNumEvents());
+                        //Serial.print("max events vars: ");
+                        //Serial.println(memory.getNumEventVars());
+
+                //}
+
+
                 resp=memory.setEventVar(evidx,ind-1,val);
+                //Serial.print("resp:");
+                //Serial.println(resp);
                 /*
                 if (DEBUG){
                         Serial.print("Saving event var resp ");
@@ -1291,6 +1302,7 @@ void MergCBUS::learnEvent(){
                 */
                 if (resp!=(ind-1)){
                     //send a message error
+                    //Serial.println("Error lear event");
                     sendERRMessage(CMDERR_INV_NV_IDX);
                     return;
                 }
@@ -1418,7 +1430,7 @@ byte MergCBUS::getNodeVar(byte varIndex){
 byte MergCBUS::getEventVar(Message *msg,byte varIndex){
     unsigned int idx=memory.getEventIndex(msg->getNodeNumber(),msg->getEventNumber());
     if (idx<nodeId.getSuportedEvents()){
-            return memory.getEventVar(idx,varIndex);
+        return memory.getEventVar(idx,varIndex);
     }
     return 0x00;
 

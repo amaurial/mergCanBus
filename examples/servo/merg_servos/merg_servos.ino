@@ -1,17 +1,18 @@
 /*
 This example implements a servo controler.
-It drives 20 servos. Can be more in arduino Mega, but it just an example.
-Each servo has the parameter start,end,speed.
-For each servo needs 3 bytes of parameter.
-Start and end are integers in degrees from 0 to 180. and the velocity from 1 to 10: 1 slow and 10 fast. 0 indicates the servo wont be activated
-Each event can control the 20 servos, therefore each event has 60 variables.
+It drives 16 servos. Can be more in arduino Mega, but it just an example.
+Each servo has the parameter start,end.
+Start and end are integers in degrees from 0 to 180. and the velocity from 1 to 255: 
+Each event can control the 16 servos, therefore each event has 6 variables. 16 bits to define which servo is activated and 16 bits to define if the 
+servo will togle upon an event. invert the behaviour
 Usim FLIM mode teach on/off events.
 It implements all automatic configuration, including learning events.
-It does not handle short events. In phase of implementation.
 It does not handle DCC messages, but you can do it on your user function.
 You can change the ports to fit to your arduino.
 This node uses 500 bytes of EPROM to store events and the other information.
 See MemoryManagement.h for memory configuration
+To clear the memory, press pushbutton1 while reseting the arduino
+
 */
 
 
@@ -25,25 +26,25 @@ See MemoryManagement.h for memory configuration
 
 
 //Module definitions
-#define NUM_SERVOS 8      //number of servos
+#define NUM_SERVOS 16      //number of servos
 //first 2 are to indicate which servo is on. 2 bytes to indicate to togle. 2 for start and end angle
 #define VAR_PER_SERVO 6  //variables per servo
 #define SPEED 50        //servo speed
-#define SERVO_START 0        //servo speed
-#define SERVO_END 180        //servo speed
+#define SERVO_START 0        //servo start angle
+#define SERVO_END 180        //servo end angle
 
 
 //CBUS definitions
-#define GREEN_LED 5                  //merg green led port
-#define YELLOW_LED 4                 //merg yellow led port
-#define PUSH_BUTTON 3                //std merg push button
-#define PUSH_BUTTON1 9               //debug push button 
+#define GREEN_LED 27                  //merg green led port
+#define YELLOW_LED 26                 //merg yellow led port
+#define PUSH_BUTTON 25                //std merg push button
+#define PUSH_BUTTON1 28               //debug push button 
 #define NODE_VARS 1                  //number o node variables.Servo speed                    
 #define NODE_EVENTS 30              //max number of events
 #define EVENTS_VARS VAR_PER_SERVO   //number of variables per event
 #define DEVICE_NUMBERS NUM_SERVOS   //number of device numbers. each servo can be a device
-#define START_ANGLE_VAR 5          //var index for the start angle
-#define END_ANGLE_VAR 6            //var index for the end angle
+#define START_ANGLE_VAR 4          //var index for the start angle
+#define END_ANGLE_VAR 5            //var index for the end angle
 
 //arduino mega has 4K, so it is ok.
 
@@ -53,7 +54,8 @@ MergCBUS cbus=MergCBUS(NODE_VARS,NODE_EVENTS,EVENTS_VARS,DEVICE_NUMBERS);
 //servo controler
 VarSpeedServo servos[NUM_SERVOS];
 //pins where the servos are attached
-byte servopins[]={11,12,13,14,15,16,17,18};//,19,20,21,22,23,24,25,26,27,28,29,30};
+//pins 9,10 and 15 don't work for many servos. servo library limitation
+byte servopins[]={2,3,4,5,6,7,8,11,12,13,14,16,17,18,19,20};//,19,20,21,22,23,24,25,26,27,28,29,30};
 byte active_servo[2];
 byte togle_servo[2];
 
@@ -112,7 +114,7 @@ void myUserFunc(Message *msg,MergCBUS *mcbus){
   if (mcbus->eventMatch()){
      onEvent=mcbus->isAccOn();
      getServosArray(msg,mcbus);
-     
+     Serial.println("event match");
      //short event are for a specific port.move just one servo
      if (!mcbus->isLongEvent()){
          varidx=mcbus->getDeviceNumberIndex();
@@ -122,12 +124,14 @@ void myUserFunc(Message *msg,MergCBUS *mcbus){
          }
      }
      
+     servo_start=mcbus->getEventVar(msg,START_ANGLE_VAR);
+     servo_end=mcbus->getEventVar(msg,END_ANGLE_VAR);
+     Serial.println(servo_start);
+     Serial.println(servo_end);
       //get the events var and control the servos
       for (int i=0;i<NUM_SERVOS;i++){        
         
         if (isServoActive(i)){          
-          servo_start=mcbus->getEventVar(msg,START_ANGLE_VAR);
-          servo_end=mcbus->getEventVar(msg,END_ANGLE_VAR);
           moveServo(onEvent,i,servo_start,servo_end);
         }        
       }
@@ -145,6 +149,7 @@ void moveServo(boolean event,byte servoidx,byte servo_start,byte servo_end){
         servos[servoidx].write(servo_start,SPEED);       
       }      
       else {
+        Serial.println("moving servo");
         servos[servoidx].write(servo_end,SPEED);
       }   
     }
@@ -195,9 +200,9 @@ boolean checkBit(byte *array,int index){
 }
 //get the events vars for activate servos and to togle the servos:invert behaviour on on/off events
 void getServosArray(Message *msg,MergCBUS *mcbus){
-  active_servo[0]=mcbus->getEventVar(msg,1);
-  active_servo[1]=mcbus->getEventVar(msg,2);
-  togle_servo[0]=mcbus->getEventVar(msg,3);
-  togle_servo[1]=mcbus->getEventVar(msg,4);
+  active_servo[0]=mcbus->getEventVar(msg,0);  
+  active_servo[1]=mcbus->getEventVar(msg,1);  
+  togle_servo[0]=mcbus->getEventVar(msg,2);
+  togle_servo[1]=mcbus->getEventVar(msg,3);
 }
 

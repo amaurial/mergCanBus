@@ -1,54 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
+	<FileVersion major="1" minor="0" />
 	<ActiveTarget name="Debug" />
-	<File name="mcp_can.h" open="0" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="0" topLine="0" />
-		</Cursor>
-	</File>
 	<File name="memory_organization.TXT" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="845" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="MergCBUS.h" open="1" top="1" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="mcp_can.h" open="0" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="6104" topLine="84" />
-		</Cursor>
-	</File>
-	<File name="MergMemoryManagement.cpp" open="1" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="369" topLine="14" />
-		</Cursor>
-	</File>
-	<File name="mcp_can.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="554" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="opcodes.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1736" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="MergCBUS.cpp" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="29174" topLine="1028" />
-		</Cursor>
-	</File>
-	<File name="Message.cpp" open="1" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="8246" topLine="251" />
-		</Cursor>
-	</File>
-	<File name="Message.h" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="4671" topLine="40" />
-		</Cursor>
-	</File>
-	<File name="MergMemoryManagement.h" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="740" topLine="24" />
+			<Cursor1 position="0" topLine="0" />
 		</Cursor>
 	</File>
 	<File name="MergNodeIdentification.h" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -56,9 +17,24 @@
 			<Cursor1 position="2191" topLine="42" />
 		</Cursor>
 	</File>
+	<File name="MergCBUS.cpp" open="1" top="1" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="35729" topLine="1238" />
+		</Cursor>
+	</File>
 	<File name="MessageBuffer.h" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="559" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="MergCBUS.h" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="4716" topLine="84" />
+		</Cursor>
+	</File>
+	<File name="Message.h" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="4671" topLine="40" />
 		</Cursor>
 	</File>
 	<File name="MergNodeIdentification.cpp" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -66,9 +42,35 @@
 			<Cursor1 position="1933" topLine="20" />
 		</Cursor>
 	</File>
+	<File name="Message.cpp" open="1" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="8246" topLine="251" />
+		</Cursor>
+	</File>
 	<File name="mcp_can_dfs.h" open="0" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="415" topLine="3" />
 		</Cursor>
 	</File>
+	<File name="MergMemoryManagement.cpp" open="1" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="10668" topLine="382" />
+		</Cursor>
+	</File>
+	<File name="opcodes.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1736" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="MergMemoryManagement.h" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="740" topLine="24" />
+		</Cursor>
+	</File>
+	<File name="mcp_can.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="554" topLine="0" />
+		</Cursor>
+	</File>
+	<EditorTabsLayout layout="03ca2e6054ab8b3000b09cb900000002=*0;mergCanBus:MergCBUS.cpp,1;mergCanBus:MergCBUS.h,2;mergCanBus:MergNodeIdentification.h,3;mergCanBus:MessageBuffer.h,4;mergCanBus:MergMemoryManagement.h,5;mergCanBus:MergMemoryManagement.cpp,6;mergCanBus:Message.cpp@layout2|name=dummy;caption=;state=2098174;dir=3;layer=0;row=0;pos=0;prop=100000;bestw=599;besth=409;minw=599;minh=409;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=03ca2e6054ab8b3000b09cb900000002;caption=;state=2098172;dir=5;layer=0;row=0;pos=0;prop=100000;bestw=200;besth=200;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|dock_size(5,0,0)=202|" />
 </CodeBlocks_layout_file>
