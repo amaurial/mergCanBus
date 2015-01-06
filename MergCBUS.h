@@ -145,8 +145,10 @@ class MergCBUS
         byte getNodeVar(byte varIndex);
         byte getEventVar(Message *msg,byte varIndex);
 
+
         void setDeviceNumber(unsigned int val,byte port);           //2 bytes representation for dn
         unsigned int getDeviceNumber(byte port);                             //2 bytes representation
+        byte getDeviceNumberIndex(){return deviceNumberIdx;};
 
 
     protected:
@@ -164,6 +166,7 @@ class MergCBUS
         bool eventmatch;                        //true if the received message is found on learned events
         unsigned long std_nn;                   //standard node number for slim
         bool typeEventMatch;                    //true is long event, false is short event
+        byte deviceNumberIdx;                   //in case of match set the devicenumber index starting on 0
 
         state state_mode;                       //actual state of the node
         unsigned long startTime;                //used for self ennumeration

@@ -1038,6 +1038,7 @@ void MergCBUS::sendERRMessage(byte code){
 
 bool MergCBUS::hasThisEvent(){
     byte opc=message.getOpc();
+    deviceNumberIdx=memory.getNumDeviceNumber()+1;
     //long events
     if (opc==OPC_ACON || opc==OPC_ACON1 || opc==OPC_ACON2 || opc==OPC_ACON3 ||
         opc==OPC_ACOF || opc==OPC_ACOF1 || opc==OPC_ACOF2 || opc==OPC_ACOF3
@@ -1056,6 +1057,7 @@ bool MergCBUS::hasThisEvent(){
             for (byte i=0;i<memory.getNumDeviceNumber();i++){
                 if (memory.getDeviceNumber(i)==dn){
                     typeEventMatch=false;
+                    deviceNumberIdx=i;
                     return true;
                 }
             }

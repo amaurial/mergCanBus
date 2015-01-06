@@ -26,22 +26,24 @@ See MemoryManagement.h for memory configuration
 
 //Module definitions
 #define NUM_SERVOS 8      //number of servos
-#define VAR_PER_SERVO 20  //variables per servo
-#define SPEED 50
+//first 2 are to indicate which servo is on. 2 bytes to indicate to togle. 2 for start and end angle
+#define VAR_PER_SERVO 6  //variables per servo
+#define SPEED 50        //servo speed
+#define SERVO_START 0        //servo speed
+#define SERVO_END 180        //servo speed
 
 
 //CBUS definitions
-#define GREEN_LED 5                       //merg green led port
-#define YELLOW_LED 4                      //merg yellow led port
-#define PUSH_BUTTON 3                     //std merg push button
-#define PUSH_BUTTON1 9                    //debug push button
-//number o node variables. first 2 are to indicate which servo is on. 2 bytes to indicate to togle. 1 for standard speed
-#define NODE_VARS 5                        
-#define NODE_EVENTS 30                     //max number of events
+#define GREEN_LED 5                  //merg green led port
+#define YELLOW_LED 4                 //merg yellow led port
+#define PUSH_BUTTON 3                //std merg push button
+#define PUSH_BUTTON1 9               //debug push button 
+#define NODE_VARS 1                  //number o node variables.Servo speed                    
+#define NODE_EVENTS 30              //max number of events
 #define EVENTS_VARS VAR_PER_SERVO   //number of variables per event
-#define DEVICE_NUMBERS 0                   //number of device numbers. used in case of a producer module
-#define START_ANGLE_VAR 5
-#define END_ANGLE_VAR 6
+#define DEVICE_NUMBERS NUM_SERVOS   //number of device numbers. each servo can be a device
+#define START_ANGLE_VAR 5          //var index for the start angle
+#define END_ANGLE_VAR 6            //var index for the end angle
 
 //arduino mega has 4K, so it is ok.
 
@@ -80,10 +82,10 @@ void setup(){
   }
   cbus.setLeds(GREEN_LED,YELLOW_LED);//set the led ports
   cbus.setPushButton(PUSH_BUTTON);//set the push button ports
-  cbus.setDebug(true);//print some messages on the serial port
+  cbus.setDebug(false);//print some messages on the serial port
   cbus.setUserHandlerFunction(&myUserFunc);//function that implements the node logic
   cbus.initCanBus(53,CAN_125KBPS,10,200);  //initiate the transport layer. pin=53, rate=125Kbps,10 tries,200 millis between each try
-  
+  //create the servos object
   setUpServos();
   
   Serial.println("Setup finished");
@@ -98,6 +100,7 @@ void loop (){
   }
 }
 
+//user defined function. contains the module logic.called every time run() is called.
 void myUserFunc(Message *msg,MergCBUS *mcbus){
   //getting standard on/off events
   
@@ -105,47 +108,61 @@ void myUserFunc(Message *msg,MergCBUS *mcbus){
   unsigned int converted_speed;  
   int varidx=0;
   
-  byte servo_start,servo_end,servo_speed;
+  byte servo_start,servo_end;
   if (mcbus->eventMatch()){
      onEvent=mcbus->isAccOn();
      getServosArray(msg,mcbus);
+     
+     //short event are for a specific port.move just one servo
+     if (!mcbus->isLongEvent()){
+         varidx=mcbus->getDeviceNumberIndex();
+         if (varidx<DEVICE_NUMBERS){
+            moveServo(onEvent,varidx,SERVO_START,SERVO_END);
+            return;
+         }
+     }
+     
       //get the events var and control the servos
       for (int i=0;i<NUM_SERVOS;i++){        
         
         if (isServoActive(i)){          
           servo_start=mcbus->getEventVar(msg,START_ANGLE_VAR);
           servo_end=mcbus->getEventVar(msg,END_ANGLE_VAR);
-          if (onEvent){
-            if (isServoToTogle(i)){              
-              servos[i].write(servo_start,SPEED);       
-            }  
-            else {
-              servos[i].write(servo_end,SPEED);
-            }   
-          }
-          else{
-            if (isServoToTogle(i)){              
-              servos[i].write(servo_end,SPEED);       
-            }  
-            else {
-              servos[i].write(servo_start,SPEED);
-            }              
-          }          
+          moveServo(onEvent,i,servo_start,servo_end);
         }        
       }
   }
   else{
     //feedback messages
-    
-    //learn device number    
+
     
   } 
 }
+
+void moveServo(boolean event,byte servoidx,byte servo_start,byte servo_end){
+    if (event){
+      if (isServoToTogle(servoidx)){              
+        servos[servoidx].write(servo_start,SPEED);       
+      }      
+      else {
+        servos[servoidx].write(servo_end,SPEED);
+      }   
+    }
+    else{
+      if (isServoToTogle(servoidx)){              
+        servos[servoidx].write(servo_end,SPEED);       
+      }  
+      else {
+        servos[servoidx].write(servo_start,SPEED);
+      }              
+    }
+}
+
 //create the objects for each servo
 void setUpServos(){  
   for (int i=0;i<NUM_SERVOS;i++){
     servos[i].attach(servopins[i]); 
-   servos[i].write(0,127); 
+    servos[i].write(0,127); 
   }
 }
 //is the servo to be activated or not
