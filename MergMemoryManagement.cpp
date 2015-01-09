@@ -156,7 +156,6 @@ unsigned int MergMemoryManagement::getEventIndex(unsigned int nn,unsigned int ev
 */
 unsigned int MergMemoryManagement::getEventIndex(byte ev1,byte ev2,byte ev3,byte ev4){
    unsigned int n=EVENTS_MEMPOS;
-
     for (int i=0;i<numEvents;i++){
         if (ev1==EEPROM.read(n) &&
             ev2==EEPROM.read(n+1) &&

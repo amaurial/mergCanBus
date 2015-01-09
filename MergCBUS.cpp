@@ -1238,23 +1238,23 @@ void MergCBUS::learnEvent(){
 
         //get the device number in case of short event
         //TODO:for producers. Test
-        if (nn==0){
-            //check if the node support device number
-            if (nodeId.isProducerNode() && memory.getNumDeviceNumber()>0){
-                ind=message.getEventVarIndex();
-                val=message.getEventVar();
-
-                if (ind>0){
-                    ind=ind-1;//internal buffers start at position 0
-                }
-                memory.setDeviceNumber(ev,ind);
-                //in case of setting device number there may be customized rules for that
-//                if (userHandler!=0){
-//                    userHandler(&message,this);
+//        if (nn==0){
+//            //check if the node support device number
+//            if (nodeId.isProducerNode() && memory.getNumDeviceNumber()>0){
+//                ind=message.getEventVarIndex();
+//                val=message.getEventVar();
+//
+//                if (ind>0){
+//                    ind=ind-1;//internal buffers start at position 0
 //                }
-            }
-
-        }
+//                memory.setDeviceNumber(ev,ind);
+//                //in case of setting device number there may be customized rules for that
+////                if (userHandler!=0){
+////                    userHandler(&message,this);
+////                }
+//            }
+//
+//        }
 
 
         //save event and get the index
@@ -1431,7 +1431,7 @@ byte MergCBUS::getEventVar(Message *msg,byte varIndex){
     unsigned int idx;
 
     if (msg->isShortEvent()){
-        idx=memory.getEventIndex(0,msg->getEventNumber());
+        idx=memory.getEventIndex(0,msg->getDeviceNumber());
     }
     else{
         idx=memory.getEventIndex(msg->getNodeNumber(),msg->getEventNumber());
