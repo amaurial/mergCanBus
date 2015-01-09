@@ -135,6 +135,8 @@ class Message
 
         bool isAccOn();
         bool isAccOff();
+        bool isLongEvent();
+        bool isShortEvent();
         byte accExtraData();
         byte getAccExtraData(byte idx);//idx starts at 1
         void createOnEvent(unsigned int nodeNumber,bool longEvent,unsigned int eventNumber,byte numDataBytes,byte* data);

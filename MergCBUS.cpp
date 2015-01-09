@@ -38,7 +38,6 @@ MergCBUS::MergCBUS(byte num_node_vars,byte num_events,byte num_events_var,byte m
     resetFunc=0;
     //flag to match if an event is in memory
     eventmatch=false;
-    typeEventMatch=true;//long event
     //pusch button vars
     push_button=255;
     pb_state=HIGH;
@@ -1040,33 +1039,34 @@ void MergCBUS::sendERRMessage(byte code){
 */
 
 bool MergCBUS::hasThisEvent(){
-    byte opc=message.getOpc();
-    deviceNumberIdx=memory.getNumDeviceNumber()+1;
+
+
     //long events
-    if (opc==OPC_ACON || opc==OPC_ACON1 || opc==OPC_ACON2 || opc==OPC_ACON3 ||
-        opc==OPC_ACOF || opc==OPC_ACOF1 || opc==OPC_ACOF2 || opc==OPC_ACOF3
-        ){
+    if (message.isLongEvent()){
              if (memory.getEventIndex(message.getNodeNumber(),message.getEventNumber())>=0){
-                typeEventMatch=true;
                 return true;
              }
     }
     //short events has to check the device number
-    if (opc==OPC_ASON || opc==OPC_ASON1 || opc==OPC_ASON2 || opc==OPC_ASON3 ||
-        opc==OPC_ASOF || opc==OPC_ASOF1 || opc==OPC_ASOF2 || opc==OPC_ASOF3
-        ){
-            unsigned int dn=message.getDeviceNumber();
+    if (message.isShortEvent()){
+//            unsigned int dn=message.getDeviceNumber();
+//            deviceNumberIdx=memory.getNumDeviceNumber()+1;
+//            for (byte i=0;i<memory.getNumDeviceNumber();i++){
+//                if (memory.getDeviceNumber(i)==dn){
+//                    typeEventMatch=false;
+//                    deviceNumberIdx=i;
+//                    return true;
+//                }
+//            }
 
-            for (byte i=0;i<memory.getNumDeviceNumber();i++){
-                if (memory.getDeviceNumber(i)==dn){
-                    typeEventMatch=false;
-                    deviceNumberIdx=i;
-                    return true;
-                }
-            }
+            if (memory.getEventIndex(0,message.getEventNumber())>=0){
+                return true;
+             }
+
     }
     return false;
 }
+
 
 /**\brief
 * Print the message to be sent to serial. Used for debug.
@@ -1237,10 +1237,10 @@ void MergCBUS::learnEvent(){
         nn=message.getNodeNumber();
 
         //get the device number in case of short event
-        //TODO:TEST
+        //TODO:for producers. Test
         if (nn==0){
             //check if the node support device number
-            if (memory.getNumDeviceNumber()>0){
+            if (nodeId.isProducerNode() && memory.getNumDeviceNumber()>0){
                 ind=message.getEventVarIndex();
                 val=message.getEventVar();
 
@@ -1255,59 +1255,59 @@ void MergCBUS::learnEvent(){
             }
 
         }
-        else{
 
-            //save event and get the index
-            buffer[0]=highByte(nn);
-            buffer[1]=lowByte(nn);
-            buffer[2]=highByte(ev);
-            buffer[3]=lowByte(ev);
-            evidx=memory.setEvent(buffer);
 
-            if (evidx>nodeId.getSuportedEvents()){
+        //save event and get the index
+        buffer[0]=highByte(nn);
+        buffer[1]=lowByte(nn);
+        buffer[2]=highByte(ev);
+        buffer[3]=lowByte(ev);
+        evidx=memory.setEvent(buffer);
+
+        if (evidx>nodeId.getSuportedEvents()){
+            //send a message error
+            sendERRMessage(CMDERR_TOO_MANY_EVENTS);
+            return;
+        }
+
+        //save the parameter
+        //the CBUS index start with 1
+        if (message.getOpc()==OPC_EVLRN || message.getOpc()==OPC_EVLRNI){
+            ind=message.getEventVarIndex();
+            val=message.getEventVar();
+
+            //if (DEBUG){
+                    //Serial.print("Saving event var ");
+                    //Serial.print(ind);
+                    //Serial.print(" value ");
+                    //Serial.print(val);
+                    //Serial. print(" of event ");
+                    //Serial.println(evidx);
+                    //Serial.print("max events: ");
+                    //Serial.println(memory.getNumEvents());
+                    //Serial.print("max events vars: ");
+                    //Serial.println(memory.getNumEventVars());
+
+            //}
+
+
+            resp=memory.setEventVar(evidx,ind-1,val);
+            //Serial.print("resp:");
+            //Serial.println(resp);
+            /*
+            if (DEBUG){
+                    Serial.print("Saving event var resp ");
+                    Serial.println(resp);
+            }
+            */
+            if (resp!=(ind-1)){
                 //send a message error
-                sendERRMessage(CMDERR_TOO_MANY_EVENTS);
+                //Serial.println("Error lear event");
+                sendERRMessage(CMDERR_INV_NV_IDX);
                 return;
             }
-
-            //save the parameter
-            //the CBUS index start with 1
-            if (message.getOpc()==OPC_EVLRN || message.getOpc()==OPC_EVLRNI){
-                ind=message.getEventVarIndex();
-                val=message.getEventVar();
-
-                //if (DEBUG){
-                        //Serial.print("Saving event var ");
-                        //Serial.print(ind);
-                        //Serial.print(" value ");
-                        //Serial.print(val);
-                        //Serial. print(" of event ");
-                        //Serial.println(evidx);
-                        //Serial.print("max events: ");
-                        //Serial.println(memory.getNumEvents());
-                        //Serial.print("max events vars: ");
-                        //Serial.println(memory.getNumEventVars());
-
-                //}
-
-
-                resp=memory.setEventVar(evidx,ind-1,val);
-                //Serial.print("resp:");
-                //Serial.println(resp);
-                /*
-                if (DEBUG){
-                        Serial.print("Saving event var resp ");
-                        Serial.println(resp);
-                }
-                */
-                if (resp!=(ind-1)){
-                    //send a message error
-                    //Serial.println("Error lear event");
-                    sendERRMessage(CMDERR_INV_NV_IDX);
-                    return;
-                }
-            }
         }
+
 
         //send a WRACK back
         prepareMessage(OPC_WRACK);
@@ -1428,7 +1428,16 @@ byte MergCBUS::getNodeVar(byte varIndex){
  *
  */
 byte MergCBUS::getEventVar(Message *msg,byte varIndex){
-    unsigned int idx=memory.getEventIndex(msg->getNodeNumber(),msg->getEventNumber());
+    unsigned int idx;
+
+    if (msg->isShortEvent()){
+        idx=memory.getEventIndex(0,msg->getEventNumber());
+    }
+    else{
+        idx=memory.getEventIndex(msg->getNodeNumber(),msg->getEventNumber());
+    }
+
+
     if (idx<nodeId.getSuportedEvents()){
         return memory.getEventVar(idx,varIndex);
     }

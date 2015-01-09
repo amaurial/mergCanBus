@@ -582,6 +582,45 @@ bool Message::isAccOff(){
     }
         return false;
 }
+
+/**
+* Check the if it is an ON message. Major event in CBUS.
+* @return True if is and On event, false if not
+*/
+bool Message::isShortEvent(){
+
+    if (opc==OPC_ASON ||
+        opc==OPC_ASON1 ||
+        opc==OPC_ASON2 ||
+        opc==OPC_ASON3 ||
+        opc==OPC_ASOF  ||
+        opc==OPC_ASOF1 ||
+        opc==OPC_ASOF2 ||
+        opc==OPC_ASOF3){
+        return true;
+    }
+        return false;
+}
+/**
+* Check the if it is an OFF message. Major event in CBUS.
+* @return True if is and OFF event, false if not
+*/
+bool Message::isLongEvent(){
+
+    if (opc==OPC_ACON ||
+        opc==OPC_ACON1 ||
+        opc==OPC_ACON2 ||
+        opc==OPC_ACON3 ||
+        opc==OPC_ACOF ||
+        opc==OPC_ACOF1 ||
+        opc==OPC_ACOF2 ||
+        opc==OPC_ACOF3){
+        return true;
+    }
+        return false;
+}
+
+
 /**
 * Return how many bytes of extra data has the ON event.
 * @return The number of extra bytes depending on the message type. ACON,ACOF=0 ; ACON1,ACOF1=1; ACON2,ACOF2=2; ACON3,ACOF1=3

@@ -114,16 +114,7 @@ void myUserFunc(Message *msg,MergCBUS *mcbus){
   if (mcbus->eventMatch()){
      onEvent=mcbus->isAccOn();
      getServosArray(msg,mcbus);
-     Serial.println("event match");
-     //short event are for a specific port.move just one servo
-     if (!mcbus->isLongEvent()){
-         varidx=mcbus->getDeviceNumberIndex();
-         if (varidx<DEVICE_NUMBERS){
-            moveServo(onEvent,varidx,SERVO_START,SERVO_END);
-            return;
-         }
-     }
-     
+     Serial.println("event match");     
      servo_start=mcbus->getEventVar(msg,START_ANGLE_VAR);
      servo_end=mcbus->getEventVar(msg,END_ANGLE_VAR);
      Serial.println(servo_start);

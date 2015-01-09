@@ -140,7 +140,6 @@ class MergCBUS
         bool isAccOn();
         bool isAccOff();
         bool eventMatch(){return eventmatch;};
-        bool isLongEvent(){return typeEventMatch;};
         unsigned int getEventIndex(Message *msg);
         byte getNodeVar(byte varIndex);
         byte getEventVar(Message *msg,byte varIndex);
