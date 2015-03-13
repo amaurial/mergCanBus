@@ -257,13 +257,19 @@ unsigned int MergCBUS::mainProcess(){
 
     switch (message.getType()){
         case (DCC):
-            handleDCCMessages();
+            if (getNodeId()->isConsumerNode()){
+                handleDCCMessages();
+            }
         break;
         case (ACCESSORY):
-            handleACCMessages();
+             if (getNodeId()->isConsumerNode()){
+                handleACCMessages();
+            }
         break;
         case (GENERAL):
-            handleGeneralMessages();
+             if (getNodeId()->isConsumerNode()){
+                handleGeneralMessages();
+            }
         break;
         case (CONFIG):
             return handleConfigMessages();
@@ -1352,10 +1358,20 @@ void MergCBUS::controlPushButton(){
                             doSetup();
                         }
                 }
+                else{
+                    if (state_mode==SETUP){
+                        state_mode=NORMAL;
+                        return;
+                    }
+                }
 
             } else if (tdelay>6000){
                 //change from flim to slim
                 if (node_mode==MTYP_SLIM){
+                    if (state_mode==SETUP){
+                        state_mode=NORMAL;
+                        return;
+                    }
                     //Serial.println("Mode SLIM. Changing to FLIM");
                     //turn the green led down
                     digitalWrite(greenLed,LOW);
@@ -1464,3 +1480,77 @@ unsigned int MergCBUS::getDeviceNumber(byte port){
 }
 
 
+byte MergCBUS::sendOnEvent(bool longEvent,unsigned int event){
+    if (longEvent){
+        prepareMessageBuff(OPC_ACON,highByte(nodeId.getNodeNumber()),lowByte(nodeId.getNodeNumber()),highByte(event),lowByte(event));
+    }
+    else{
+        prepareMessageBuff(OPC_ASON,highByte(nodeId.getNodeNumber()),lowByte(nodeId.getNodeNumber()),highByte(event),lowByte(event));
+    }
+    sendCanMessage();
+}
+byte MergCBUS::sendOffEvent(bool longEvent,unsigned int event){
+    if (longEvent){
+        prepareMessageBuff(OPC_ACOF,highByte(nodeId.getNodeNumber()),lowByte(nodeId.getNodeNumber()),highByte(event),lowByte(event));
+    }
+    else{
+        prepareMessageBuff(OPC_ASOF,highByte(nodeId.getNodeNumber()),lowByte(nodeId.getNodeNumber()),highByte(event),lowByte(event));
+    }
+    sendCanMessage();
+}
+byte MergCBUS::sendOnEvent1(bool longEvent,unsigned int event,byte var1){
+    if (longEvent){
+        prepareMessageBuff(OPC_ACON1,highByte(nodeId.getNodeNumber()),lowByte(nodeId.getNodeNumber()),highByte(event),lowByte(event),var1);
+    }
+    else{
+        prepareMessageBuff(OPC_ASON1,highByte(nodeId.getNodeNumber()),lowByte(nodeId.getNodeNumber()),highByte(event),lowByte(event),var1);
+    }
+    sendCanMessage();
+}
+byte MergCBUS::sendOffEvent1(bool longEvent,unsigned int event,byte var1){
+    if (longEvent){
+        prepareMessageBuff(OPC_ACOF1,highByte(nodeId.getNodeNumber()),lowByte(nodeId.getNodeNumber()),highByte(event),lowByte(event),var1);
+    }
+    else{
+        prepareMessageBuff(OPC_ASOF1,highByte(nodeId.getNodeNumber()),lowByte(nodeId.getNodeNumber()),highByte(event),lowByte(event),var1);
+    }
+    sendCanMessage();
+}
+byte MergCBUS::sendOnEvent2(bool longEvent,unsigned int event,byte var1,byte var2){
+    if (longEvent){
+        prepareMessageBuff(OPC_ACON2,highByte(nodeId.getNodeNumber()),lowByte(nodeId.getNodeNumber()),highByte(event),lowByte(event),var1,var2);
+    }
+    else{
+        prepareMessageBuff(OPC_ASON2,highByte(nodeId.getNodeNumber()),lowByte(nodeId.getNodeNumber()),highByte(event),lowByte(event),var1,var2);
+    }
+
+    sendCanMessage();
+}
+byte MergCBUS::sendOffEvent2(bool longEvent,unsigned int event,byte var1,byte var2){
+    if (longEvent){
+        prepareMessageBuff(OPC_ACOF2,highByte(nodeId.getNodeNumber()),lowByte(nodeId.getNodeNumber()),highByte(event),lowByte(event),var1,var2);
+    }
+    else{
+        prepareMessageBuff(OPC_ASOF2,highByte(nodeId.getNodeNumber()),lowByte(nodeId.getNodeNumber()),highByte(event),lowByte(event),var1,var2);
+    }
+    sendCanMessage();
+}
+byte MergCBUS::sendOnEvent3(bool longEvent,unsigned int event,byte var1,byte var2,byte var3){
+    if (longEvent){
+        prepareMessageBuff(OPC_ACON3,highByte(nodeId.getNodeNumber()),lowByte(nodeId.getNodeNumber()),highByte(event),lowByte(event),var1,var2,var3);
+    }
+    else{
+        prepareMessageBuff(OPC_ASON3,highByte(nodeId.getNodeNumber()),lowByte(nodeId.getNodeNumber()),highByte(event),lowByte(event),var1,var2,var3);
+    }
+
+    sendCanMessage();
+}
+byte MergCBUS::sendOffEvent3(bool longEvent,unsigned int event,byte var1,byte var2,byte var3){
+    if (longEvent){
+        prepareMessageBuff(OPC_ACOF3,highByte(nodeId.getNodeNumber()),lowByte(nodeId.getNodeNumber()),highByte(event),lowByte(event),var1,var2,var3);
+    }
+    else{
+        prepareMessageBuff(OPC_ASOF3,highByte(nodeId.getNodeNumber()),lowByte(nodeId.getNodeNumber()),highByte(event),lowByte(event),var1,var2,var3);
+    }
+    sendCanMessage();
+}

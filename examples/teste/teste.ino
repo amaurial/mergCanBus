@@ -19,17 +19,23 @@ See MemoryManagement.h for memory configuration
 #include <Message.h>
 #include <EEPROM.h>
 
-#define GREEN_LED 5       //green led port
-#define YELLOW_LED 4      //yellow led port
-#define PUSH_BUTTON 3     //std merg push button
-#define PUSH_BUTTON1 9    //debug push button
+
+#define SENSORS 8        //total sensors
+#define START_PORT 2     //initial port sensor
+
+#define GREEN_LED 22       //green led port
+#define YELLOW_LED 23      //yellow led port
+#define PUSH_BUTTON 21     //std merg push button
+#define PUSH_BUTTON1 28    //debug push button
+#define NODE_VARS 1                  //number o node variables.Servo speed
+#define NODE_EVENTS 30              //max number of events
+#define EVENTS_VARS 1             //number of variables per event
+#define DEVICE_NUMBERS SENSORS   //number of device numbers. each servo can be a device
 //input ports for sensors
-#define SENSORS 15        //total sensors
-#define START_PORT 20     //initial port sensor
 
-MergCBUS cbus=MergCBUS();
+MergCBUS cbus=MergCBUS(NODE_VARS,NODE_EVENTS,EVENTS_VARS,DEVICE_NUMBERS);
 
-byte sensors[SENSORS];    //array with sensor ports
+byte sensors[SENSORS];      //array with sensor ports
 byte sensors_state[SENSORS];//last sensor state
 
 
@@ -46,12 +52,16 @@ void setup(){
   cbus.getNodeId()->setManufacturerId(0xA5);    //merg code
   cbus.getNodeId()->setMinCodeVersion(1);       //Version 1
   cbus.getNodeId()->setMaxCodeVersion(0);
-  cbus.getNodeId()->setSuportedEvents(20);      //max supported events. this can be changed in the memory config
-  cbus.getNodeId()->setSuportedEventsVariables(8);
-  cbus.getNodeId()->setSuportedNodeVariables(20);
   cbus.getNodeId()->setProducerNode(true);
   cbus.getNodeId()->setConsumerNode(false);
   cbus.setStdNN(999); //standard node number
+
+  if (digitalRead(PUSH_BUTTON1)==LOW){
+    Serial.println("Setup new memory");
+    cbus.setUpNewMemory();
+    cbus.setSlimMode();
+    cbus.saveNodeFlags();
+  }
 
   cbus.setLeds(GREEN_LED,YELLOW_LED);//set the led ports
   cbus.setPushButton(PUSH_BUTTON);//set the push button ports

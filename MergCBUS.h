@@ -148,7 +148,16 @@ class MergCBUS
         void setDeviceNumber(unsigned int val,byte port);           //2 bytes representation for dn
         unsigned int getDeviceNumber(byte port);                             //2 bytes representation
         byte getDeviceNumberIndex(){return deviceNumberIdx;};
-
+        state getNodeState(){return state_mode;};
+        //send events
+        byte sendOnEvent(bool longEvent,unsigned int event);
+        byte sendOffEvent(bool longEvent,unsigned int event);
+        byte sendOnEvent1(bool longEvent,unsigned int event,byte var1);
+        byte sendOffEvent1(bool longEvent,unsigned int event,byte var1);
+        byte sendOnEvent2(bool longEvent,unsigned int event,byte var1,byte var2);
+        byte sendOffEvent2(bool longEvent,unsigned int event,byte var1,byte var2);
+        byte sendOnEvent3(bool longEvent,unsigned int event,byte var1,byte var2,byte var3);
+        byte sendOffEvent3(bool longEvent,unsigned int event,byte var1,byte var2,byte var3);
 
     protected:
     private:
@@ -216,7 +225,7 @@ class MergCBUS
         void doOutOfService();
         void initMemory();
         bool isSelfEnumMode();
-        state getNodeState(){return state_mode;};
+
         /**\brief Set the node state to a new state.
         * @param newstate One of states @see state
         */
