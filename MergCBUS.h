@@ -206,7 +206,7 @@ class MergCBUS
         void prepareMessage(byte opc);          //fill the buffer with specific messages
         void prepareMessageBuff(byte data0=0,byte data1=0,byte data2=0,byte data3=0,byte data4=0,byte data5=0,byte data6=0,byte data7=0);//fill the buffer byte by byte
         byte getMessageSize(byte opc);          //return the
-
+        //leds and the push button controls
         void controlLeds();
         byte greenLed;
         byte yellowLed;
@@ -217,14 +217,14 @@ class MergCBUS
         byte push_button;
         byte pb_state;
 
-        void(* resetFunc) (void);           //declare reset function @ address 0
-        void learnEvent();
+        void(* resetFunc) (void);           //declare reset function @ address 0. resets the arduino
+        void learnEvent();                  //put the node in the learn event mode
         unsigned int mainProcess();
-        void doSelfEnnumeration(bool soft);
-        void doSetup();
-        void doOutOfService();
-        void initMemory();
-        bool isSelfEnumMode();
+        void doSelfEnnumeration(bool soft); //put the node in the self enummeration mode
+        void doSetup();                     // put the node in the setup mode
+        void doOutOfService();              //put the node in the out of service node
+        void initMemory();                  //load the eprom memory
+        bool isSelfEnumMode();              //check if the node is in the self enum mode
 
         /**\brief Set the node state to a new state.
         * @param newstate One of states @see state

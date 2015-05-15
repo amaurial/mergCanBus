@@ -257,17 +257,17 @@ unsigned int MergCBUS::mainProcess(){
 
     switch (message.getType()){
         case (DCC):
-            if (getNodeId()->isConsumerNode()){
+            if (nodeId.isConsumerNode()){
                 handleDCCMessages();
             }
         break;
         case (ACCESSORY):
-             if (getNodeId()->isConsumerNode()){
+             if (nodeId.isConsumerNode()){
                 handleACCMessages();
             }
         break;
         case (GENERAL):
-             if (getNodeId()->isConsumerNode()){
+             if (nodeId.isConsumerNode()){
                 handleGeneralMessages();
             }
         break;
