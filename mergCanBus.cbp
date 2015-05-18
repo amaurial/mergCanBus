@@ -37,6 +37,8 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
+		<Unit filename="CircularBuffer.cpp" />
+		<Unit filename="CircularBuffer.h" />
 		<Unit filename="LICENSE" />
 		<Unit filename="MergCBUS.cpp" />
 		<Unit filename="MergCBUS.h" />
