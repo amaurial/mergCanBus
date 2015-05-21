@@ -14,6 +14,7 @@ MergCBUS::MergCBUS(byte num_node_vars,byte num_events,byte num_events_var,byte m
     messageFilter=0;
     bufferIndex=0;
     Can=MCP_CAN();
+    msgBuffer=CircularBuffer();
     memory=MergMemoryManagement(num_node_vars,num_events,num_events_var,max_device_numbers);
     nodeId=MergNodeIdentification();
     nodeId.setSuportedEvents(num_events);

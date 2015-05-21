@@ -2,21 +2,21 @@
 #define CIRCULARBUFFER_H
 
 #define _msgSize 8
+#define CIRCULARBUFFER_MSGS 50 //messages
+#define CIRCULARBUFFER_SIZE CIRCULARBUFFER_MSGS*_msgSize
 class CircularBuffer
 {
     public:
         CircularBuffer(int value);
         virtual ~CircularBuffer();
     public:
-        void setSize(int value){bufSize=value*_msgSize;};
-        void put(byte *buffer);
-        void get(byte *buffer);
-        int getPos();
+        bool put(byte *buffer);
+        bool get(byte *buffer);
+        int getPos(){return pos;};
     private:
-        byte* _buf;
-        int bufSize;
+        byte _buf[CIRCULARBUFFER_SIZE];
         int tail;
-        int head;
+        int op;
         int pos;
 };
 

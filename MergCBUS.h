@@ -16,6 +16,7 @@
 #include "MergNodeIdentification.h"
 #include "mcp_can.h"
 #include "MergMemoryManagement.h"
+#include "CircularBuffer.h"
 
 
 //#define Reset_AVR() wdt_enable(WDTO_30MS); while(1) {} //reset
@@ -175,6 +176,7 @@ class MergCBUS
         unsigned long std_nn;                   //standard node number for slim
         bool typeEventMatch;                    //true is long event, false is short event
         byte deviceNumberIdx;                   //in case of match set the devicenumber index starting on 0
+        CircularBuffer msgBuffer;
 
         state state_mode;                       //actual state of the node
         unsigned long startTime;                //used for self ennumeration
