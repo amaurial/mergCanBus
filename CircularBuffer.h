@@ -18,6 +18,8 @@ class CircularBuffer
         int tail;
         int op;
         int pos;
+        int entries;
+        void incPos();
 };
 
 #endif // CIRCULARBUFFER_H
