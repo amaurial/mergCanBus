@@ -17,6 +17,7 @@
 #include "mcp_can.h"
 #include "MergMemoryManagement.h"
 #include "CircularBuffer.h"
+#include "TimerOne.h"
 
 
 //#define Reset_AVR() wdt_enable(WDTO_30MS); while(1) {} //reset
@@ -24,7 +25,7 @@
 
 
 
-#define SELF_ENUM_TIME 1000      /** Defines the timeout used for self ennumeration mode.*/
+#define SELF_ENUM_TIME 1000      /** Defines the timeout used for self ennumeration mode.Milliseconds*/
 #define TEMP_BUFFER_SIZE 128    /** Size of a internal buffer for general usage.*/
 #define SELF_ENUM_BUFFER_SIZE 99
 #define BLINK_RATE 100
@@ -160,6 +161,10 @@ class MergCBUS
         byte sendOnEvent3(bool longEvent,unsigned int event,byte var1,byte var2,byte var3);
         byte sendOffEvent3(bool longEvent,unsigned int event,byte var1,byte var2,byte var3);
 
+        //set timmer interval
+        void setTimerInterval(long value){timerInterval=value;};
+        long getTimerInterval(){return timerInterval;}
+
     protected:
     private:
         //let the bus level lib private
@@ -234,6 +239,13 @@ class MergCBUS
         void setNodeState(state newstate){ state_mode=newstate;};
         byte accExtraData();
         byte getAccExtraData(byte idx);//idx starts at 1
+
+        //timer functions for reading messages
+        long timerInterval;
+
+        void startTimer();
+        void stopTimer();
+        void cbusRead(CircularBuffer *circBuffer);
 };
 
 #endif // MESSAGEPARSER_H

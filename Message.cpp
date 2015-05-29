@@ -1191,3 +1191,4 @@ void Message::loadMessageType()
     messages[OPC_EXTC6]=ACCESSORY;
 }
 
+

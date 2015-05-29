@@ -288,10 +288,10 @@ unsigned int MergCBUS::mainProcess(){
 * @return true if a message in the can bus.
 */
 bool MergCBUS::readCanBus(byte buf_num){
-    byte len=0;
+    byte len=0;//number of bytes read.
     bool resp;
-    byte bufIdxdata=115;
-    byte bufIdxhead=110;
+    byte bufIdxdata=115;//position in the general buffer. data need 8 bytes
+    byte bufIdxhead=110;//position in the general buffer. header need 4 bytes
     eventmatch=false;
     resp=readCanBus(&buffer[bufIdxdata],&buffer[bufIdxhead],&len,buf_num);
     if (resp){
@@ -311,6 +311,39 @@ bool MergCBUS::readCanBus(byte buf_num){
         eventmatch=hasThisEvent();
      }
     return resp;
+}
+
+/** \brief
+* Read the can bus from circular buffer and load the data in the message object.
+* @return true if a message in the can bus.
+*/
+bool MergCBUS::readCanBus(){
+    byte len=0;//number of bytes read.
+    byte bufIdxdata=110;//position in the general buffer. data need 8 bytes
+    eventmatch=false;
+    resp=readCanBus(&buffer[bufIdxdata],&buffer[bufIdxhead],&len,buf_num);
+
+    if (msgBuffer.get(&buffer[bufIdxdata])){
+        message.clear();
+        message.setHeaderBuffer(&buffer[bufIdxdata+2]);
+        len=buffer[bufIdxdata];
+        message.setCanMessageSize(len);
+        message.setDataBuffer(&buffer[bufIdxdata+5]);
+        if (buffer[bufIdxdata+2]==0){
+            //Serial.println("readCanBus - unsetRTM");
+            message.unsetRTR();
+        }
+        else{
+            //Serial.println("readCanBus - setRTM");
+            message.setRTR();
+        }
+
+        //eventmatch=memory.hasEvent(buffer[bufIdxdata],buffer[bufIdxdata+1],buffer[bufIdxdata+2],buffer[bufIdxdata+3]);
+        eventmatch=hasThisEvent();
+        return true;
+    }
+
+    return false;
 }
 
 
@@ -1554,4 +1587,19 @@ byte MergCBUS::sendOffEvent3(bool longEvent,unsigned int event,byte var1,byte va
         prepareMessageBuff(OPC_ASOF3,highByte(nodeId.getNodeNumber()),lowByte(nodeId.getNodeNumber()),highByte(event),lowByte(event),var1,var2,var3);
     }
     sendCanMessage();
+}
+
+//Timmer functions
+
+void MergCBUS::startTimer(){
+    Timer1.initialize(timerInterval);
+    Timer1.attachInterrupt(cbusRead);
+}
+void MergCBUS::stopTimer(){
+
+}
+void MergCBUS::cbusRead(){
+
+
+
 }
