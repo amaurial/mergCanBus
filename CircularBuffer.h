@@ -1,13 +1,16 @@
 #ifndef CIRCULARBUFFER_H
 #define CIRCULARBUFFER_H
 
-#define _msgSize 14 //1 byte for the message size. 4 bytes for header. 8 bytes to max message
-#define CIRCULARBUFFER_MSGS 50 //messages
+#define _msgSize 15 //1 byte for the message size.1 byte for RTR, 4 bytes for header. 8 bytes to max message
+#define CIRCULARBUFFER_MSGS 40 //messages
 #define CIRCULARBUFFER_SIZE CIRCULARBUFFER_MSGS*_msgSize
+
+#include <Arduino.h>
+
 class CircularBuffer
 {
     public:
-        CircularBuffer(int value);
+        CircularBuffer();
         virtual ~CircularBuffer();
     public:
         bool put(byte *buffer);

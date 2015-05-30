@@ -10,6 +10,7 @@
 #include <EEPROM.h>
 #include <SPI.h>
 #include <avr/wdt.h>
+//#include <TimerOne.h>
 
 //#include "CANMessage.h"
 #include "Message.h"
@@ -17,7 +18,7 @@
 #include "mcp_can.h"
 #include "MergMemoryManagement.h"
 #include "CircularBuffer.h"
-#include "TimerOne.h"
+
 
 
 //#define Reset_AVR() wdt_enable(WDTO_30MS); while(1) {} //reset
@@ -107,6 +108,7 @@ class MergCBUS
         void setDebug(bool debug);
         void sendERRMessage(byte code);
         bool hasThisEvent();
+        bool readCanBus();
         bool readCanBus(byte buf_num);
         bool readCanBus(byte *msg,byte *header,byte *length,byte buf_num);
         void printSentMessage();
@@ -164,6 +166,9 @@ class MergCBUS
         //set timmer interval
         void setTimerInterval(long value){timerInterval=value;};
         long getTimerInterval(){return timerInterval;}
+        //void startTimer();
+        //void stopTimer();
+        void cbusRead();
 
     protected:
     private:
@@ -243,9 +248,6 @@ class MergCBUS
         //timer functions for reading messages
         long timerInterval;
 
-        void startTimer();
-        void stopTimer();
-        void cbusRead(CircularBuffer *circBuffer);
 };
 
 #endif // MESSAGEPARSER_H

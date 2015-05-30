@@ -44,6 +44,7 @@ MergCBUS::MergCBUS(byte num_node_vars,byte num_events,byte num_events_var,byte m
     pb_state=HIGH;
     std_nn=300;//std node number for a producer
     initMemory();
+    timerInterval=0;
 }
 
 /** \brief
@@ -171,16 +172,28 @@ unsigned int MergCBUS::run(){
             finishSelfEnumeration();
         }
     }
+    if (timerInterval>0){
+        if (readCanBus()){
+            resp=mainProcess();
+            if (resp==OK ){
+                return OK;
+            }
+        }
 
-    if (readCanBus(0)==true){
-       resp=mainProcess();
     }
-    if (readCanBus(1)==true){
-       resp1=mainProcess();
+    else{
+        if (readCanBus(0)==true){
+            resp=mainProcess();
+        }
+        if (readCanBus(1)==true){
+           resp1=mainProcess();
+        }
+        if (resp==OK || resp1==OK){
+            return OK;
+        }
     }
-    if (resp==OK || resp1==OK){
-        return OK;
-    }
+
+
 
     if (userHandler!=0){
         userHandler(&message,this);
@@ -314,22 +327,21 @@ bool MergCBUS::readCanBus(byte buf_num){
 }
 
 /** \brief
-* Read the can bus from circular buffer and load the data in the message object.
+* Read the can bus from the circular buffer and load the data in the message object.
 * @return true if a message in the can bus.
 */
 bool MergCBUS::readCanBus(){
     byte len=0;//number of bytes read.
-    byte bufIdxdata=110;//position in the general buffer. data need 8 bytes
+    bool resp;
+    byte bufidx=90;//position in the general buffer. data need 8 bytes
     eventmatch=false;
-    resp=readCanBus(&buffer[bufIdxdata],&buffer[bufIdxhead],&len,buf_num);
-
-    if (msgBuffer.get(&buffer[bufIdxdata])){
+    resp=msgBuffer.get(&buffer[bufidx]);
+    if (resp){
         message.clear();
-        message.setHeaderBuffer(&buffer[bufIdxdata+2]);
-        len=buffer[bufIdxdata];
-        message.setCanMessageSize(len);
-        message.setDataBuffer(&buffer[bufIdxdata+5]);
-        if (buffer[bufIdxdata+2]==0){
+        message.setCanMessageSize(buffer[bufidx]);
+        message.setHeaderBuffer(&buffer[bufidx+2]);
+        message.setDataBuffer(&buffer[bufidx+6]);
+        if (buffer[bufidx+1]==0){
             //Serial.println("readCanBus - unsetRTM");
             message.unsetRTR();
         }
@@ -340,11 +352,11 @@ bool MergCBUS::readCanBus(){
 
         //eventmatch=memory.hasEvent(buffer[bufIdxdata],buffer[bufIdxdata+1],buffer[bufIdxdata+2],buffer[bufIdxdata+3]);
         eventmatch=hasThisEvent();
-        return true;
-    }
-
-    return false;
+     }
+    return resp;
 }
+
+
 
 
 /** \brief
@@ -1591,15 +1603,41 @@ byte MergCBUS::sendOffEvent3(bool longEvent,unsigned int event,byte var1,byte va
 
 //Timmer functions
 
-void MergCBUS::startTimer(){
-    Timer1.initialize(timerInterval);
-    Timer1.attachInterrupt(cbusRead);
-}
-void MergCBUS::stopTimer(){
+//void MergCBUS::startTimer(){
+//    Timer1.initialize(timerInterval);
+//    Timer1.attachInterrupt(cbusRead);
+//}
+//void MergCBUS::stopTimer(){
+//    Timer1.stop();
+//    Timer1.detachInterrupt();
+//}
 
-}
+/** \brief
+* Read the can bus message and  put in circular buffer.
+* Used by the timer
+* the buffer is 1 byte for the message size.1 byte for RTR, 4 bytes for header. 8 bytes to max message
+* @return true if a message in the can bus.
+*/
 void MergCBUS::cbusRead(){
+    byte len=0;//number of bytes read.
+    byte bufIdx=110;//1 byte for the message size.1 byte for RTR, 4 bytes for header. 8 bytes to max message
 
+    bool resp;
+    //read buffer 0 and buffer 1
+    for (int i=0;i<2;i++){
+        resp=readCanBus(&buffer[bufIdx+6],&buffer[bufIdx+2],&len,i);
+        if (resp){
+            buffer[bufIdx]=len;
 
-
+            if (Can.isRTMMessage()==0){
+                //Serial.println("readCanBus - unsetRTM");
+                buffer[bufIdx+1]=0;
+            }
+            else{
+                //Serial.println("readCanBus - setRTM");
+                buffer[bufIdx+1]=1;
+            }
+            msgBuffer.put(&buffer[bufIdx]);
+          }
+    }
 }
