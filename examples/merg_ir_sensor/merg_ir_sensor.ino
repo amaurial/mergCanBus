@@ -2,8 +2,8 @@
 This example implements a ir sensor controller to detect block occupancy.
 It drives 16 ir. Can be more in arduino Mega, but it just an example.
 The module produces ON/OFF events.
-The events can be toogled by the first 2 node variables. 0 means ON when train enters, OFF when trains leaves.
-1 means the oposit. Each bit of the 2 bytes are to set toggle or not.
+The vents can be toogled by the first 2 node variables. 0 means ON when train enters, OFF when trains leaves.
+1 means the oposit. Each bit of the 2 bytes are to ser togle or not.
 Usim FLIM mode teach on/off events.
 It implements all automatic configuration, including learning events.
 It does not handle DCC messages, but you can do it on your user function.
@@ -18,10 +18,10 @@ To clear the memory, press pushbutton1 while reseting the arduino
 
 #include <Arduino.h>
 #include <SPI.h> //required by the library
+#include <TimerOne.h>
 #include <MergCBUS.h>
 #include <Message.h>
 #include <EEPROM.h> //required by the library
-#include <VarSpeedServo.h>
 
 
 //Module definitions
@@ -58,6 +58,11 @@ int sensorport[NUMSENSORS]={A8,A9 ,A10 ,A11, A12 ,A13, A14,A15};
 //create the merg object
 MergCBUS cbus=MergCBUS(NODE_VARS,NODE_EVENTS,EVENTS_VARS,DEVICE_NUMBERS);
 
+//timer function to read the can messages
+void readCanMessages(){
+  //read the can message and put then in a circular buffer
+  cbus.cbusRead();
+}
 
 void setup(){
   
@@ -74,8 +79,6 @@ void setup(){
   cbus.getNodeId()->setConsumerNode(false);
   cbus.setStdNN(999); //standard node number
 
-  //setup new memory can push_button1 is pressed while starting
-  //basically resets the node
   if (digitalRead(PUSH_BUTTON1)==LOW){
     Serial.println("Setup new memory");
     cbus.setUpNewMemory();
@@ -87,15 +90,18 @@ void setup(){
   cbus.setDebug(true);//print some messages on the serial port
   cbus.setUserHandlerFunction(&myUserFunc);//function that implements the node logic
   cbus.initCanBus(53,CAN_125KBPS,10,200);  //initiate the transport layer. pin=53, rate=125Kbps,10 tries,200 millis between each try
-  //create the sensors object
+  cbus.setTimerInterval(10000);  
+  //create the servos object
   setupSensors();
-  
+  //using timer
+  Timer1.initialize(10000);//microseconds
+  Timer1.attachInterrupt(readCanMessages);
   Serial.println("Setup finished");
 }
 
 void loop (){
 
-  cbus.run();//do all cbus logic
+  cbus.run();//do all logic
   
   if (cbus.getNodeState()==NORMAL){
     checkSensors();
@@ -111,7 +117,7 @@ void loop (){
 void myUserFunc(Message *msg,MergCBUS *mcbus){
  
 }
-//we sample the sensor answers,average them and take decision if on or off upon configuration
+
 void checkSensors(){
   int state;
   int i;
@@ -178,7 +184,6 @@ void sendMessage(bool state,unsigned int sensor){
    }
 }
 //check if we have to togle the event
-//based on the node variables
 bool togleSensor(int sensor){
   byte first,second;
   bool resp=false;
