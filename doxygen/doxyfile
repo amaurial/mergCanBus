@@ -96,20 +96,22 @@ WARN_LOGFILE            = "/home/user/amauriala/Projects/mergCanBus/doxygen/doxy
 # configuration options related to the input files
 #---------------------------------------------------------------------------
 INPUT                  = \
-	"../MergNodeIdentification.h" \
-	"../mcp_can.h" \
-	"../Message.h" \
-	"../mcp_can_dfs.h" \
 	"../MergCBUS.h" \
-	"../CANMessage.h" \
-	"../opcodes.h" \
 	"../MergCBUS.cpp" \
-	"../MergMemoryManagement.cpp" \
-	"../MergMemoryManagement.h" \
-	"../Message.cpp" \
+	"../mcp_can.cpp" \
+	"../mcp_can.h" \
+	"../CircularBuffer.cpp" \
 	"../MergNodeIdentification.cpp" \
-	"../CANMessage.cpp" \
-	"../mcp_can.cpp" 
+	"../MessageBuffer.cpp" \
+	"../mcp_can_dfs.h" \
+	"../Message.cpp" \
+	"../MergNodeIdentification.h" \
+	"../Message.h" \
+	"../opcodes.h" \
+	"../MessageBuffer.h" \
+	"../MergMemoryManagement.h" \
+	"../CircularBuffer.h" \
+	"../MergMemoryManagement.cpp" 
 INPUT_ENCODING         = UTF-8
 FILE_PATTERNS          =
 RECURSIVE              = NO
@@ -252,7 +254,7 @@ SEARCH_INCLUDES        = YES
 INCLUDE_PATH           =
 INCLUDE_FILE_PATTERNS  =
 PREDEFINED             = WXUNUSED()=
-EXPAND_AS_DEFINED      =
+EXPAND_AS_DEFINED      = 
 SKIP_FUNCTION_MACROS   = YES
 #---------------------------------------------------------------------------
 # Configuration::additions related to external references

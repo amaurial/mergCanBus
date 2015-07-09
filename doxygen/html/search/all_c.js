@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['value',['value',['../structmerg__event__vars.html#aafb802640c56b192cfdcf0618fef43c6',1,'merg_event_vars']]]
+  ['unsetrtr',['unsetRTR',['../class_message.html#a612a51f023a40faa729812c8b5b2214a',1,'Message']]],
+  ['userhandlertype',['userHandlerType',['../class_merg_c_b_u_s.html#a21225a2e55710f867a17addb1b4f6962',1,'MergCBUS']]]
 ];

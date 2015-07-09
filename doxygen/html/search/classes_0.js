@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['canmessage',['CANMessage',['../class_c_a_n_message.html',1,'']]]
+  ['circularbuffer',['CircularBuffer',['../class_circular_buffer.html',1,'']]]
 ];

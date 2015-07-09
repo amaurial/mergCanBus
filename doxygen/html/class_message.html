@@ -91,7 +91,7 @@ $(document).ready(function(){initNavTree('class_message.html','');});
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Typedefs</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Typedefs</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -115,93 +115,92 @@ $(document).ready(function(){initNavTree('class_message.html','');});
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a4fc4f717b634e66070366cb7722d7761"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_message.html#a4fc4f717b634e66070366cb7722d7761">Message</a> ()</td></tr>
 <tr class="separator:a4fc4f717b634e66070366cb7722d7761"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a95032c9791fd41b3d0fdc273aa67affa"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a95032c9791fd41b3d0fdc273aa67affa"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>Message</b> (unsigned int canId, unsigned int opc, unsigned int nodeNumber, unsigned int eventNumber, byte data[CANDATA_SIZE], unsigned int priority)</td></tr>
+<tr class="memitem:a95032c9791fd41b3d0fdc273aa67affa"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_message.html#a95032c9791fd41b3d0fdc273aa67affa">Message</a> (unsigned int canId, unsigned int opc, unsigned int nodeNumber, unsigned int eventNumber, byte data[CANDATA_SIZE], unsigned int priority)</td></tr>
 <tr class="separator:a95032c9791fd41b3d0fdc273aa67affa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3f7275462831f787a861271687bcad67"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_message.html#a3f7275462831f787a861271687bcad67">~Message</a> ()</td></tr>
 <tr class="separator:a3f7275462831f787a861271687bcad67"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1b8faf1d90a0a0eda1fa70a7eb4800d9"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_message.html#a1b8faf1d90a0a0eda1fa70a7eb4800d9">setCanMessage</a> (<a class="el" href="class_c_a_n_message.html">CANMessage</a> *canMessage)</td></tr>
-<tr class="separator:a1b8faf1d90a0a0eda1fa70a7eb4800d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6797951d2c535a060a042d7a5b7840f9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6797951d2c535a060a042d7a5b7840f9"></a>
-<a class="el" href="class_c_a_n_message.html">CANMessage</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>getCanMessage</b> ()</td></tr>
-<tr class="separator:a6797951d2c535a060a042d7a5b7840f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a143fd38176627cf7ed650a4cf22c9121"><td class="memItemLeft" align="right" valign="top">byte&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_message.html#a143fd38176627cf7ed650a4cf22c9121">getByte</a> (byte pos)</td></tr>
 <tr class="separator:a143fd38176627cf7ed650a4cf22c9121"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9452e069e7e0a4dd933a4805beeafbbe"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9452e069e7e0a4dd933a4805beeafbbe"></a>
-byte&#160;</td><td class="memItemRight" valign="bottom"><b>getCanId</b> ()</td></tr>
+<tr class="memitem:a159602e5e64c9f74d73dda6f6782af48"><td class="memItemLeft" align="right" valign="top">byte *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_message.html#a159602e5e64c9f74d73dda6f6782af48">getDataBuffer</a> ()</td></tr>
+<tr class="memdesc:a159602e5e64c9f74d73dda6f6782af48"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the 8 bytes CAN message buffer. The user can also get specific values using other methods.  <a href="#a159602e5e64c9f74d73dda6f6782af48">More...</a><br/></td></tr>
+<tr class="separator:a159602e5e64c9f74d73dda6f6782af48"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af86c9c36d185a2d7abfd5c62f87fc0ca"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_message.html#af86c9c36d185a2d7abfd5c62f87fc0ca">setDataBuffer</a> (byte val[CANDATA_SIZE])</td></tr>
+<tr class="separator:af86c9c36d185a2d7abfd5c62f87fc0ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afeb6af1ebe670ce9d7a9e3775bf6e981"><td class="memItemLeft" align="right" valign="top">byte *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_message.html#afeb6af1ebe670ce9d7a9e3775bf6e981">getHeaderBuffer</a> ()</td></tr>
+<tr class="memdesc:afeb6af1ebe670ce9d7a9e3775bf6e981"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the 8 bytes CAN header buffer. The user can also get specific values using other methods.  <a href="#afeb6af1ebe670ce9d7a9e3775bf6e981">More...</a><br/></td></tr>
+<tr class="separator:afeb6af1ebe670ce9d7a9e3775bf6e981"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5d9f6614ccca7ee4feebd734dbd21f77"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_message.html#a5d9f6614ccca7ee4feebd734dbd21f77">setHeaderBuffer</a> (byte val[HEADER_SIZE])</td></tr>
+<tr class="separator:a5d9f6614ccca7ee4feebd734dbd21f77"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9452e069e7e0a4dd933a4805beeafbbe"><td class="memItemLeft" align="right" valign="top">byte&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_message.html#a9452e069e7e0a4dd933a4805beeafbbe">getCanId</a> ()</td></tr>
 <tr class="separator:a9452e069e7e0a4dd933a4805beeafbbe"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afb26a027ffa7e45750f1c738017bb41c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afb26a027ffa7e45750f1c738017bb41c"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setCanId</b> (byte val)</td></tr>
+<tr class="memitem:afb26a027ffa7e45750f1c738017bb41c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_message.html#afb26a027ffa7e45750f1c738017bb41c">setCanId</a> (byte val)</td></tr>
+<tr class="memdesc:afb26a027ffa7e45750f1c738017bb41c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the can id in the message NOT USED. At the moment the messages are being assembled outside and loaded by <a class="el" href="class_message.html#af86c9c36d185a2d7abfd5c62f87fc0ca">setDataBuffer</a>.  <a href="#afb26a027ffa7e45750f1c738017bb41c">More...</a><br/></td></tr>
 <tr class="separator:afb26a027ffa7e45750f1c738017bb41c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a00bb427353a9903f1b33f95350f79e4b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a00bb427353a9903f1b33f95350f79e4b"></a>
-byte&#160;</td><td class="memItemRight" valign="bottom"><b>getOpc</b> ()</td></tr>
+<tr class="memitem:a00bb427353a9903f1b33f95350f79e4b"><td class="memItemLeft" align="right" valign="top">byte&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_message.html#a00bb427353a9903f1b33f95350f79e4b">getOpc</a> ()</td></tr>
 <tr class="separator:a00bb427353a9903f1b33f95350f79e4b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8b97ccee81287d4cb824cce17f3a50ae"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8b97ccee81287d4cb824cce17f3a50ae"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setOpc</b> (byte val)</td></tr>
+<tr class="memitem:a8b97ccee81287d4cb824cce17f3a50ae"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_message.html#a8b97ccee81287d4cb824cce17f3a50ae">setOpc</a> (byte val)</td></tr>
+<tr class="memdesc:a8b97ccee81287d4cb824cce17f3a50ae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the opc in the message NOT USED. At the moment the messages are being assembled outside and loaded by <a class="el" href="class_message.html#af86c9c36d185a2d7abfd5c62f87fc0ca">setDataBuffer</a>.  <a href="#a8b97ccee81287d4cb824cce17f3a50ae">More...</a><br/></td></tr>
 <tr class="separator:a8b97ccee81287d4cb824cce17f3a50ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acc3ad0370c78c143501f90be11d269c3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acc3ad0370c78c143501f90be11d269c3"></a>
-message_type&#160;</td><td class="memItemRight" valign="bottom"><b>getType</b> ()</td></tr>
+<tr class="memitem:acc3ad0370c78c143501f90be11d269c3"><td class="memItemLeft" align="right" valign="top">message_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_message.html#acc3ad0370c78c143501f90be11d269c3">getType</a> ()</td></tr>
+<tr class="memdesc:acc3ad0370c78c143501f90be11d269c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the message type.  <a href="#acc3ad0370c78c143501f90be11d269c3">More...</a><br/></td></tr>
 <tr class="separator:acc3ad0370c78c143501f90be11d269c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab5fe14f551f377618aa0fd38ec26a465"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab5fe14f551f377618aa0fd38ec26a465"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setType</b> (message_type val)</td></tr>
+<tr class="memitem:ab5fe14f551f377618aa0fd38ec26a465"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_message.html#ab5fe14f551f377618aa0fd38ec26a465">setType</a> (message_type val)</td></tr>
+<tr class="memdesc:ab5fe14f551f377618aa0fd38ec26a465"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the message type NOT USED. At the moment the messages are being assembled outside and loaded by <a class="el" href="class_message.html#af86c9c36d185a2d7abfd5c62f87fc0ca">setDataBuffer</a>.  <a href="#ab5fe14f551f377618aa0fd38ec26a465">More...</a><br/></td></tr>
 <tr class="separator:ab5fe14f551f377618aa0fd38ec26a465"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3087320a6bc8f44f9fbb25664cb5f4e4"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_message.html#a3087320a6bc8f44f9fbb25664cb5f4e4">getEventNumber</a> ()</td></tr>
 <tr class="separator:a3087320a6bc8f44f9fbb25664cb5f4e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afd918c1f125e62ee2d5b8d2a1137bf73"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afd918c1f125e62ee2d5b8d2a1137bf73"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setEventNumber</b> (unsigned int val)</td></tr>
+<tr class="memitem:afd918c1f125e62ee2d5b8d2a1137bf73"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_message.html#afd918c1f125e62ee2d5b8d2a1137bf73">setEventNumber</a> (unsigned int val)</td></tr>
+<tr class="memdesc:afd918c1f125e62ee2d5b8d2a1137bf73"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set event number to be used on message NOT USED. At the moment the messages are being assembled outside and loaded by <a class="el" href="class_message.html#af86c9c36d185a2d7abfd5c62f87fc0ca">setDataBuffer</a>.  <a href="#afd918c1f125e62ee2d5b8d2a1137bf73">More...</a><br/></td></tr>
 <tr class="separator:afd918c1f125e62ee2d5b8d2a1137bf73"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abe2125efcf686ed607ce9a7d12b20984"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_message.html#abe2125efcf686ed607ce9a7d12b20984">getNodeNumber</a> ()</td></tr>
 <tr class="separator:abe2125efcf686ed607ce9a7d12b20984"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acc36c61a540bd4ed1374e3437a4e40e8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acc36c61a540bd4ed1374e3437a4e40e8"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setNodeNumber</b> (unsigned int val)</td></tr>
+<tr class="memitem:acc36c61a540bd4ed1374e3437a4e40e8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_message.html#acc36c61a540bd4ed1374e3437a4e40e8">setNodeNumber</a> (unsigned int val)</td></tr>
+<tr class="memdesc:acc36c61a540bd4ed1374e3437a4e40e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the node number to be used on message NOT USED. At the moment the messages are being assembled outside and loaded by <a class="el" href="class_message.html#af86c9c36d185a2d7abfd5c62f87fc0ca">setDataBuffer</a>.  <a href="#acc36c61a540bd4ed1374e3437a4e40e8">More...</a><br/></td></tr>
 <tr class="separator:acc36c61a540bd4ed1374e3437a4e40e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a28436f6e61f0f5c681bbe589c85ea33a"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_message.html#a28436f6e61f0f5c681bbe589c85ea33a">getDeviceNumber</a> ()</td></tr>
 <tr class="separator:a28436f6e61f0f5c681bbe589c85ea33a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af6be3cb87c2958432cd17bcaac304828"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af6be3cb87c2958432cd17bcaac304828"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setDeviceNumber</b> (unsigned int val)</td></tr>
+<tr class="memitem:af6be3cb87c2958432cd17bcaac304828"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_message.html#af6be3cb87c2958432cd17bcaac304828">setDeviceNumber</a> (unsigned int val)</td></tr>
+<tr class="memdesc:af6be3cb87c2958432cd17bcaac304828"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the device number to be used on message NOT USED. At the moment the messages are being assembled outside and loaded by <a class="el" href="class_message.html#af86c9c36d185a2d7abfd5c62f87fc0ca">setDataBuffer</a>.  <a href="#af6be3cb87c2958432cd17bcaac304828">More...</a><br/></td></tr>
 <tr class="separator:af6be3cb87c2958432cd17bcaac304828"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8bb81dd2408dd0a4f7c4ca796ece56d9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8bb81dd2408dd0a4f7c4ca796ece56d9"></a>
-byte *&#160;</td><td class="memItemRight" valign="bottom"><b>getData</b> ()</td></tr>
-<tr class="separator:a8bb81dd2408dd0a4f7c4ca796ece56d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae4e4c015b0e22549a77f338ed505b440"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_message.html#ae4e4c015b0e22549a77f338ed505b440">setData</a> (byte val[CANDATA_SIZE])</td></tr>
-<tr class="separator:ae4e4c015b0e22549a77f338ed505b440"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a03896ba46ca30483a796ee058df4eba3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a03896ba46ca30483a796ee058df4eba3"></a>
-byte&#160;</td><td class="memItemRight" valign="bottom"><b>getPriority</b> ()</td></tr>
+<tr class="memitem:a03896ba46ca30483a796ee058df4eba3"><td class="memItemLeft" align="right" valign="top">byte&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_message.html#a03896ba46ca30483a796ee058df4eba3">getPriority</a> ()</td></tr>
+<tr class="memdesc:a03896ba46ca30483a796ee058df4eba3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the message priority in the Can header.  <a href="#a03896ba46ca30483a796ee058df4eba3">More...</a><br/></td></tr>
 <tr class="separator:a03896ba46ca30483a796ee058df4eba3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a41549efc4487ecaa8e7be21172bf5d02"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a41549efc4487ecaa8e7be21172bf5d02"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setPriority</b> (byte val)</td></tr>
+<tr class="memitem:a41549efc4487ecaa8e7be21172bf5d02"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_message.html#a41549efc4487ecaa8e7be21172bf5d02">setPriority</a> (byte val)</td></tr>
+<tr class="memdesc:a41549efc4487ecaa8e7be21172bf5d02"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the message priority in the CAN header NOT USED. At the moment the messages are being assembled outside and loaded by <a class="el" href="class_message.html#a5d9f6614ccca7ee4feebd734dbd21f77">setHeaderBuffer</a>.  <a href="#a41549efc4487ecaa8e7be21172bf5d02">More...</a><br/></td></tr>
 <tr class="separator:a41549efc4487ecaa8e7be21172bf5d02"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a77c757aa4efa75d75b6a26e0a396bc26"><td class="memItemLeft" align="right" valign="top">byte&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_message.html#a77c757aa4efa75d75b6a26e0a396bc26">getMessageSize</a> ()</td></tr>
 <tr class="separator:a77c757aa4efa75d75b6a26e0a396bc26"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a88dc5bb7a92755f3fc3a480512ed325e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a88dc5bb7a92755f3fc3a480512ed325e"></a>
-unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>getNumBytes</b> ()</td></tr>
+<tr class="memitem:a88dc5bb7a92755f3fc3a480512ed325e"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_message.html#a88dc5bb7a92755f3fc3a480512ed325e">getNumBytes</a> ()</td></tr>
+<tr class="memdesc:a88dc5bb7a92755f3fc3a480512ed325e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the number of bytes parameter in the message.  <a href="#a88dc5bb7a92755f3fc3a480512ed325e">More...</a><br/></td></tr>
 <tr class="separator:a88dc5bb7a92755f3fc3a480512ed325e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a87972ab17c0129ba9e6bd04bcffeed6e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a87972ab17c0129ba9e6bd04bcffeed6e"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setNumBytes</b> (unsigned int val)</td></tr>
+<tr class="memitem:a87972ab17c0129ba9e6bd04bcffeed6e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_message.html#a87972ab17c0129ba9e6bd04bcffeed6e">setNumBytes</a> (unsigned int val)</td></tr>
+<tr class="memdesc:a87972ab17c0129ba9e6bd04bcffeed6e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the number of bytes parameter in the message NOT USED. At the moment the messages are being assembled outside and loaded by <a class="el" href="class_message.html#af86c9c36d185a2d7abfd5c62f87fc0ca">setDataBuffer</a>.  <a href="#a87972ab17c0129ba9e6bd04bcffeed6e">More...</a><br/></td></tr>
 <tr class="separator:a87972ab17c0129ba9e6bd04bcffeed6e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af707419697acf59655187dc2e673170f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af707419697acf59655187dc2e673170f"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setRTR</b> ()</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_message.html#af707419697acf59655187dc2e673170f">setRTR</a> ()</td></tr>
+<tr class="memdesc:af707419697acf59655187dc2e673170f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the CAN RTR parameter. Set after reading the CAN header. <br/></td></tr>
 <tr class="separator:af707419697acf59655187dc2e673170f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a612a51f023a40faa729812c8b5b2214a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a612a51f023a40faa729812c8b5b2214a"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>unsetRTR</b> ()</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_message.html#a612a51f023a40faa729812c8b5b2214a">unsetRTR</a> ()</td></tr>
+<tr class="memdesc:a612a51f023a40faa729812c8b5b2214a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Unset the CAN RTR parameter. <br/></td></tr>
 <tr class="separator:a612a51f023a40faa729812c8b5b2214a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7f5a3137d564f9de8f467368dfa5f1b7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7f5a3137d564f9de8f467368dfa5f1b7"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>getRTR</b> ()</td></tr>
+<tr class="memitem:a7f5a3137d564f9de8f467368dfa5f1b7"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_message.html#a7f5a3137d564f9de8f467368dfa5f1b7">getRTR</a> ()</td></tr>
+<tr class="memdesc:a7f5a3137d564f9de8f467368dfa5f1b7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the CAN RTR parameter. Set after reading the CAN header.  <a href="#a7f5a3137d564f9de8f467368dfa5f1b7">More...</a><br/></td></tr>
 <tr class="separator:a7f5a3137d564f9de8f467368dfa5f1b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aeea5f6ae60eb166fcb1736c20b284e68"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aeea5f6ae60eb166fcb1736c20b284e68"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setSession</b> (byte val)</td></tr>
+<tr class="memitem:aeea5f6ae60eb166fcb1736c20b284e68"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_message.html#aeea5f6ae60eb166fcb1736c20b284e68">setSession</a> (byte val)</td></tr>
+<tr class="memdesc:aeea5f6ae60eb166fcb1736c20b284e68"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the session value in the message NOT USED. At the moment the messages are being assembled outside and loaded by <a class="el" href="class_message.html#af86c9c36d185a2d7abfd5c62f87fc0ca">setDataBuffer</a>.  <a href="#aeea5f6ae60eb166fcb1736c20b284e68">More...</a><br/></td></tr>
 <tr class="separator:aeea5f6ae60eb166fcb1736c20b284e68"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a867d39b232ee6cfe83a5a6f0441ec5da"><td class="memItemLeft" align="right" valign="top">byte&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_message.html#a867d39b232ee6cfe83a5a6f0441ec5da">getSession</a> ()</td></tr>
 <tr class="separator:a867d39b232ee6cfe83a5a6f0441ec5da"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4069ca6fc47c6629918b29532f315e45"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_message.html#a4069ca6fc47c6629918b29532f315e45">getDecoder</a> ()</td></tr>
 <tr class="separator:a4069ca6fc47c6629918b29532f315e45"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a991dabf8f34d36ae45a33b84141ab5f9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a991dabf8f34d36ae45a33b84141ab5f9"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setDecoder</b> (unsigned int val)</td></tr>
+<tr class="memitem:a991dabf8f34d36ae45a33b84141ab5f9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_message.html#a991dabf8f34d36ae45a33b84141ab5f9">setDecoder</a> (unsigned int val)</td></tr>
+<tr class="memdesc:a991dabf8f34d36ae45a33b84141ab5f9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the decoder value NOT USED. At the moment the messages are being assembled outside and loaded by <a class="el" href="class_message.html#af86c9c36d185a2d7abfd5c62f87fc0ca">setDataBuffer</a>.  <a href="#a991dabf8f34d36ae45a33b84141ab5f9">More...</a><br/></td></tr>
 <tr class="separator:a991dabf8f34d36ae45a33b84141ab5f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6e34240177b5c1127a880d60ec33735d"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_message.html#a6e34240177b5c1127a880d60ec33735d">getCV</a> ()</td></tr>
 <tr class="separator:a6e34240177b5c1127a880d60ec33735d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad051e496867ecab822b471636f45fa43"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad051e496867ecab822b471636f45fa43"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setCV</b> (unsigned int val)</td></tr>
+<tr class="memitem:ad051e496867ecab822b471636f45fa43"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_message.html#ad051e496867ecab822b471636f45fa43">setCV</a> (unsigned int val)</td></tr>
+<tr class="memdesc:ad051e496867ecab822b471636f45fa43"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the DCC CV value in the message NOT USED. At the moment the messages are being assembled outside and loaded by <a class="el" href="class_message.html#af86c9c36d185a2d7abfd5c62f87fc0ca">setDataBuffer</a>.  <a href="#ad051e496867ecab822b471636f45fa43">More...</a><br/></td></tr>
 <tr class="separator:ad051e496867ecab822b471636f45fa43"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a96128714a25fe49c5e6c1dc563845aaf"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_message.html#a96128714a25fe49c5e6c1dc563845aaf">getCVMode</a> ()</td></tr>
 <tr class="separator:a96128714a25fe49c5e6c1dc563845aaf"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -239,6 +238,33 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>setCV</b> (unsigned i
 <tr class="separator:a52d17dd26a0a0b5f7ee84cacf5c3a793"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a82602e32b77119caf0fa9afe0e0b2a9e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_message.html#a82602e32b77119caf0fa9afe0e0b2a9e">clear</a> ()</td></tr>
 <tr class="separator:a82602e32b77119caf0fa9afe0e0b2a9e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a13a72dff57c0acb792d06ca297324621"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a13a72dff57c0acb792d06ca297324621"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_message.html#a13a72dff57c0acb792d06ca297324621">setDebug</a> (bool val)</td></tr>
+<tr class="memdesc:a13a72dff57c0acb792d06ca297324621"><td class="mdescLeft">&#160;</td><td class="mdescRight">Force the code to print debug messages to the serial interface if value is True. <br/></td></tr>
+<tr class="separator:a13a72dff57c0acb792d06ca297324621"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4398c8d6dd212642bcf95786b122dee4"><td class="memItemLeft" align="right" valign="top">byte&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_message.html#a4398c8d6dd212642bcf95786b122dee4">getCanMessageSize</a> ()</td></tr>
+<tr class="separator:a4398c8d6dd212642bcf95786b122dee4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a013e607e51f2912ba11022300fda1227"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_message.html#a013e607e51f2912ba11022300fda1227">setCanMessageSize</a> (byte val)</td></tr>
+<tr class="memdesc:a013e607e51f2912ba11022300fda1227"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the message size NOT USED. At the moment the messages are being assembled outside and loaded by <a class="el" href="class_message.html#af86c9c36d185a2d7abfd5c62f87fc0ca">setDataBuffer</a>.  <a href="#a013e607e51f2912ba11022300fda1227">More...</a><br/></td></tr>
+<tr class="separator:a013e607e51f2912ba11022300fda1227"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a45fb4c86ae49088f6168ff27fd13c6a1"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_message.html#a45fb4c86ae49088f6168ff27fd13c6a1">isAccOn</a> ()</td></tr>
+<tr class="separator:a45fb4c86ae49088f6168ff27fd13c6a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7c491058d6b9b2610d2eb566b2ab4cb0"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_message.html#a7c491058d6b9b2610d2eb566b2ab4cb0">isAccOff</a> ()</td></tr>
+<tr class="separator:a7c491058d6b9b2610d2eb566b2ab4cb0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7b04c062fcee79678e697f028d0a963c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_message.html#a7b04c062fcee79678e697f028d0a963c">isLongEvent</a> ()</td></tr>
+<tr class="separator:a7b04c062fcee79678e697f028d0a963c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab5dcf97adde80d1d07241e68450fce2b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_message.html#ab5dcf97adde80d1d07241e68450fce2b">isShortEvent</a> ()</td></tr>
+<tr class="separator:ab5dcf97adde80d1d07241e68450fce2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a74f02a4811593a1e64c92e151ef6a237"><td class="memItemLeft" align="right" valign="top">byte&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_message.html#a74f02a4811593a1e64c92e151ef6a237">accExtraData</a> ()</td></tr>
+<tr class="separator:a74f02a4811593a1e64c92e151ef6a237"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab8c032c0a12439d681fea44749817e1a"><td class="memItemLeft" align="right" valign="top">byte&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_message.html#ab8c032c0a12439d681fea44749817e1a">getAccExtraData</a> (byte idx)</td></tr>
+<tr class="separator:ab8c032c0a12439d681fea44749817e1a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a95b5026225ef5393cbdcd586c9dff0d0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_message.html#a95b5026225ef5393cbdcd586c9dff0d0">createOnEvent</a> (unsigned int nodeNumber, bool longEvent, unsigned int eventNumber, byte numDataBytes, byte *data)</td></tr>
+<tr class="memdesc:a95b5026225ef5393cbdcd586c9dff0d0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a ON event message.  <a href="#a95b5026225ef5393cbdcd586c9dff0d0">More...</a><br/></td></tr>
+<tr class="separator:a95b5026225ef5393cbdcd586c9dff0d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0f8f5eb77fbebbe5734009b7e47ec7d9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_message.html#a0f8f5eb77fbebbe5734009b7e47ec7d9">createOffEvent</a> (unsigned int nodeNumber, bool longEvent, unsigned int eventNumber, byte numDataBytes, byte *data)</td></tr>
+<tr class="memdesc:a0f8f5eb77fbebbe5734009b7e47ec7d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a OFF event message.  <a href="#a0f8f5eb77fbebbe5734009b7e47ec7d9">More...</a><br/></td></tr>
+<tr class="separator:a0f8f5eb77fbebbe5734009b7e47ec7d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>The <a class="el" href="class_message.html">Message</a> class holds the detailed information about a can message. If works as a wrapper class over the can bus message. It extracts the information from the message based on the semantics of the message OPC. Still in fase of modification and cleanning. </p>
@@ -256,6 +282,68 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>setCV</b> (unsigned i
       </table>
 </div><div class="memdoc">
 <p>Constructor Clear the internal buffers and load the basic configuration. </p>
+
+</div>
+</div>
+<a class="anchor" id="a95032c9791fd41b3d0fdc273aa67affa"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Message::Message </td>
+          <td>(</td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>canId</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>opc</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>nodeNumber</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>eventNumber</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">byte&#160;</td>
+          <td class="paramname"><em>data</em>[CANDATA_SIZE], </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>priority</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Creates a message to be sent. Not being used. NOT USED AT THIS VERSION. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">canId</td><td>is the can id of the message. </td></tr>
+    <tr><td class="paramname">opc</td><td>is the opc code. </td></tr>
+    <tr><td class="paramname">nodeNumber</td><td>is the node number. </td></tr>
+    <tr><td class="paramname">eventNumber</td><td>is the event number. </td></tr>
+    <tr><td class="paramname">data</td><td>is the message data itself. </td></tr>
+    <tr><td class="paramname">priority</td><td>is CAN priority. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -284,6 +372,23 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>setCV</b> (unsigned i
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a class="anchor" id="a74f02a4811593a1e64c92e151ef6a237"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">byte Message::accExtraData </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Return how many bytes of extra data has the ON event. </p>
+<dl class="section return"><dt>Returns</dt><dd>The number of extra bytes depending on the message type. ACON,ACOF=0 ; ACON1,ACOF1=1; ACON2,ACOF2=2; ACON3,ACOF1=3 </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="a82602e32b77119caf0fa9afe0e0b2a9e"></a>
 <div class="memitem">
 <div class="memproto">
@@ -297,6 +402,120 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>setCV</b> (unsigned i
       </table>
 </div><div class="memdoc">
 <p>Clear the internal structure. </p>
+
+</div>
+</div>
+<a class="anchor" id="a0f8f5eb77fbebbe5734009b7e47ec7d9"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Message::createOffEvent </td>
+          <td>(</td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>nodeNumber</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>longEvent</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>eventNumber</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">byte&#160;</td>
+          <td class="paramname"><em>numDataBytes</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">byte *&#160;</td>
+          <td class="paramname"><em>msgdata</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Create a OFF event message. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">nodeNumber</td><td>Node number of the message </td></tr>
+    <tr><td class="paramname">longEvent</td><td>Indication of Long or Short event. True means long event. </td></tr>
+    <tr><td class="paramname">eventNumber</td><td>Event number </td></tr>
+    <tr><td class="paramname">numDataBytes</td><td>Number of extra bytes in the message. It defines the type of On event should be created: 0 means +ACOF or ASOF 1 means +ACOF1 or ASOF1 2 means +ACOF2 or ASOF2 3 means +ACOF3 or ASOF3 </td></tr>
+    <tr><td class="paramname">msgdata</td><td>The extra data to be added according to the Number of extra bytes. There is no check if the msgdata is set or not. So be sure to set it if the number of extra bytes &gt; 1. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd></dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a95b5026225ef5393cbdcd586c9dff0d0"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Message::createOnEvent </td>
+          <td>(</td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>nodeNumber</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>longEvent</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>eventNumber</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">byte&#160;</td>
+          <td class="paramname"><em>numDataBytes</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">byte *&#160;</td>
+          <td class="paramname"><em>msgdata</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Create a ON event message. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">nodeNumber</td><td>Node number of the message </td></tr>
+    <tr><td class="paramname">longEvent</td><td>Indication of Long or Short event. True means long event. </td></tr>
+    <tr><td class="paramname">eventNumber</td><td>Event number </td></tr>
+    <tr><td class="paramname">numDataBytes</td><td>Number of extra bytes in the message. It defines the type of On event should be created: 0 means +ACON or ASON 1 means +ACON1 or ASON1 2 means +ACON2 or ASON2 3 means +ACON3 or ASON3 </td></tr>
+    <tr><td class="paramname">msgdata</td><td>The extra data to be added according to the Number of extra bytes. There is no check if the msgdata is set or not. So be sure to set it if the number of extra bytes &gt; 1. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
 </div>
 </div>
@@ -314,6 +533,24 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>setCV</b> (unsigned i
 </div><div class="memdoc">
 <p>Get the function value for DCC messages </p>
 <dl class="section return"><dt>Returns</dt><dd>a 1 byte integer. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="ab8c032c0a12439d681fea44749817e1a"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">byte Message::getAccExtraData </td>
+          <td>(</td>
+          <td class="paramtype">byte&#160;</td>
+          <td class="paramname"><em>idx</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Get the extra data byte on an ON or OFF event. </p>
+<dl class="section return"><dt>Returns</dt><dd>Return the extra byte. The index is between 1 and 3 </dd></dl>
 
 </div>
 </div>
@@ -354,6 +591,40 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>setCV</b> (unsigned i
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a class="anchor" id="a9452e069e7e0a4dd933a4805beeafbbe"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">byte Message::getCanId </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Get the Can id from the header. </p>
+<dl class="section return"><dt>Returns</dt><dd>message size. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a4398c8d6dd212642bcf95786b122dee4"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">byte Message::getCanMessageSize </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Get the message size. Extract it from the can frame. </p>
+<dl class="section return"><dt>Returns</dt><dd>message size. </dd></dl>
 
 </div>
 </div>
@@ -422,6 +693,32 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>setCV</b> (unsigned i
 </div><div class="memdoc">
 <p>Get the cv value for DCC messages </p>
 <dl class="section return"><dt>Returns</dt><dd>a 1 byte integer. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a159602e5e64c9f74d73dda6f6782af48"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">byte* Message::getDataBuffer </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the 8 bytes CAN message buffer. The user can also get specific values using other methods. </p>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to the CAN message. </dd></dl>
 
 </div>
 </div>
@@ -561,6 +858,32 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>setCV</b> (unsigned i
 
 </div>
 </div>
+<a class="anchor" id="afeb6af1ebe670ce9d7a9e3775bf6e981"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">byte* Message::getHeaderBuffer </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the 8 bytes CAN header buffer. The user can also get specific values using other methods. </p>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to the CAN header. </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="a77c757aa4efa75d75b6a26e0a396bc26"></a>
 <div class="memitem">
 <div class="memproto">
@@ -573,7 +896,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>setCV</b> (unsigned i
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Get the message size. Extract it from the can frame. </p>
+<p>Get the CBUS message size. Extract it from the opc. </p>
 <dl class="section return"><dt>Returns</dt><dd>message size. </dd></dl>
 
 </div>
@@ -629,6 +952,48 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>setCV</b> (unsigned i
 
 </div>
 </div>
+<a class="anchor" id="a88dc5bb7a92755f3fc3a480512ed325e"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">unsigned int Message::getNumBytes </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the number of bytes parameter in the message. </p>
+<dl class="section return"><dt>Returns</dt><dd>The number of bytes </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a00bb427353a9903f1b33f95350f79e4b"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">byte Message::getOpc </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>first byte contains the opc and the number of bytes in the message the first 3 bits are the number of bytes the 5 last bits are the OPC </p>
+
+</div>
+</div>
 <a class="anchor" id="ad74f37957a12619584c920f5b6fa22ae"></a>
 <div class="memitem">
 <div class="memproto">
@@ -660,6 +1025,58 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>setCV</b> (unsigned i
 </div><div class="memdoc">
 <p>Get the parameter Para field </p>
 <dl class="section return"><dt>Returns</dt><dd>a 1 byte integer. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a03896ba46ca30483a796ee058df4eba3"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">byte Message::getPriority </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the message priority in the Can header. </p>
+<dl class="section return"><dt>Returns</dt><dd>The priority </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a7f5a3137d564f9de8f467368dfa5f1b7"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Message::getRTR </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the CAN RTR parameter. Set after reading the CAN header. </p>
+<dl class="section return"><dt>Returns</dt><dd>True if the RTR is set else returns False. </dd></dl>
 
 </div>
 </div>
@@ -731,29 +1148,202 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>setCV</b> (unsigned i
 
 </div>
 </div>
-<a class="anchor" id="a1b8faf1d90a0a0eda1fa70a7eb4800d9"></a>
+<a class="anchor" id="acc3ad0370c78c143501f90be11d269c3"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">message_type Message::getType </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the message type. </p>
+<dl class="section return"><dt>Returns</dt><dd>The message type message_type </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a7c491058d6b9b2610d2eb566b2ab4cb0"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">unsigned int Message::setCanMessage </td>
+          <td class="memname">bool Message::isAccOff </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="class_c_a_n_message.html">CANMessage</a> *&#160;</td>
-          <td class="paramname"><em>canMessage</em></td><td>)</td>
+          <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Link a can message to a message </p>
+<p>Check the if it is an OFF message. Major event in CBUS. </p>
+<dl class="section return"><dt>Returns</dt><dd>True if is and OFF event, false if not </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="ae4e4c015b0e22549a77f338ed505b440"></a>
+<a class="anchor" id="a45fb4c86ae49088f6168ff27fd13c6a1"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void Message::setData </td>
+          <td class="memname">bool Message::isAccOn </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Check the if it is an ON message. Major event in CBUS. </p>
+<dl class="section return"><dt>Returns</dt><dd>True if is and On event, false if not </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a7b04c062fcee79678e697f028d0a963c"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Message::isLongEvent </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Check the if it is an OFF message. Major event in CBUS. </p>
+<dl class="section return"><dt>Returns</dt><dd>True if is and OFF event, false if not </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="ab5dcf97adde80d1d07241e68450fce2b"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Message::isShortEvent </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Check the if it is an ON message. Major event in CBUS. </p>
+<dl class="section return"><dt>Returns</dt><dd>True if is and On event, false if not </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="afb26a027ffa7e45750f1c738017bb41c"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Message::setCanId </td>
+          <td>(</td>
+          <td class="paramtype">byte&#160;</td>
+          <td class="paramname"><em>val</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set the can id in the message NOT USED. At the moment the messages are being assembled outside and loaded by <a class="el" href="class_message.html#af86c9c36d185a2d7abfd5c62f87fc0ca">setDataBuffer</a>. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">canId</td><td>is the can ID </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a013e607e51f2912ba11022300fda1227"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Message::setCanMessageSize </td>
+          <td>(</td>
+          <td class="paramtype">byte&#160;</td>
+          <td class="paramname"><em>val</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set the message size NOT USED. At the moment the messages are being assembled outside and loaded by <a class="el" href="class_message.html#af86c9c36d185a2d7abfd5c62f87fc0ca">setDataBuffer</a>. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">The</td><td>message size </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="ad051e496867ecab822b471636f45fa43"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Message::setCV </td>
+          <td>(</td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>val</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set the DCC CV value in the message NOT USED. At the moment the messages are being assembled outside and loaded by <a class="el" href="class_message.html#af86c9c36d185a2d7abfd5c62f87fc0ca">setDataBuffer</a>. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">val</td><td>is the DCC CV value </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="af86c9c36d185a2d7abfd5c62f87fc0ca"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Message::setDataBuffer </td>
           <td>(</td>
           <td class="paramtype">byte&#160;</td>
           <td class="paramname"><em>val</em>[CANDATA_SIZE]</td><td>)</td>
@@ -771,6 +1361,317 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>setCV</b> (unsigned i
 
 </div>
 </div>
+<a class="anchor" id="a991dabf8f34d36ae45a33b84141ab5f9"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Message::setDecoder </td>
+          <td>(</td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>val</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set the decoder value NOT USED. At the moment the messages are being assembled outside and loaded by <a class="el" href="class_message.html#af86c9c36d185a2d7abfd5c62f87fc0ca">setDataBuffer</a>. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">val</td><td>is the decoder value </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="af6be3cb87c2958432cd17bcaac304828"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Message::setDeviceNumber </td>
+          <td>(</td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>val</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set the device number to be used on message NOT USED. At the moment the messages are being assembled outside and loaded by <a class="el" href="class_message.html#af86c9c36d185a2d7abfd5c62f87fc0ca">setDataBuffer</a>. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">val</td><td>is the device number </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="afd918c1f125e62ee2d5b8d2a1137bf73"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Message::setEventNumber </td>
+          <td>(</td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>val</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set event number to be used on message NOT USED. At the moment the messages are being assembled outside and loaded by <a class="el" href="class_message.html#af86c9c36d185a2d7abfd5c62f87fc0ca">setDataBuffer</a>. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">val</td><td>is the event number </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a5d9f6614ccca7ee4feebd734dbd21f77"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Message::setHeaderBuffer </td>
+          <td>(</td>
+          <td class="paramtype">byte&#160;</td>
+          <td class="paramname"><em>val</em>[HEADER_SIZE]</td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Set the header buffer. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">val</td><td>A 8 bytes array. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="acc36c61a540bd4ed1374e3437a4e40e8"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Message::setNodeNumber </td>
+          <td>(</td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>val</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set the node number to be used on message NOT USED. At the moment the messages are being assembled outside and loaded by <a class="el" href="class_message.html#af86c9c36d185a2d7abfd5c62f87fc0ca">setDataBuffer</a>. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">val</td><td>is the node number </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a87972ab17c0129ba9e6bd04bcffeed6e"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Message::setNumBytes </td>
+          <td>(</td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>val</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set the number of bytes parameter in the message NOT USED. At the moment the messages are being assembled outside and loaded by <a class="el" href="class_message.html#af86c9c36d185a2d7abfd5c62f87fc0ca">setDataBuffer</a>. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">val</td><td>is the number of bytes </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a8b97ccee81287d4cb824cce17f3a50ae"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Message::setOpc </td>
+          <td>(</td>
+          <td class="paramtype">byte&#160;</td>
+          <td class="paramname"><em>val</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set the opc in the message NOT USED. At the moment the messages are being assembled outside and loaded by <a class="el" href="class_message.html#af86c9c36d185a2d7abfd5c62f87fc0ca">setDataBuffer</a>. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">opc</td><td>is the opc </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a41549efc4487ecaa8e7be21172bf5d02"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Message::setPriority </td>
+          <td>(</td>
+          <td class="paramtype">byte&#160;</td>
+          <td class="paramname"><em>val</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set the message priority in the CAN header NOT USED. At the moment the messages are being assembled outside and loaded by <a class="el" href="class_message.html#a5d9f6614ccca7ee4feebd734dbd21f77">setHeaderBuffer</a>. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">val</td><td>is the priority </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="aeea5f6ae60eb166fcb1736c20b284e68"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Message::setSession </td>
+          <td>(</td>
+          <td class="paramtype">byte&#160;</td>
+          <td class="paramname"><em>val</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set the session value in the message NOT USED. At the moment the messages are being assembled outside and loaded by <a class="el" href="class_message.html#af86c9c36d185a2d7abfd5c62f87fc0ca">setDataBuffer</a>. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">val</td><td>is the session value </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="ab5fe14f551f377618aa0fd38ec26a465"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Message::setType </td>
+          <td>(</td>
+          <td class="paramtype">message_type&#160;</td>
+          <td class="paramname"><em>val</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set the message type NOT USED. At the moment the messages are being assembled outside and loaded by <a class="el" href="class_message.html#af86c9c36d185a2d7abfd5c62f87fc0ca">setDataBuffer</a>. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">val</td><td>is the message type  </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li><a class="el" href="_message_8h_source.html">Message.h</a></li>
 <li>Message.cpp</li>
@@ -781,7 +1682,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>setCV</b> (unsigned i
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_message.html">Message</a></li>
-    <li class="footer">Generated on Mon Nov 10 2014 16:29:20 for mergCanBus by
+    <li class="footer">Generated on Thu Jul 9 2015 15:17:25 for mergCanBus by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

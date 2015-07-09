@@ -4,15 +4,6 @@
 #include <Arduino.h>
 #include <EEPROM.h>
 
-/** \brief Structure that contains the event variables.
- *
- * \param
- * \param
- * \return
- *
- */
-
-
 #define EVENT_SIZE 4                    /** Event size.                                                        */
 #define EVENT_VARS_SIZE 2               /** Size for events vars. Each var has 2 bytes. first is the index, second is the value        */
 #define NNDD_SIZE 2                     /** Size of a node number or device number */
@@ -22,7 +13,7 @@
 #define FAILED_INDEX 255                /** Value returned when vars or events vars not found                             */
 
 #define MERG_MEMPOS 0                                                  /** Position in memory. has the value 0xaa to mark it is from this mod       */
-#define MERG_MEMORY_MODEL MERG_MEMPOS+1
+#define MERG_MEMORY_MODEL MERG_MEMPOS+1                                 /**< Mark the current memory model for this node*/
 #define CAN_ID_MEMPOS MERG_MEMORY_MODEL+1                                    /**Position in memory.can id has 1 byte                                    */
 #define NN_MEMPOS CAN_ID_MEMPOS+1                                      /**Position in memory.Node mumber has 2 bytes                               */
 #define FLAGS_MEMPOS NN_MEMPOS+NNDD_SIZE                           /**Position in memory.flags                          */
@@ -45,13 +36,26 @@ class MergMemoryManagement
         MergMemoryManagement();
         MergMemoryManagement(byte num_node_vars,byte num_events,byte num_events_vars,byte max_device_numbers);
         virtual ~MergMemoryManagement();
-        /** \brief Check if there is some learned event.*/
+        /** \brief Check if there is some learned event.
+        *\return True if the number of events is bigger than 0, else false.
+        */
         bool hasEvents(){return (numEvents>0?true:false);};
+        /** \brief Check if there event vars saved.
+        *\return True if the number of events vars is bigger than 0, else false.
+        */
         bool hasEventVars(unsigned int eventIdx);
+
+        unsigned int setEvent(byte *event);//return the index
+        unsigned int setEvent(byte *event,unsigned int eventIdx);
         byte* getEvent(unsigned int index);
+
+        void setVar(unsigned int index,byte val);
         byte getVar(unsigned int index);
+
+        unsigned int setEventVar(unsigned int eventIdx,unsigned int varIdx,byte val);
         byte getEventVar(unsigned int eventIdx,unsigned int index);
         byte *getEventVars(unsigned int eventIdx,unsigned int *len);
+
         /** \brief Return the number of set node variables.*/
         byte getNumVars(){return MAX_AVAIL_VARS;};
         /** \brief Return the number of learned events.*/
@@ -66,23 +70,19 @@ class MergMemoryManagement
         //unsigned int  eraseEvent(byte event[EVENT_SIZE]);
         unsigned int  eraseEvent(unsigned int nn,unsigned int ev);
 
-
-        void setVar(unsigned int index,byte val);
         void setCanId(byte canId);
+        /**\brief Get the can id.
+        * \return The can id
+        */
+        byte getCanId(){return can_ID;};
+
+        unsigned int getNodeNumber();
         void setNodeNumber(unsigned int val);                       //2 bytes representation
 
         void setDeviceNumber(unsigned int val,byte port);           //2 bytes representation for dn
         unsigned int getDeviceNumber(byte port);                             //2 bytes representation
+        /** \brief Return the maximum number of supported device numbers.*/
         byte getNumDeviceNumber(){return MAX_NUM_DEVICE_NUMBERS;};                                  //2 bytes representation
-
-
-        byte getCanId(){return can_ID;};
-        unsigned int getNodeNumber();
-
-        unsigned int setEvent(byte *event);//return the index
-        unsigned int setEvent(byte *event,unsigned int eventIdx);
-
-        unsigned int setEventVar(unsigned int eventIdx,unsigned int varIdx,byte val);
 
         unsigned int getEventIndex(byte ev1,byte ev2,byte ev3,byte ev4);
         unsigned int getEventIndex(unsigned int nn,unsigned int ev);

@@ -18,6 +18,13 @@ Message::Message()
 
 /**
 * Creates a message to be sent. Not being used.
+* NOT USED AT THIS VERSION.
+* \param canId is the can id of the message.
+* \param opc is the opc code.
+* \param nodeNumber is the node number.
+* \param eventNumber is the event number.
+* \param data is the message data itself.
+* \param priority is CAN priority.
 */
 
 Message::Message(unsigned int canId,
@@ -660,6 +667,21 @@ byte Message::getAccExtraData(byte idx){
     }
     return 0;
 }
+/** \brief Create a ON event message
+ *
+ * \param nodeNumber Node number of the message
+ * \param longEvent Indication of Long or Short event. True means long event.
+ * \param eventNumber Event number
+ * \param numDataBytes Number of extra bytes in the message. It defines the type of On event should be created:
+ * 0 means +ACON or ASON
+ * 1 means +ACON1 or ASON1
+ * 2 means +ACON2 or ASON2
+ * 3 means +ACON3 or ASON3
+ * \param msgdata The extra data to be added according to the Number of extra bytes. There is no check if the msgdata is set or not.
+ * So be sure to set it if the number of extra bytes > 1.
+ * \return
+ *
+ */
 
 void Message::createOnEvent(unsigned int nodeNumber,bool longEvent,unsigned int eventNumber,byte numDataBytes,byte* msgdata){
 
@@ -715,7 +737,21 @@ void Message::createOnEvent(unsigned int nodeNumber,bool longEvent,unsigned int 
     data[4]=lowByte(eventNumber);
 
 }
-
+/** \brief Create a OFF event message
+ *
+ * \param nodeNumber Node number of the message
+ * \param longEvent Indication of Long or Short event. True means long event.
+ * \param eventNumber Event number
+ * \param numDataBytes Number of extra bytes in the message. It defines the type of On event should be created:
+ * 0 means +ACOF or ASOF
+ * 1 means +ACOF1 or ASOF1
+ * 2 means +ACOF2 or ASOF2
+ * 3 means +ACOF3 or ASOF3
+ * \param msgdata The extra data to be added according to the Number of extra bytes. There is no check if the msgdata is set or not.
+ * So be sure to set it if the number of extra bytes > 1.
+ * \return
+ *
+ */
 void Message::createOffEvent(unsigned int nodeNumber,bool longEvent,unsigned int eventNumber,byte numDataBytes,byte* msgdata){
     switch (numDataBytes){
     case (0):
