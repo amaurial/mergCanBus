@@ -1,14 +1,16 @@
 #include "MergMemoryManagement.h"
 
 /**\brief
-* Constructor: clear array and reads the EEPROM
+* Constructor: Default constructor. Does nothing.
 */
 MergMemoryManagement::MergMemoryManagement()
 {
     //ctor
 
 }
-
+/**\brief
+* Constructor: clear array and reads the EEPROM
+*/
 MergMemoryManagement::MergMemoryManagement(byte num_node_vars,byte num_events,byte num_events_vars,byte max_device_numbers){
     MAX_AVAIL_VARS=num_node_vars;
     MAX_NUM_EVENTS=num_events;
@@ -22,7 +24,9 @@ MergMemoryManagement::MergMemoryManagement(byte num_node_vars,byte num_events,by
     clear();
     read();
 }
-
+/**\brief
+* Destructor: clear the allocated buffers.
+*/
 MergMemoryManagement::~MergMemoryManagement(){
     delete [] return_eventVars;
 }
@@ -458,7 +462,8 @@ void MergMemoryManagement::setDeviceNumber(unsigned int val,byte port){
 
 /**\brief
 * Get the device number.
-* @return The node number (16 bit integer).
+* \param port The device port.
+* \return The node number (16 bit integer).
 */
 unsigned int MergMemoryManagement::getDeviceNumber(byte port){
     if (port >MAX_NUM_DEVICE_NUMBERS){

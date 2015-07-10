@@ -1,6 +1,23 @@
-/home/user/amauriala/Projects/mergCanBus/Message.cpp:22: warning: no matching class member found for 
-  Message::Message(unsigned int canId, unsigned int opc, unsigned int nodeNumber, unsigned int eventNumber, byte[DATA_SIZE] data[DATA_SIZE], unsigned int priority)
-Possible candidates:
-  Message::Message()
-  Message::Message(unsigned int canId, unsigned int opc, unsigned int nodeNumber, unsigned int eventNumber, byte data[CANDATA_SIZE], unsigned int priority)
-
+/home/user/amauriala/Projects/mergCanBus/CircularBuffer.cpp:52: warning: argument 'buffer.' of command @param is not found in the argument list of CircularBuffer::get(byte *buffer)
+/home/user/amauriala/Projects/mergCanBus/CircularBuffer.cpp:52: warning: The following parameters of CircularBuffer::get(byte *buffer) are not documented:
+  parameter 'buffer'
+/home/user/amauriala/Projects/mergCanBus/MergCBUS.h:131: warning: argument 'new' of command @param is not found in the argument list of MergCBUS::setStdNN(unsigned int val)
+/home/user/amauriala/Projects/mergCanBus/MergCBUS.h:131: warning: The following parameters of MergCBUS::setStdNN(unsigned int val) are not documented:
+  parameter 'val'
+/home/user/amauriala/Projects/mergCanBus/MergMemoryManagement.cpp:449: warning: The following parameters of MergMemoryManagement::setDeviceNumber(unsigned int val, byte port) are not documented:
+  parameter 'port'
+/home/user/amauriala/Projects/mergCanBus/MergMemoryManagement.cpp:494: warning: argument 'mode' of command @param is not found in the argument list of MergMemoryManagement::setNodeFlag(byte val)
+/home/user/amauriala/Projects/mergCanBus/MergMemoryManagement.cpp:494: warning: The following parameters of MergMemoryManagement::setNodeFlag(byte val) are not documented:
+  parameter 'val'
+/home/user/amauriala/Projects/mergCanBus/MergNodeIdentification.h:71: warning: argument 'val' of command @param is not found in the argument list of MergNodeIdentification::getFlags()
+/home/user/amauriala/Projects/mergCanBus/Message.h:92: warning: unable to resolve reference to `message_type' for \ref command
+/home/user/amauriala/Projects/mergCanBus/Message.h:80: warning: argument 'canId' of command @param is not found in the argument list of Message::setCanId(byte val)
+/home/user/amauriala/Projects/mergCanBus/Message.h:80: warning: The following parameters of Message::setCanId(byte val) are not documented:
+  parameter 'val'
+/home/user/amauriala/Projects/mergCanBus/Message.h:197: warning: argument 'The' of command @param is not found in the argument list of Message::setCanMessageSize(byte val)
+/home/user/amauriala/Projects/mergCanBus/Message.h:197: warning: The following parameters of Message::setCanMessageSize(byte val) are not documented:
+  parameter 'val'
+/home/user/amauriala/Projects/mergCanBus/Message.h:87: warning: argument 'opc' of command @param is not found in the argument list of Message::setOpc(byte val)
+/home/user/amauriala/Projects/mergCanBus/Message.h:87: warning: The following parameters of Message::setOpc(byte val) are not documented:
+  parameter 'val'
+/home/user/amauriala/Projects/mergCanBus/Message.h:96: warning: Found unknown command `\message_type'

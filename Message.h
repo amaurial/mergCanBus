@@ -64,51 +64,111 @@ class Message
 
         byte getByte(byte pos);
 
+        /** \brief Get the 8 bytes CAN message buffer. The user can also get specific values using other methods.
+         * \return Pointer to the CAN message.
+         */
 
         byte *getDataBuffer(){return data;};
          void setDataBuffer(byte val[CANDATA_SIZE]);
-
+        /** \brief Get the 8 bytes CAN header buffer. The user can also get specific values using other methods.
+         * \return Pointer to the CAN header.
+         */
         byte *getHeaderBuffer(){return header;};
         void setHeaderBuffer(byte val[HEADER_SIZE] );
 
         byte getCanId();
+        /** \brief Set the can id in the message
+         *  NOT USED. At the moment the messages are being assembled outside and loaded by \ref setDataBuffer
+         * \param canId is the can ID
+         */
         void setCanId(byte val) { canId = val; }
 
         byte getOpc();
+        /** \brief Set the opc in the message
+         *  NOT USED. At the moment the messages are being assembled outside and loaded by \ref setDataBuffer
+         * \param opc is the opc
+         */
         void setOpc(byte val) {opc = val; }
-
+        /** \brief Get the message type.
+         * \return The message type \ref message_type
+         */
         message_type getType() { return _type; }
+        /** \brief Set the message type
+         *  NOT USED. At the moment the messages are being assembled outside and loaded by \ref setDataBuffer
+         * \param val is the message type @message_type
+         */
         void setType(message_type val) { _type = val; }
 
         unsigned int getEventNumber();
+        /** \brief Set event number to be used on message
+         *  NOT USED. At the moment the messages are being assembled outside and loaded by \ref setDataBuffer
+         * \param val is the event number
+         */
         void setEventNumber(unsigned int val) { _eventNumber = val; }
 
         unsigned int getNodeNumber();
+        /** \brief Set the node number to be used on message
+         *  NOT USED. At the moment the messages are being assembled outside and loaded by \ref setDataBuffer
+         * \param val is the node number
+         */
         void setNodeNumber(unsigned int val) { _nodeNumber = val; }
 
         unsigned int getDeviceNumber();
+        /** \brief Set the device number to be used on message
+         *  NOT USED. At the moment the messages are being assembled outside and loaded by \ref setDataBuffer
+         * \param val is the device number
+         */
         void setDeviceNumber(unsigned int val) { _deviceNumber = val; }
 
-
-
+        /** \brief Get the message priority in the Can header
+         * \return The priority
+         */
         byte getPriority() { return _priority;}
+        /** \brief Set the message priority in the CAN header
+         *  NOT USED. At the moment the messages are being assembled outside and loaded by \ref setHeaderBuffer
+         * \param val is the priority
+         */
         void setPriority(byte val) { _priority = val; }
 
         byte getMessageSize();
+        /** \brief Get the number of bytes parameter in the message
+         * \return The number of bytes
+         */
         unsigned int getNumBytes() { return _numBytes; }
+        /** \brief Set the number of bytes parameter in the message
+        *  NOT USED. At the moment the messages are being assembled outside and loaded by \ref setDataBuffer
+         * \param val is the number of bytes
+         */
         void setNumBytes(unsigned int val) { _numBytes = val; }
-
+        /** \brief Set the CAN RTR parameter. Set after reading the CAN header.
+         */
         void setRTR() {_RTR=true;};
+        /** \brief Unset the CAN RTR parameter
+         */
         void unsetRTR(){_RTR=false;};
+        /** \brief Get the CAN RTR parameter. Set after reading the CAN header.
+         * \return True if the RTR is set else returns False.
+         */
         bool getRTR(){return _RTR;};
-
+        /** \brief Set the session value in the message
+        *  NOT USED. At the moment the messages are being assembled outside and loaded by \ref setDataBuffer
+         * \param val is the session value
+         */
         void setSession(byte val) {_session=val;}
         byte getSession();
 
         unsigned int getDecoder();
+        /** \brief Set the decoder value
+        *  NOT USED. At the moment the messages are being assembled outside and loaded by \ref setDataBuffer
+         * \param val is the decoder value
+         */
         void setDecoder(unsigned int val) { _decoder = val; }
 
         unsigned int getCV();
+        /** \brief Set the DCC CV value in the message
+        *  NOT USED. At the moment the messages are being assembled outside and loaded by \ref setDataBuffer
+         * \param val is the DCC CV value
+         */
         void setCV(unsigned int val) { _cv = val; }
 
         unsigned int getCVMode();
@@ -129,8 +189,15 @@ class Message
         byte getEventVarIndex();
         byte getEventVar();
         void clear();
+        /** \brief Force the code to print debug messages to the serial interface if value is True.
+         */
+
         void setDebug(bool val){debug=val;};
         byte getCanMessageSize();
+        /** \brief Set the message size
+        *  NOT USED. At the moment the messages are being assembled outside and loaded by \ref setDataBuffer
+         * \param The message size
+         */
         void setCanMessageSize(byte val) {canMsgSize=val;};
 
         bool isAccOn();

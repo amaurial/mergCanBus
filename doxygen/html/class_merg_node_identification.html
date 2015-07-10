@@ -91,7 +91,7 @@ $(document).ready(function(){initNavTree('class_merg_node_identification.html','
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Typedefs</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Typedefs</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -113,85 +113,953 @@ $(document).ready(function(){initNavTree('class_merg_node_identification.html','
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a83076917e774e4eab71503bf7589530e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a83076917e774e4eab71503bf7589530e"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setCanID</b> (byte val)</td></tr>
+<tr class="memitem:a0ad146469f614b57befaa7779c8528ab"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_merg_node_identification.html#a0ad146469f614b57befaa7779c8528ab">MergNodeIdentification</a> ()</td></tr>
+<tr class="memdesc:a0ad146469f614b57befaa7779c8528ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#a0ad146469f614b57befaa7779c8528ab">More...</a><br/></td></tr>
+<tr class="separator:a0ad146469f614b57befaa7779c8528ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a075f53750e52b65181b38628c9e34918"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_merg_node_identification.html#a075f53750e52b65181b38628c9e34918">~MergNodeIdentification</a> ()</td></tr>
+<tr class="memdesc:a075f53750e52b65181b38628c9e34918"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor.  <a href="#a075f53750e52b65181b38628c9e34918">More...</a><br/></td></tr>
+<tr class="separator:a075f53750e52b65181b38628c9e34918"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a83076917e774e4eab71503bf7589530e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_merg_node_identification.html#a83076917e774e4eab71503bf7589530e">setCanID</a> (byte val)</td></tr>
+<tr class="memdesc:a83076917e774e4eab71503bf7589530e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the can id for this node.  <a href="#a83076917e774e4eab71503bf7589530e">More...</a><br/></td></tr>
 <tr class="separator:a83076917e774e4eab71503bf7589530e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a332a18e94b99a797ed8ae1ab223bc401"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a332a18e94b99a797ed8ae1ab223bc401"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setNodeNumber</b> (unsigned int val)</td></tr>
-<tr class="separator:a332a18e94b99a797ed8ae1ab223bc401"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0ce167c00a89bd5fa6f8ba44aabf7789"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0ce167c00a89bd5fa6f8ba44aabf7789"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setNodeName</b> (char *nodeName)</td></tr>
-<tr class="separator:a0ce167c00a89bd5fa6f8ba44aabf7789"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9d9c77a64fec374bca9e4ef49610e9ac"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9d9c77a64fec374bca9e4ef49610e9ac"></a>
-byte&#160;</td><td class="memItemRight" valign="bottom"><b>getCanID</b> ()</td></tr>
+<tr class="memitem:a9d9c77a64fec374bca9e4ef49610e9ac"><td class="memItemLeft" align="right" valign="top">byte&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_merg_node_identification.html#a9d9c77a64fec374bca9e4ef49610e9ac">getCanID</a> ()</td></tr>
+<tr class="memdesc:a9d9c77a64fec374bca9e4ef49610e9ac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the can id for this node.  <a href="#a9d9c77a64fec374bca9e4ef49610e9ac">More...</a><br/></td></tr>
 <tr class="separator:a9d9c77a64fec374bca9e4ef49610e9ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aead2f3ff2e5f41a706f3f1ec462deba4"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aead2f3ff2e5f41a706f3f1ec462deba4"></a>
-unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>getNodeNumber</b> ()</td></tr>
+<tr class="memitem:a332a18e94b99a797ed8ae1ab223bc401"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_merg_node_identification.html#a332a18e94b99a797ed8ae1ab223bc401">setNodeNumber</a> (unsigned int val)</td></tr>
+<tr class="memdesc:a332a18e94b99a797ed8ae1ab223bc401"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the node number for this node.  <a href="#a332a18e94b99a797ed8ae1ab223bc401">More...</a><br/></td></tr>
+<tr class="separator:a332a18e94b99a797ed8ae1ab223bc401"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aead2f3ff2e5f41a706f3f1ec462deba4"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_merg_node_identification.html#aead2f3ff2e5f41a706f3f1ec462deba4">getNodeNumber</a> ()</td></tr>
+<tr class="memdesc:aead2f3ff2e5f41a706f3f1ec462deba4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the node number for this node.  <a href="#aead2f3ff2e5f41a706f3f1ec462deba4">More...</a><br/></td></tr>
 <tr class="separator:aead2f3ff2e5f41a706f3f1ec462deba4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7ae65c39f85e2fb1d7ab940f2f051152"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7ae65c39f85e2fb1d7ab940f2f051152"></a>
-const char *&#160;</td><td class="memItemRight" valign="bottom"><b>getNodeName</b> ()</td></tr>
+<tr class="memitem:aba951c1739be029071d40634f6593d61"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_merg_node_identification.html#aba951c1739be029071d40634f6593d61">setNodeName</a> (char const *nodeName, int csize)</td></tr>
+<tr class="memdesc:aba951c1739be029071d40634f6593d61"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the node name.  <a href="#aba951c1739be029071d40634f6593d61">More...</a><br/></td></tr>
+<tr class="separator:aba951c1739be029071d40634f6593d61"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7ae65c39f85e2fb1d7ab940f2f051152"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_merg_node_identification.html#a7ae65c39f85e2fb1d7ab940f2f051152">getNodeName</a> ()</td></tr>
+<tr class="memdesc:a7ae65c39f85e2fb1d7ab940f2f051152"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the node name.  <a href="#a7ae65c39f85e2fb1d7ab940f2f051152">More...</a><br/></td></tr>
 <tr class="separator:a7ae65c39f85e2fb1d7ab940f2f051152"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a518d01b7074389c163af42c1faf9c6a0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a518d01b7074389c163af42c1faf9c6a0"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setDeviceNumber</b> (unsigned int val)</td></tr>
-<tr class="separator:a518d01b7074389c163af42c1faf9c6a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af04fe8d3af8649c4803399a1ad944547"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af04fe8d3af8649c4803399a1ad944547"></a>
-unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>getDeviceNumber</b> ()</td></tr>
-<tr class="separator:af04fe8d3af8649c4803399a1ad944547"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a79ed072e120908504dcf19b3d75f8d42"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a79ed072e120908504dcf19b3d75f8d42"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setManufacturerId</b> (byte val)</td></tr>
+<tr class="memitem:a79ed072e120908504dcf19b3d75f8d42"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_merg_node_identification.html#a79ed072e120908504dcf19b3d75f8d42">setManufacturerId</a> (byte val)</td></tr>
+<tr class="memdesc:a79ed072e120908504dcf19b3d75f8d42"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the manufacturer ID.  <a href="#a79ed072e120908504dcf19b3d75f8d42">More...</a><br/></td></tr>
 <tr class="separator:a79ed072e120908504dcf19b3d75f8d42"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa8ccdabe90a50cf1779b5589272e4312"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa8ccdabe90a50cf1779b5589272e4312"></a>
-byte&#160;</td><td class="memItemRight" valign="bottom"><b>getManufacturerId</b> ()</td></tr>
+<tr class="memitem:aa8ccdabe90a50cf1779b5589272e4312"><td class="memItemLeft" align="right" valign="top">byte&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_merg_node_identification.html#aa8ccdabe90a50cf1779b5589272e4312">getManufacturerId</a> ()</td></tr>
+<tr class="memdesc:aa8ccdabe90a50cf1779b5589272e4312"><td class="mdescLeft">&#160;</td><td class="mdescRight">GSet the manufacturer ID.  <a href="#aa8ccdabe90a50cf1779b5589272e4312">More...</a><br/></td></tr>
 <tr class="separator:aa8ccdabe90a50cf1779b5589272e4312"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a42b1f85392ae472206d290681591ca4b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a42b1f85392ae472206d290681591ca4b"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setModuleId</b> (byte val)</td></tr>
+<tr class="memitem:a42b1f85392ae472206d290681591ca4b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_merg_node_identification.html#a42b1f85392ae472206d290681591ca4b">setModuleId</a> (byte val)</td></tr>
+<tr class="memdesc:a42b1f85392ae472206d290681591ca4b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the module ID.  <a href="#a42b1f85392ae472206d290681591ca4b">More...</a><br/></td></tr>
 <tr class="separator:a42b1f85392ae472206d290681591ca4b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad932468edcbd75021f92c8c5c09d3e07"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad932468edcbd75021f92c8c5c09d3e07"></a>
-byte&#160;</td><td class="memItemRight" valign="bottom"><b>getModuleId</b> ()</td></tr>
+<tr class="memitem:ad932468edcbd75021f92c8c5c09d3e07"><td class="memItemLeft" align="right" valign="top">byte&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_merg_node_identification.html#ad932468edcbd75021f92c8c5c09d3e07">getModuleId</a> ()</td></tr>
+<tr class="memdesc:ad932468edcbd75021f92c8c5c09d3e07"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the module ID.  <a href="#ad932468edcbd75021f92c8c5c09d3e07">More...</a><br/></td></tr>
 <tr class="separator:ad932468edcbd75021f92c8c5c09d3e07"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac83602870fae89378f512de53363605b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac83602870fae89378f512de53363605b"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setFlags</b> (byte val)</td></tr>
+<tr class="memitem:ac83602870fae89378f512de53363605b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_merg_node_identification.html#ac83602870fae89378f512de53363605b">setFlags</a> (byte val)</td></tr>
+<tr class="memdesc:ac83602870fae89378f512de53363605b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the module flags.  <a href="#ac83602870fae89378f512de53363605b">More...</a><br/></td></tr>
 <tr class="separator:ac83602870fae89378f512de53363605b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aeba9fec35808d065c05af5387b988888"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aeba9fec35808d065c05af5387b988888"></a>
-byte&#160;</td><td class="memItemRight" valign="bottom"><b>getFlags</b> ()</td></tr>
+<tr class="memitem:aeba9fec35808d065c05af5387b988888"><td class="memItemLeft" align="right" valign="top">byte&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_merg_node_identification.html#aeba9fec35808d065c05af5387b988888">getFlags</a> ()</td></tr>
+<tr class="memdesc:aeba9fec35808d065c05af5387b988888"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the module flags.  <a href="#aeba9fec35808d065c05af5387b988888">More...</a><br/></td></tr>
 <tr class="separator:aeba9fec35808d065c05af5387b988888"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a69dca01c0c99b3d97cd4d6f9598f3f64"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a69dca01c0c99b3d97cd4d6f9598f3f64"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setMinCodeVersion</b> (byte val)</td></tr>
+<tr class="memitem:a69dca01c0c99b3d97cd4d6f9598f3f64"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_merg_node_identification.html#a69dca01c0c99b3d97cd4d6f9598f3f64">setMinCodeVersion</a> (byte val)</td></tr>
+<tr class="memdesc:a69dca01c0c99b3d97cd4d6f9598f3f64"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the min Code Version.  <a href="#a69dca01c0c99b3d97cd4d6f9598f3f64">More...</a><br/></td></tr>
 <tr class="separator:a69dca01c0c99b3d97cd4d6f9598f3f64"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a82991f1bd860f5ad94a537dc83c6d254"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a82991f1bd860f5ad94a537dc83c6d254"></a>
-byte&#160;</td><td class="memItemRight" valign="bottom"><b>getMinCodeVersion</b> ()</td></tr>
+<tr class="memitem:a82991f1bd860f5ad94a537dc83c6d254"><td class="memItemLeft" align="right" valign="top">byte&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_merg_node_identification.html#a82991f1bd860f5ad94a537dc83c6d254">getMinCodeVersion</a> ()</td></tr>
+<tr class="memdesc:a82991f1bd860f5ad94a537dc83c6d254"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the min Code Version.  <a href="#a82991f1bd860f5ad94a537dc83c6d254">More...</a><br/></td></tr>
 <tr class="separator:a82991f1bd860f5ad94a537dc83c6d254"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae01db7cc73b68288fecc2eace1828899"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae01db7cc73b68288fecc2eace1828899"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setMaxCodeVersion</b> (byte val)</td></tr>
+<tr class="memitem:ae01db7cc73b68288fecc2eace1828899"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_merg_node_identification.html#ae01db7cc73b68288fecc2eace1828899">setMaxCodeVersion</a> (byte val)</td></tr>
+<tr class="memdesc:ae01db7cc73b68288fecc2eace1828899"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the max Code Version.  <a href="#ae01db7cc73b68288fecc2eace1828899">More...</a><br/></td></tr>
 <tr class="separator:ae01db7cc73b68288fecc2eace1828899"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2391a6d9659a57a0b1e3c8c4c19d2454"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2391a6d9659a57a0b1e3c8c4c19d2454"></a>
-byte&#160;</td><td class="memItemRight" valign="bottom"><b>getMaxCodeVersion</b> ()</td></tr>
+<tr class="memitem:a2391a6d9659a57a0b1e3c8c4c19d2454"><td class="memItemLeft" align="right" valign="top">byte&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_merg_node_identification.html#a2391a6d9659a57a0b1e3c8c4c19d2454">getMaxCodeVersion</a> ()</td></tr>
+<tr class="memdesc:a2391a6d9659a57a0b1e3c8c4c19d2454"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the max Code Version.  <a href="#a2391a6d9659a57a0b1e3c8c4c19d2454">More...</a><br/></td></tr>
 <tr class="separator:a2391a6d9659a57a0b1e3c8c4c19d2454"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a20dec04b153357c80e6ad6646a707871"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a20dec04b153357c80e6ad6646a707871"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setSuportedEvents</b> (byte val)</td></tr>
+<tr class="memitem:a20dec04b153357c80e6ad6646a707871"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_merg_node_identification.html#a20dec04b153357c80e6ad6646a707871">setSuportedEvents</a> (byte val)</td></tr>
+<tr class="memdesc:a20dec04b153357c80e6ad6646a707871"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the number of supported events.  <a href="#a20dec04b153357c80e6ad6646a707871">More...</a><br/></td></tr>
 <tr class="separator:a20dec04b153357c80e6ad6646a707871"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a597ca54cc697450e0efb95e2e2c669cb"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a597ca54cc697450e0efb95e2e2c669cb"></a>
-byte&#160;</td><td class="memItemRight" valign="bottom"><b>getSuportedEvents</b> ()</td></tr>
+<tr class="memitem:a597ca54cc697450e0efb95e2e2c669cb"><td class="memItemLeft" align="right" valign="top">byte&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_merg_node_identification.html#a597ca54cc697450e0efb95e2e2c669cb">getSuportedEvents</a> ()</td></tr>
+<tr class="memdesc:a597ca54cc697450e0efb95e2e2c669cb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the number of supported events.  <a href="#a597ca54cc697450e0efb95e2e2c669cb">More...</a><br/></td></tr>
 <tr class="separator:a597ca54cc697450e0efb95e2e2c669cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae617f3c49d5800aa56e0add65aa8ee95"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae617f3c49d5800aa56e0add65aa8ee95"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setSuportedEventsVariables</b> (byte val)</td></tr>
+<tr class="memitem:ae617f3c49d5800aa56e0add65aa8ee95"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_merg_node_identification.html#ae617f3c49d5800aa56e0add65aa8ee95">setSuportedEventsVariables</a> (byte val)</td></tr>
+<tr class="memdesc:ae617f3c49d5800aa56e0add65aa8ee95"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the number of supported events variables.  <a href="#ae617f3c49d5800aa56e0add65aa8ee95">More...</a><br/></td></tr>
 <tr class="separator:ae617f3c49d5800aa56e0add65aa8ee95"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a31e77dfd972844b336d14ba9a9f3cddd"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a31e77dfd972844b336d14ba9a9f3cddd"></a>
-byte&#160;</td><td class="memItemRight" valign="bottom"><b>getSuportedEventsVariables</b> ()</td></tr>
+<tr class="memitem:a31e77dfd972844b336d14ba9a9f3cddd"><td class="memItemLeft" align="right" valign="top">byte&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_merg_node_identification.html#a31e77dfd972844b336d14ba9a9f3cddd">getSuportedEventsVariables</a> ()</td></tr>
+<tr class="memdesc:a31e77dfd972844b336d14ba9a9f3cddd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the number of supported events variables.  <a href="#a31e77dfd972844b336d14ba9a9f3cddd">More...</a><br/></td></tr>
 <tr class="separator:a31e77dfd972844b336d14ba9a9f3cddd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a72a738ead69d160b96d7fb7013331758"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a72a738ead69d160b96d7fb7013331758"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setSuportedNodeVariables</b> (byte val)</td></tr>
+<tr class="memitem:a72a738ead69d160b96d7fb7013331758"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_merg_node_identification.html#a72a738ead69d160b96d7fb7013331758">setSuportedNodeVariables</a> (byte val)</td></tr>
+<tr class="memdesc:a72a738ead69d160b96d7fb7013331758"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the number of supported node variables.  <a href="#a72a738ead69d160b96d7fb7013331758">More...</a><br/></td></tr>
 <tr class="separator:a72a738ead69d160b96d7fb7013331758"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a47b7a0dc891a2adf6d668c234316529d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a47b7a0dc891a2adf6d668c234316529d"></a>
-byte&#160;</td><td class="memItemRight" valign="bottom"><b>getSuportedNodeVariables</b> ()</td></tr>
+<tr class="memitem:a47b7a0dc891a2adf6d668c234316529d"><td class="memItemLeft" align="right" valign="top">byte&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_merg_node_identification.html#a47b7a0dc891a2adf6d668c234316529d">getSuportedNodeVariables</a> ()</td></tr>
+<tr class="memdesc:a47b7a0dc891a2adf6d668c234316529d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the number of supported node variables.  <a href="#a47b7a0dc891a2adf6d668c234316529d">More...</a><br/></td></tr>
 <tr class="separator:a47b7a0dc891a2adf6d668c234316529d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa11d7284af00bd7c93e4cd9b2dbaf328"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa11d7284af00bd7c93e4cd9b2dbaf328"></a>
-byte&#160;</td><td class="memItemRight" valign="bottom"><b>getParameter</b> (byte inx)</td></tr>
+<tr class="memitem:aa11d7284af00bd7c93e4cd9b2dbaf328"><td class="memItemLeft" align="right" valign="top">byte&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_merg_node_identification.html#aa11d7284af00bd7c93e4cd9b2dbaf328">getParameter</a> (byte inx)</td></tr>
+<tr class="memdesc:aa11d7284af00bd7c93e4cd9b2dbaf328"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get one of the defined parameters.  <a href="#aa11d7284af00bd7c93e4cd9b2dbaf328">More...</a><br/></td></tr>
 <tr class="separator:aa11d7284af00bd7c93e4cd9b2dbaf328"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaa9d9804debd53785e8f3f3a171f6e29"><td class="memItemLeft" align="right" valign="top">byte&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_merg_node_identification.html#aaa9d9804debd53785e8f3f3a171f6e29">getNumberOfParameters</a> ()</td></tr>
+<tr class="memdesc:aaa9d9804debd53785e8f3f3a171f6e29"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the number of node parameters.  <a href="#aaa9d9804debd53785e8f3f3a171f6e29">More...</a><br/></td></tr>
+<tr class="separator:aaa9d9804debd53785e8f3f3a171f6e29"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a035b64252ff8a9e680e481dbb788edd5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_merg_node_identification.html#a035b64252ff8a9e680e481dbb788edd5">setProducerNode</a> (bool val)</td></tr>
+<tr class="memdesc:a035b64252ff8a9e680e481dbb788edd5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set this module as a producer.  <a href="#a035b64252ff8a9e680e481dbb788edd5">More...</a><br/></td></tr>
+<tr class="separator:a035b64252ff8a9e680e481dbb788edd5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4a9ca23eaab80db892764fbc6affed0d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_merg_node_identification.html#a4a9ca23eaab80db892764fbc6affed0d">isProducerNode</a> ()</td></tr>
+<tr class="memdesc:a4a9ca23eaab80db892764fbc6affed0d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Indicates if the node is a producer.  <a href="#a4a9ca23eaab80db892764fbc6affed0d">More...</a><br/></td></tr>
+<tr class="separator:a4a9ca23eaab80db892764fbc6affed0d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1ddd550e0081516713ad47881b8ab239"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_merg_node_identification.html#a1ddd550e0081516713ad47881b8ab239">setConsumerNode</a> (bool val)</td></tr>
+<tr class="memdesc:a1ddd550e0081516713ad47881b8ab239"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set this module as a consumer.  <a href="#a1ddd550e0081516713ad47881b8ab239">More...</a><br/></td></tr>
+<tr class="separator:a1ddd550e0081516713ad47881b8ab239"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adc8a76ccc6e4ed000769dc5ed4263e80"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_merg_node_identification.html#adc8a76ccc6e4ed000769dc5ed4263e80">isConsumerNode</a> ()</td></tr>
+<tr class="memdesc:adc8a76ccc6e4ed000769dc5ed4263e80"><td class="mdescLeft">&#160;</td><td class="mdescRight">Indicates if the node is a consumer.  <a href="#adc8a76ccc6e4ed000769dc5ed4263e80">More...</a><br/></td></tr>
+<tr class="separator:adc8a76ccc6e4ed000769dc5ed4263e80"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa81ce38db52f2508e71efafbef651b86"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa81ce38db52f2508e71efafbef651b86"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_merg_node_identification.html#aa81ce38db52f2508e71efafbef651b86">setSlimMode</a> ()</td></tr>
+<tr class="memdesc:aa81ce38db52f2508e71efafbef651b86"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set this module to SlimMode. <br/></td></tr>
+<tr class="separator:aa81ce38db52f2508e71efafbef651b86"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a02eb7a12697d556169517ea7d6f06cd9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a02eb7a12697d556169517ea7d6f06cd9"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_merg_node_identification.html#a02eb7a12697d556169517ea7d6f06cd9">setFlimMode</a> ()</td></tr>
+<tr class="memdesc:a02eb7a12697d556169517ea7d6f06cd9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set this module to FlimMode. <br/></td></tr>
+<tr class="separator:a02eb7a12697d556169517ea7d6f06cd9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5eddac86c818ba7ebd525c29753e2901"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5eddac86c818ba7ebd525c29753e2901"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_merg_node_identification.html#a5eddac86c818ba7ebd525c29753e2901">isSlimMode</a> ()</td></tr>
+<tr class="memdesc:a5eddac86c818ba7ebd525c29753e2901"><td class="mdescLeft">&#160;</td><td class="mdescRight">Indicate if the mode is in SlimMode. <br/></td></tr>
+<tr class="separator:a5eddac86c818ba7ebd525c29753e2901"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1e88b14c6e3ce2a4359a514f9cba4ce6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1e88b14c6e3ce2a4359a514f9cba4ce6"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_merg_node_identification.html#a1e88b14c6e3ce2a4359a514f9cba4ce6">isFlimMode</a> ()</td></tr>
+<tr class="memdesc:a1e88b14c6e3ce2a4359a514f9cba4ce6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Indicate if the mode is in FlimMode. <br/></td></tr>
+<tr class="separator:a1e88b14c6e3ce2a4359a514f9cba4ce6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a26dd508e5fdd061b1b7bd27ece11535c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a26dd508e5fdd061b1b7bd27ece11535c"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_merg_node_identification.html#a26dd508e5fdd061b1b7bd27ece11535c">setSuportBootLoading</a> (bool val)</td></tr>
+<tr class="memdesc:a26dd508e5fdd061b1b7bd27ece11535c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Indicate if the mode supports boot loading. This current version by default does not support boot loading. <br/></td></tr>
+<tr class="separator:a26dd508e5fdd061b1b7bd27ece11535c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab7e8783debece2f1ac891664e2995649"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab7e8783debece2f1ac891664e2995649"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_merg_node_identification.html#ab7e8783debece2f1ac891664e2995649">suportBootLoading</a> ()</td></tr>
+<tr class="memdesc:ab7e8783debece2f1ac891664e2995649"><td class="mdescLeft">&#160;</td><td class="mdescRight">Indicate if the mode supports boot loading. This current version by default does not support boot loading. <br/></td></tr>
+<tr class="separator:ab7e8783debece2f1ac891664e2995649"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Class that saves the node parameters. Name, Manufactorer,Module, Can id, Node number, device number, Code Version, Supported events and variables. It is set from user information and from EEPROM: can id, node number, device number. </p>
-</div><hr/>The documentation for this class was generated from the following files:<ul>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a class="anchor" id="a0ad146469f614b57befaa7779c8528ab"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">MergNodeIdentification::MergNodeIdentification </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Constructor. </p>
+<p>Set the internal variables. </p>
+
+</div>
+</div>
+<a class="anchor" id="a075f53750e52b65181b38628c9e34918"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">MergNodeIdentification::~MergNodeIdentification </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Destructor. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a class="anchor" id="a9d9c77a64fec374bca9e4ef49610e9ac"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">byte MergNodeIdentification::getCanID </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the can id for this node. </p>
+<dl class="section return"><dt>Returns</dt><dd>The can id. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="aeba9fec35808d065c05af5387b988888"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">byte MergNodeIdentification::getFlags </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the module flags. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">val</td><td>The module flags. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="aa8ccdabe90a50cf1779b5589272e4312"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">byte MergNodeIdentification::getManufacturerId </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>GSet the manufacturer ID. </p>
+<dl class="section return"><dt>Returns</dt><dd>The manufacuter id. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a2391a6d9659a57a0b1e3c8c4c19d2454"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">byte MergNodeIdentification::getMaxCodeVersion </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the max Code Version. </p>
+<dl class="section return"><dt>Returns</dt><dd>The max code version. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a82991f1bd860f5ad94a537dc83c6d254"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">byte MergNodeIdentification::getMinCodeVersion </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the min Code Version. </p>
+<dl class="section return"><dt>Returns</dt><dd>The min code version. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="ad932468edcbd75021f92c8c5c09d3e07"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">byte MergNodeIdentification::getModuleId </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the module ID. </p>
+<dl class="section return"><dt>Returns</dt><dd>The module id. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a7ae65c39f85e2fb1d7ab940f2f051152"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char * MergNodeIdentification::getNodeName </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Retrieve the node name. </p>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to the node name. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="aead2f3ff2e5f41a706f3f1ec462deba4"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">unsigned int MergNodeIdentification::getNodeNumber </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the node number for this node. </p>
+<dl class="section return"><dt>Returns</dt><dd>The node number. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="aaa9d9804debd53785e8f3f3a171f6e29"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">byte MergNodeIdentification::getNumberOfParameters </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the number of node parameters. </p>
+<dl class="section return"><dt>Returns</dt><dd>Currently 8. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="aa11d7284af00bd7c93e4cd9b2dbaf328"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">byte MergNodeIdentification::getParameter </td>
+          <td>(</td>
+          <td class="paramtype">byte&#160;</td>
+          <td class="paramname"><em>idx</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get one of the defined parameters. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">idx</td><td>Index of the parameter: 0 to 8 </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Return either of the parameters:<ul>
+<li>Manufacturer Id</li>
+<li>Max Code Version</li>
+<li>Min Code Version</li>
+<li>Module Id</li>
+<li>Number of Supported Events</li>
+<li>Number of Supported Event Variables</li>
+<li>Number of Supported Node Variables</li>
+<li>Node Flags</li>
+<li>0 by default </li>
+</ul>
+</dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a597ca54cc697450e0efb95e2e2c669cb"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">byte MergNodeIdentification::getSuportedEvents </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the number of supported events. </p>
+<dl class="section return"><dt>Returns</dt><dd>The number of events. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a31e77dfd972844b336d14ba9a9f3cddd"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">byte MergNodeIdentification::getSuportedEventsVariables </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the number of supported events variables. </p>
+<dl class="section return"><dt>Returns</dt><dd>The number of events variables. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a47b7a0dc891a2adf6d668c234316529d"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">byte MergNodeIdentification::getSuportedNodeVariables </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the number of supported node variables. </p>
+<dl class="section return"><dt>Returns</dt><dd>The number of events variables. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="adc8a76ccc6e4ed000769dc5ed4263e80"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool MergNodeIdentification::isConsumerNode </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Indicates if the node is a consumer. </p>
+<dl class="section return"><dt>Returns</dt><dd>True for consumer. False not consumer. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a4a9ca23eaab80db892764fbc6affed0d"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool MergNodeIdentification::isProducerNode </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Indicates if the node is a producer. </p>
+<dl class="section return"><dt>Returns</dt><dd>True for producer. False not producer. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a83076917e774e4eab71503bf7589530e"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void MergNodeIdentification::setCanID </td>
+          <td>(</td>
+          <td class="paramtype">byte&#160;</td>
+          <td class="paramname"><em>val</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set the can id for this node. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">val</td><td>The can id. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a1ddd550e0081516713ad47881b8ab239"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void MergNodeIdentification::setConsumerNode </td>
+          <td>(</td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>val</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Set this module as a consumer. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">val</td><td>True for consumer. False not consumer. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="ac83602870fae89378f512de53363605b"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void MergNodeIdentification::setFlags </td>
+          <td>(</td>
+          <td class="paramtype">byte&#160;</td>
+          <td class="paramname"><em>val</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set the module flags. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">val</td><td>The module flags. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a79ed072e120908504dcf19b3d75f8d42"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void MergNodeIdentification::setManufacturerId </td>
+          <td>(</td>
+          <td class="paramtype">byte&#160;</td>
+          <td class="paramname"><em>val</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set the manufacturer ID. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">val</td><td>The manufacuter id. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="ae01db7cc73b68288fecc2eace1828899"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void MergNodeIdentification::setMaxCodeVersion </td>
+          <td>(</td>
+          <td class="paramtype">byte&#160;</td>
+          <td class="paramname"><em>val</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set the max Code Version. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">val</td><td>The max code version. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a69dca01c0c99b3d97cd4d6f9598f3f64"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void MergNodeIdentification::setMinCodeVersion </td>
+          <td>(</td>
+          <td class="paramtype">byte&#160;</td>
+          <td class="paramname"><em>val</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set the min Code Version. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">val</td><td>The min code version. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a42b1f85392ae472206d290681591ca4b"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void MergNodeIdentification::setModuleId </td>
+          <td>(</td>
+          <td class="paramtype">byte&#160;</td>
+          <td class="paramname"><em>val</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set the module ID. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">val</td><td>The module id. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="aba951c1739be029071d40634f6593d61"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void MergNodeIdentification::setNodeName </td>
+          <td>(</td>
+          <td class="paramtype">char const *&#160;</td>
+          <td class="paramname"><em>nn</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>csize</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Set the node name. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">nn</td><td>Pointer to the node name. </td></tr>
+    <tr><td class="paramname">csize</td><td>Size of the node name limited by NAME_SIZE. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a332a18e94b99a797ed8ae1ab223bc401"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void MergNodeIdentification::setNodeNumber </td>
+          <td>(</td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>val</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set the node number for this node. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">val</td><td>The node number. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a035b64252ff8a9e680e481dbb788edd5"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void MergNodeIdentification::setProducerNode </td>
+          <td>(</td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>val</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Set this module as a producer. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">val</td><td>True for producer. False not producer. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a20dec04b153357c80e6ad6646a707871"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void MergNodeIdentification::setSuportedEvents </td>
+          <td>(</td>
+          <td class="paramtype">byte&#160;</td>
+          <td class="paramname"><em>val</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set the number of supported events. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">val</td><td>The number of events. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="ae617f3c49d5800aa56e0add65aa8ee95"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void MergNodeIdentification::setSuportedEventsVariables </td>
+          <td>(</td>
+          <td class="paramtype">byte&#160;</td>
+          <td class="paramname"><em>val</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set the number of supported events variables. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">val</td><td>The number of events variables. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a72a738ead69d160b96d7fb7013331758"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void MergNodeIdentification::setSuportedNodeVariables </td>
+          <td>(</td>
+          <td class="paramtype">byte&#160;</td>
+          <td class="paramname"><em>val</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set the number of supported node variables. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">val</td><td>The number of events variables. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following files:<ul>
 <li><a class="el" href="_merg_node_identification_8h_source.html">MergNodeIdentification.h</a></li>
 <li>MergNodeIdentification.cpp</li>
 </ul>
@@ -201,7 +1069,7 @@ byte&#160;</td><td class="memItemRight" valign="bottom"><b>getParameter</b> (byt
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_merg_node_identification.html">MergNodeIdentification</a></li>
-    <li class="footer">Generated on Mon Nov 10 2014 16:29:20 for mergCanBus by
+    <li class="footer">Generated on Thu Jul 9 2015 15:17:25 for mergCanBus by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

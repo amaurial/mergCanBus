@@ -1,0 +1,31 @@
+warning: source ../CANMessage.h is not a readable file or directory... skipping.
+warning: source ../CANMessage.cpp is not a readable file or directory... skipping.
+/home/user/amauriala/Projects/mergCanBus/MergNodeIdentification.cpp:3: warning: documented symbol `MergNodeIdentification::MergNodeIdentification' was not declared or defined.
+/home/user/amauriala/Projects/mergCanBus/MergNodeIdentification.cpp:10: warning: documented symbol `MergNodeIdentification::~MergNodeIdentification' was not declared or defined.
+/home/user/amauriala/Projects/mergCanBus/MergNodeIdentification.cpp:14: warning: documented symbol `void MergNodeIdentification::setNodeName' was not declared or defined.
+/home/user/amauriala/Projects/mergCanBus/MergNodeIdentification.cpp:30: warning: documented symbol `const char * MergNodeIdentification::getNodeName' was not declared or defined.
+/home/user/amauriala/Projects/mergCanBus/MergNodeIdentification.cpp:35: warning: no matching class member found for 
+  byte MergNodeIdentification::getParameter(byte idx)
+
+/home/user/amauriala/Projects/mergCanBus/MergNodeIdentification.cpp:66: warning: documented symbol `void MergNodeIdentification::setProducerNode' was not declared or defined.
+/home/user/amauriala/Projects/mergCanBus/MergNodeIdentification.cpp:73: warning: documented symbol `bool MergNodeIdentification::isProducerNode' was not declared or defined.
+/home/user/amauriala/Projects/mergCanBus/MergNodeIdentification.cpp:82: warning: documented symbol `void MergNodeIdentification::setConsumerNode' was not declared or defined.
+/home/user/amauriala/Projects/mergCanBus/MergNodeIdentification.cpp:89: warning: documented symbol `bool MergNodeIdentification::isConsumerNode' was not declared or defined.
+/home/user/amauriala/Projects/mergCanBus/MergNodeIdentification.cpp:97: warning: no matching class member found for 
+  void MergNodeIdentification::setSlimMode()
+
+/home/user/amauriala/Projects/mergCanBus/MergNodeIdentification.cpp:100: warning: no matching class member found for 
+  void MergNodeIdentification::setFlimMode()
+
+/home/user/amauriala/Projects/mergCanBus/MergNodeIdentification.cpp:103: warning: documented symbol `bool MergNodeIdentification::isSlimMode' was not declared or defined.
+/home/user/amauriala/Projects/mergCanBus/MergNodeIdentification.cpp:111: warning: documented symbol `bool MergNodeIdentification::isFlimMode' was not declared or defined.
+/home/user/amauriala/Projects/mergCanBus/MergNodeIdentification.cpp:119: warning: documented symbol `void MergNodeIdentification::setSuportBootLoading' was not declared or defined.
+/home/user/amauriala/Projects/mergCanBus/MergNodeIdentification.cpp:127: warning: documented symbol `bool MergNodeIdentification::suportBootLoading' was not declared or defined.
+/home/user/amauriala/Projects/mergCanBus/MergCBUS.h:131: warning: argument 'new' of command @param is not found in the argument list of MergCBUS::setStdNN(unsigned int val)
+/home/user/amauriala/Projects/mergCanBus/MergCBUS.h:131: warning: The following parameters of MergCBUS::setStdNN(unsigned int val) are not documented:
+  parameter 'val'
+/home/user/amauriala/Projects/mergCanBus/MergMemoryManagement.cpp:445: warning: The following parameters of MergMemoryManagement::setDeviceNumber(unsigned int val, byte port) are not documented:
+  parameter 'port'
+/home/user/amauriala/Projects/mergCanBus/MergMemoryManagement.cpp:489: warning: argument 'mode' of command @param is not found in the argument list of MergMemoryManagement::setNodeFlag(byte val)
+/home/user/amauriala/Projects/mergCanBus/MergMemoryManagement.cpp:489: warning: The following parameters of MergMemoryManagement::setNodeFlag(byte val) are not documented:
+  parameter 'val'

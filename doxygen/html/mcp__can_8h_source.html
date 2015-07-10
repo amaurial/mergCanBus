@@ -89,7 +89,7 @@ $(document).ready(function(){initNavTree('mcp__can_8h_source.html','');});
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Typedefs</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Typedefs</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -130,111 +130,112 @@ $(document).ready(function(){initNavTree('mcp__can_8h_source.html','');});
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="preprocessor"></span></div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="preprocessor">#include &quot;mcp_can_dfs.h&quot;</span></div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="preprocessor">#define MAX_CHAR_IN_MESSAGE 8</span></div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="preprocessor"></span></div>
-<div class="line"><a name="l00029"></a><span class="lineno"><a class="line" href="class_m_c_p___c_a_n.html">   29</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_m_c_p___c_a_n.html">MCP_CAN</a></div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;{</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    INT8U   m_nExtFlg;                                                  <span class="comment">/* identifier xxxID             */</span></div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;                                                                        <span class="comment">/* 1 if either extended (the 29 LSB) */</span></div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;                                                                        <span class="comment">/* or standard (the 11 LSB)     */</span></div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    INT32U  m_nID;                                                      <span class="comment">/* can id                       */</span></div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    INT8U   m_nDlc;                                                     <span class="comment">/* data length:                 */</span></div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    INT8U   m_nDta[MAX_CHAR_IN_MESSAGE];                                <span class="comment">/* data                         */</span></div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    INT8U   m_nRtr;                                                     <span class="comment">/* rtr                          */</span></div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    INT8U   m_nfilhit;</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    INT8U   SPICS;</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    INT8U canHeader[4];</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    INT8U _prio;<span class="comment">//priority</span></div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    INT8U _minprio;<span class="comment">//min priority                                                                                                                                                                                                       /*can header*/</span></div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="comment">/*</span></div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="comment">*  mcp2515 driver function</span></div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="comment">*/</span></div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;   <span class="comment">// private:</span></div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    <span class="keywordtype">void</span> mcp2515_reset(<span class="keywordtype">void</span>);                                           <span class="comment">/* reset mcp2515                */</span></div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    INT8U mcp2515_readRegister(<span class="keyword">const</span> INT8U address);                    <span class="comment">/* read mcp2515&#39;s register      */</span></div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <span class="keywordtype">void</span> mcp2515_readRegisterS(<span class="keyword">const</span> INT8U address,</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;                               INT8U values[],</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;                               <span class="keyword">const</span> INT8U n);</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <span class="keywordtype">void</span> mcp2515_setRegister(<span class="keyword">const</span> INT8U address,                       <span class="comment">/* set mcp2515&#39;s register       */</span></div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;                             <span class="keyword">const</span> INT8U value);</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    <span class="keywordtype">void</span> mcp2515_setRegisterS(<span class="keyword">const</span> INT8U address,                      <span class="comment">/* set mcp2515&#39;s registers      */</span></div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;                              <span class="keyword">const</span> INT8U values[],</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;                              <span class="keyword">const</span> INT8U n);</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    <span class="keywordtype">void</span> mcp2515_initCANBuffers(<span class="keywordtype">void</span>);</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <span class="keywordtype">void</span> mcp2515_modifyRegister(<span class="keyword">const</span> INT8U address,                    <span class="comment">/* set bit of one register      */</span></div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;                                <span class="keyword">const</span> INT8U mask,</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;                                <span class="keyword">const</span> INT8U data);</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    INT8U mcp2515_readStatus(<span class="keywordtype">void</span>);                                     <span class="comment">/* read mcp2515&#39;s Status        */</span></div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    INT8U mcp2515_setCANCTRL_Mode(<span class="keyword">const</span> INT8U newmode);                 <span class="comment">/* set mode                     */</span></div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    INT8U mcp2515_configRate(<span class="keyword">const</span> INT8U canSpeed);                     <span class="comment">/* set boadrate                 */</span></div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    INT8U mcp2515_init(<span class="keyword">const</span> INT8U canSpeed);                           <span class="comment">/* mcp2515init                  */</span></div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    <span class="keywordtype">void</span> mcp2515_write_id( <span class="keyword">const</span> INT8U mcp_addr,                        <span class="comment">/* write can id                 */</span></div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;                               <span class="keyword">const</span> INT8U ext,</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;                               <span class="keyword">const</span> INT32U <span class="keywordtype">id</span> );</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    <span class="keywordtype">void</span> mcp2515_read_id( <span class="keyword">const</span> INT8U mcp_addr,                         <span class="comment">/* read can id                  */</span></div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;                                    INT8U* ext,</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;                                    INT32U* <span class="keywordtype">id</span> );</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    <span class="keywordtype">void</span> mcp2515_write_canMsg( <span class="keyword">const</span> INT8U buffer_sidh_addr );          <span class="comment">/* write can msg                */</span></div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    <span class="keywordtype">void</span> mcp2515_read_canMsg( <span class="keyword">const</span> INT8U buffer_sidh_addr);            <span class="comment">/* read can msg                 */</span></div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    <span class="keywordtype">void</span> mcp2515_start_transmit(<span class="keyword">const</span> INT8U mcp_addr);                  <span class="comment">/* start transmit               */</span></div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    INT8U mcp2515_getNextFreeTXBuf(INT8U *txbuf_n);                     <span class="comment">/* get Next free txbuf          */</span></div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    <span class="keywordtype">void</span> setRTMBit(<span class="keywordtype">void</span>);                                                                                                                                                                                               <span class="comment">/*set the bit in case need to send a Request Transfer Message   */</span></div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    <span class="keywordtype">void</span> unsetRTMBit(<span class="keywordtype">void</span>);                                                                                                                                                                                             <span class="comment">/*set the bit in case need to send a Request Transfer Message   */</span></div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;<span class="comment">/*</span></div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;<span class="comment">*  can operator function</span></div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;<span class="comment">*/</span></div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    INT8U setMsg(INT32U <span class="keywordtype">id</span>, INT8U ext, INT8U len, INT8U *pData);    <span class="comment">/* set message                  */</span></div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    INT8U clearMsg();                                               <span class="comment">/* clear all message to zero    */</span></div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    INT8U readMsg();                                                <span class="comment">/* read message                 */</span></div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    INT8U sendMsg();                                                <span class="comment">/* send message                 */</span></div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    <a class="code" href="class_m_c_p___c_a_n.html">MCP_CAN</a>(INT8U _CS);</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    <a class="code" href="class_m_c_p___c_a_n.html">MCP_CAN</a>();</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;    <span class="keywordtype">void</span> set_cs(INT8U _CS);</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    INT8U begin(INT8U speedset);                              <span class="comment">/* init can                     */</span></div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;    INT8U init_Mask(INT8U num, INT8U ext, INT32U ulData);           <span class="comment">/* init Masks                   */</span></div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    INT8U init_Filt(INT8U num, INT8U ext, INT32U ulData);           <span class="comment">/* init filters                 */</span></div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;    INT8U sendMsgBuf(INT32U <span class="keywordtype">id</span>, INT8U ext, INT8U len, INT8U *buf);  <span class="comment">/* send buf                     */</span></div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;    INT8U readMsgBuf(INT8U *len, INT8U *buf);                       <span class="comment">/* read buf                     */</span></div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    INT8U checkReceive(<span class="keywordtype">void</span>);                                       <span class="comment">/* if something received        */</span></div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    INT8U checkError(<span class="keywordtype">void</span>);                                         <span class="comment">/* if something error           */</span></div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    INT32U getCanId(<span class="keywordtype">void</span>);                                          <span class="comment">/* get can id when receive      */</span></div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;    INT8U sendRTMMessage(INT32U <span class="keywordtype">id</span>);                                                                                                                            <span class="comment">/* send the request transfer message    */</span></div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    INT8U isRTMMessage(<span class="keywordtype">void</span>);                                                                                                                                                     <span class="comment">/* check if received message is a request transfer message    */</span></div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;    <span class="keywordtype">void</span> getCanHeader(INT8U *buf);</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;    <span class="keywordtype">void</span> setPriority(INT8U prio,INT8U minprio);                                   <span class="comment">//set the first 2 bits of can header</span></div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;                                    <span class="comment">//set the bits 8 and 7 of header</span></div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="preprocessor"></span><span class="preprocessor">#define HEADER_SIZE 4</span></div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="preprocessor"></span></div>
+<div class="line"><a name="l00030"></a><span class="lineno"><a class="line" href="class_m_c_p___c_a_n.html">   30</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_m_c_p___c_a_n.html">MCP_CAN</a></div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;{</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    INT8U   m_nExtFlg;                                                  <span class="comment">/* identifier xxxID             */</span></div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;                                                                        <span class="comment">/* 1 if either extended (the 29 LSB) */</span></div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;                                                                        <span class="comment">/* or standard (the 11 LSB)     */</span></div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    INT32U  m_nID;                                                      <span class="comment">/* can id                       */</span></div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    INT8U   m_nDlc;                                                     <span class="comment">/* data length:                 */</span></div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    INT8U   m_nDta[MAX_CHAR_IN_MESSAGE];                                <span class="comment">/* data                         */</span></div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    INT8U   m_nRtr;                                                     <span class="comment">/* rtr                          */</span></div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    INT8U   m_nfilhit;</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    INT8U   SPICS;</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    INT8U canHeader[HEADER_SIZE];</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    INT8U _prio;<span class="comment">//priority</span></div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    INT8U _minprio;<span class="comment">//min priority                                                                                                                                                                                                       /*can header*/</span></div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="comment">/*</span></div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="comment">*  mcp2515 driver function</span></div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="comment">*/</span></div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;   <span class="comment">// private:</span></div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    <span class="keywordtype">void</span> mcp2515_reset(<span class="keywordtype">void</span>);                                           <span class="comment">/* reset mcp2515                */</span></div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    INT8U mcp2515_readRegister(<span class="keyword">const</span> INT8U address);                    <span class="comment">/* read mcp2515&#39;s register      */</span></div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    <span class="keywordtype">void</span> mcp2515_readRegisterS(<span class="keyword">const</span> INT8U address,</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;                               INT8U values[],</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;                               <span class="keyword">const</span> INT8U n);</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    <span class="keywordtype">void</span> mcp2515_setRegister(<span class="keyword">const</span> INT8U address,                       <span class="comment">/* set mcp2515&#39;s register       */</span></div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;                             <span class="keyword">const</span> INT8U value);</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    <span class="keywordtype">void</span> mcp2515_setRegisterS(<span class="keyword">const</span> INT8U address,                      <span class="comment">/* set mcp2515&#39;s registers      */</span></div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;                              <span class="keyword">const</span> INT8U values[],</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;                              <span class="keyword">const</span> INT8U n);</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <span class="keywordtype">void</span> mcp2515_initCANBuffers(<span class="keywordtype">void</span>);</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <span class="keywordtype">void</span> mcp2515_modifyRegister(<span class="keyword">const</span> INT8U address,                    <span class="comment">/* set bit of one register      */</span></div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;                                <span class="keyword">const</span> INT8U mask,</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;                                <span class="keyword">const</span> INT8U data);</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    INT8U mcp2515_readStatus(<span class="keywordtype">void</span>);                                     <span class="comment">/* read mcp2515&#39;s Status        */</span></div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    INT8U mcp2515_setCANCTRL_Mode(<span class="keyword">const</span> INT8U newmode);                 <span class="comment">/* set mode                     */</span></div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    INT8U mcp2515_configRate(<span class="keyword">const</span> INT8U canSpeed);                     <span class="comment">/* set boadrate                 */</span></div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    INT8U mcp2515_init(<span class="keyword">const</span> INT8U canSpeed);                           <span class="comment">/* mcp2515init                  */</span></div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    <span class="keywordtype">void</span> mcp2515_write_id( <span class="keyword">const</span> INT8U mcp_addr,                        <span class="comment">/* write can id                 */</span></div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;                               <span class="keyword">const</span> INT8U ext,</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;                               <span class="keyword">const</span> INT32U <span class="keywordtype">id</span> );</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    <span class="keywordtype">void</span> mcp2515_read_id( <span class="keyword">const</span> INT8U mcp_addr,                         <span class="comment">/* read can id                  */</span></div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;                                    INT8U* ext,</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;                                    INT32U* <span class="keywordtype">id</span> );</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    <span class="keywordtype">void</span> mcp2515_write_canMsg( <span class="keyword">const</span> INT8U buffer_sidh_addr );          <span class="comment">/* write can msg                */</span></div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    <span class="keywordtype">void</span> mcp2515_read_canMsg( <span class="keyword">const</span> INT8U buffer_sidh_addr);            <span class="comment">/* read can msg                 */</span></div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    <span class="keywordtype">void</span> mcp2515_start_transmit(<span class="keyword">const</span> INT8U mcp_addr);                  <span class="comment">/* start transmit               */</span></div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    INT8U mcp2515_getNextFreeTXBuf(INT8U *txbuf_n);                     <span class="comment">/* get Next free txbuf          */</span></div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    <span class="keywordtype">void</span> setRTMBit();                                                                                                                                                                                           <span class="comment">/*set the bit in case need to send a Request Transfer Message   */</span></div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    <span class="keywordtype">void</span> unsetRTMBit();                                                                                                                                                                                         <span class="comment">/*set the bit in case need to send a Request Transfer Message   */</span></div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;<span class="comment">/*</span></div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;<span class="comment">*  can operator function</span></div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;<span class="comment">*/</span></div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    INT8U setMsg(INT32U <span class="keywordtype">id</span>, INT8U ext, INT8U len, INT8U *pData);    <span class="comment">/* set message                  */</span></div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    INT8U clearMsg();                                               <span class="comment">/* clear all message to zero    */</span></div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    INT8U readMsg(INT8U buf_num);                                                <span class="comment">/* read message                 */</span></div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    INT8U sendMsg();                                                <span class="comment">/* send message                 */</span></div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    <a class="code" href="class_m_c_p___c_a_n.html">MCP_CAN</a>(INT8U _CS);</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;    <a class="code" href="class_m_c_p___c_a_n.html">MCP_CAN</a>();</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    <span class="keywordtype">void</span> set_cs(INT8U _CS);</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;    INT8U begin(INT8U speedset);                              <span class="comment">/* init can                     */</span></div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    INT8U init_Mask(INT8U num, INT8U ext, INT32U ulData);           <span class="comment">/* init Masks                   */</span></div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;    INT8U init_Filt(INT8U num, INT8U ext, INT32U ulData);           <span class="comment">/* init filters                 */</span></div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;    INT8U sendMsgBuf(INT32U <span class="keywordtype">id</span>, INT8U ext, INT8U len, INT8U *buf);  <span class="comment">/* send buf                     */</span></div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    INT8U readMsgBuf(INT8U *len, INT8U *buf,INT8U buf_num);                       <span class="comment">/* read buf                     */</span></div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    INT8U checkReceive();                                       <span class="comment">/* if something received        */</span></div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    INT8U checkError();                                         <span class="comment">/* if something error           */</span></div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;    INT32U getCanId();                                          <span class="comment">/* get can id when receive      */</span></div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    INT8U sendRTMMessage(INT32U <span class="keywordtype">id</span>);                                                                                                                            <span class="comment">/* send the request transfer message    */</span></div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;    INT8U isRTMMessage();                                                                                                                                                         <span class="comment">/* check if received message is a request transfer message    */</span></div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;    <span class="keywordtype">void</span> getCanHeader(INT8U *buf);</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;    <span class="keywordtype">void</span> setPriority(INT8U prio,INT8U minprio);                                   <span class="comment">//set the first 2 bits of can header</span></div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;                                    <span class="comment">//set the bits 8 and 7 of header</span></div>
 <div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;};</div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;</div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;<span class="preprocessor"></span><span class="comment">/*********************************************************************************************************</span></div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;<span class="comment">  END FILE</span></div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;<span class="comment">*********************************************************************************************************/</span></div>
-<div class="ttc" id="class_m_c_p___c_a_n_html"><div class="ttname"><a href="class_m_c_p___c_a_n.html">MCP_CAN</a></div><div class="ttdef"><b>Definition:</b> mcp_can.h:29</div></div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;};</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;<span class="preprocessor"></span><span class="comment">/*********************************************************************************************************</span></div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;<span class="comment">  END FILE</span></div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;<span class="comment">*********************************************************************************************************/</span></div>
+<div class="ttc" id="class_m_c_p___c_a_n_html"><div class="ttname"><a href="class_m_c_p___c_a_n.html">MCP_CAN</a></div><div class="ttdef"><b>Definition:</b> mcp_can.h:30</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><b>mcp_can.h</b></li>
-    <li class="footer">Generated on Mon Nov 10 2014 16:29:20 for mergCanBus by
+    <li class="footer">Generated on Thu Jul 9 2015 15:17:25 for mergCanBus by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>
