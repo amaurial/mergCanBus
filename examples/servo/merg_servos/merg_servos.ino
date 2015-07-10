@@ -2,8 +2,8 @@
 This example implements a servo controler.
 It drives 16 servos. Can be more in arduino Mega, but it just an example.
 Each servo has the parameter start,end.
-Start and end are integers in degrees from 0 to 180. and the velocity from 1 to 255: 
-Each event can control the 16 servos, therefore each event has 6 variables. 16 bits to define which servo is activated and 16 bits to define if the 
+Start and end are integers in degrees from 0 to 180. and the velocity from 1 to 255:
+Each event can control the 16 servos, therefore each event has 6 variables. 16 bits to define which servo is activated and 16 bits to define if the
 servo will togle upon an event. invert the behaviour
 Usim FLIM mode teach on/off events.
 It implements all automatic configuration, including learning events.
@@ -19,6 +19,7 @@ To clear the memory, press pushbutton1 while reseting the arduino
 
 #include <Arduino.h>
 #include <SPI.h> //required by the library
+#include <TimerOne.h>
 #include <MergCBUS.h>
 #include <Message.h>
 #include <EEPROM.h> //required by the library
@@ -38,8 +39,8 @@ To clear the memory, press pushbutton1 while reseting the arduino
 #define GREEN_LED 27                  //merg green led port
 #define YELLOW_LED 26                 //merg yellow led port
 #define PUSH_BUTTON 25                //std merg push button
-#define PUSH_BUTTON1 28               //debug push button 
-#define NODE_VARS 1                  //number o node variables.Servo speed                    
+#define PUSH_BUTTON1 28               //debug push button
+#define NODE_VARS 1                  //number o node variables.Servo speed
 #define NODE_EVENTS 30              //max number of events
 #define EVENTS_VARS VAR_PER_SERVO   //number of variables per event
 #define DEVICE_NUMBERS NUM_SERVOS   //number of device numbers. each servo can be a device
@@ -59,10 +60,14 @@ byte servopins[]={2,3,4,5,6,7,8,11,12,13,14,16,17,18,19,20};//,19,20,21,22,23,24
 byte active_servo[2];
 byte togle_servo[2];
 
-
+//timer function to read the can messages
+void readCanMessages(){
+  //read the can message and put then in a circular buffer
+  cbus.cbusRead();
+}
 
 void setup(){
-  
+
   pinMode(PUSH_BUTTON1,INPUT_PULLUP);//debug push button
   Serial.begin(115200);
 
@@ -87,9 +92,11 @@ void setup(){
   cbus.setDebug(false);//print some messages on the serial port
   cbus.setUserHandlerFunction(&myUserFunc);//function that implements the node logic
   cbus.initCanBus(53,CAN_125KBPS,10,200);  //initiate the transport layer. pin=53, rate=125Kbps,10 tries,200 millis between each try
+  cbus.setTimerInterval(10000);
   //create the servos object
   setUpServos();
-  
+  Timer1.initialize(10000);//microseconds
+  Timer1.attachInterrupt(readCanMessages);
   Serial.println("Setup finished");
 }
 
@@ -105,64 +112,64 @@ void loop (){
 //user defined function. contains the module logic.called every time run() is called.
 void myUserFunc(Message *msg,MergCBUS *mcbus){
   //getting standard on/off events
-  
+
   boolean onEvent;
-  unsigned int converted_speed;  
+  unsigned int converted_speed;
   int varidx=0;
-  
+
   byte servo_start,servo_end;
   if (mcbus->eventMatch()){
      onEvent=mcbus->isAccOn();
      getServosArray(msg,mcbus);
-     Serial.println("event match");     
+     Serial.println("event match");
      servo_start=mcbus->getEventVar(msg,START_ANGLE_VAR);
      servo_end=mcbus->getEventVar(msg,END_ANGLE_VAR);
      Serial.println(servo_start);
      Serial.println(servo_end);
       //get the events var and control the servos
-      for (int i=0;i<NUM_SERVOS;i++){        
-        
-        if (isServoActive(i)){          
+      for (int i=0;i<NUM_SERVOS;i++){
+
+        if (isServoActive(i)){
           moveServo(onEvent,i,servo_start,servo_end);
-        }        
+        }
       }
   }
   else{
     //feedback messages
 
-    
-  } 
+
+  }
 }
 
 void moveServo(boolean event,byte servoidx,byte servo_start,byte servo_end){
     if (event){
-      if (isServoToTogle(servoidx)){              
-        servos[servoidx].write(servo_start,SPEED);       
-      }      
+      if (isServoToTogle(servoidx)){
+        servos[servoidx].write(servo_start,SPEED);
+      }
       else {
         Serial.println("moving servo");
         servos[servoidx].write(servo_end,SPEED);
-      }   
+      }
     }
     else{
-      if (isServoToTogle(servoidx)){              
-        servos[servoidx].write(servo_end,SPEED);       
-      }  
+      if (isServoToTogle(servoidx)){
+        servos[servoidx].write(servo_end,SPEED);
+      }
       else {
         servos[servoidx].write(servo_start,SPEED);
-      }              
+      }
     }
 }
 
 //create the objects for each servo
-void setUpServos(){  
+void setUpServos(){
   for (int i=0;i<NUM_SERVOS;i++){
-    servos[i].attach(servopins[i]); 
-    servos[i].write(0,127); 
+    servos[i].attach(servopins[i]);
+    servos[i].write(0,127);
   }
 }
 //is the servo to be activated or not
-boolean isServoActive(int index){  
+boolean isServoActive(int index){
   return checkBit(active_servo,index);
 }
 //is the servo by index to togle or not
@@ -178,21 +185,21 @@ boolean checkBit(byte *array,int index){
     i=index;
   }
   else{
-    a=array[1];    
+    a=array[1];
     i=index-8;
   }
-  
+
   if (bitRead(a,i)==1){
     return true;
   }
   else{
      return false;
-  }  
+  }
 }
 //get the events vars for activate servos and to togle the servos:invert behaviour on on/off events
 void getServosArray(Message *msg,MergCBUS *mcbus){
-  active_servo[0]=mcbus->getEventVar(msg,0);  
-  active_servo[1]=mcbus->getEventVar(msg,1);  
+  active_servo[0]=mcbus->getEventVar(msg,0);
+  active_servo[1]=mcbus->getEventVar(msg,1);
   togle_servo[0]=mcbus->getEventVar(msg,2);
   togle_servo[1]=mcbus->getEventVar(msg,3);
 }

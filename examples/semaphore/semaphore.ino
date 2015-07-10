@@ -15,6 +15,7 @@ See MemoryManagement.h for memory configuration
 
 #include <Arduino.h>
 #include <SPI.h>
+#include <TimerOne.h>
 #include <MergCBUS.h>
 #include <Message.h>
 #include <EEPROM.h>
@@ -33,6 +34,12 @@ MergCBUS cbus=MergCBUS(5,20,1,0);
 byte lighton;//control the state
 byte nextlighton;//control the state
 unsigned long starttime;
+
+//timer function to read the can messages
+void readCanMessages(){
+  //read the can message and put then in a circular buffer
+  cbus.cbusRead();
+}
 
 void setup(){
 
@@ -62,6 +69,10 @@ void setup(){
   cbus.setDebug(false);//print some messages on the serial port
   cbus.setUserHandlerFunction(&myUserFunc);//function that implements the node logic
   cbus.initCanBus(53,CAN_125KBPS,10,200);  //initiate the transport layer
+  cbus.setTimerInterval(10000);
+
+  Timer1.initialize(10000);//microseconds
+  Timer1.attachInterrupt(readCanMessages);
 
   Serial.println("Setup finished");
 }
