@@ -502,7 +502,7 @@ void MergMemoryManagement::dumpMemory(){
 /**\brief
 * Find the event variable position in memory
 */
-
+#ifdef DEBUGDEF
     read();
     byte a;
     Serial.println("MEMORY DUMP");
@@ -550,7 +550,7 @@ void MergMemoryManagement::dumpMemory(){
         }
         Serial.println();
     }
-
+#endif // DEBUGDEF
 }
 unsigned int MergMemoryManagement::resolveEvVarArrayPos(byte evidx,byte varidx){
 

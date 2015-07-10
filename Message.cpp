@@ -156,15 +156,16 @@ unsigned int Message::getNodeNumber(){
     //node number is always at the position 1 and 2
     //byte* data=_canMessage->getData();
     unsigned int r=0;
-    if (debug){
+    #ifdef DEBUGDEF
         Serial.println("Message::getNodeNumber - Getting NN");
         Serial.print("OPC:");
         Serial.println(data[0],HEX);
-    }
+    #endif // DEBUGDEF
+
     if (hasThisData(data[0],NODE_NUMBER)){
-            if (debug){
+            #ifdef DEBUGDEF
                 Serial.println("NN OK");
-            }
+            #endif // DEBUGDEF
             r=data[1];
             r=r<<8;
             r=r|data[2];

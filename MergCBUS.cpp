@@ -67,10 +67,14 @@ void MergCBUS::loadMemory(){
     nodeId.setFlags(memory.getNodeFlag());
     if (nodeId.isSlimMode()){
         node_mode=MTYP_SLIM;
-        //Serial.println("SLIM mode");
+        #ifdef DEBUGDEF
+            Serial.println("SLIM mode");
+        #endif // DEBUGDEF
     }else{
         node_mode=MTYP_FLIM;
-        //Serial.println("FLIM mode");
+        #ifdef DEBUGDEF
+            Serial.println("FLIM mode");
+        #endif // DEBUGDEF
     }
 }
 
@@ -113,19 +117,18 @@ bool MergCBUS::initCanBus(unsigned int port,unsigned int rate,unsigned int retri
     do {
         if (CAN_OK==Can.begin(rate)){
 
-            if (DEBUG){
+            #ifdef DEBUGDEF
                 Serial.println("Can rate set");
-            }
-
+            #endif // DEBUGDEF
             return true;
         }
         r++;
         delay(retryIntervalMilliseconds);
     }while (r<retries);
 
-    if (DEBUG){
-        Serial.println("Failed to set Can rate");
-    }
+    #ifdef DEBUGDEF
+                Serial.println("Failed to set Can rate");
+    #endif // DEBUGDEF
 
    return false;
 }
@@ -162,13 +165,15 @@ unsigned int MergCBUS::run(){
 
     if (state_mode==SELF_ENUMERATION){
         unsigned long tdelay=millis()-startTime;
-        if (DEBUG){
-            Serial.println("Processing self ennumeration.");
-        }
+        #ifdef DEBUGDEF
+                Serial.println("Processing self ennumeration.");
+        #endif // DEBUGDEF
+
         if (tdelay>SELF_ENUM_TIME){
-            if (DEBUG){
+            #ifdef DEBUGDEF
                 Serial.println("Finishing self ennumeration.");
-            }
+            #endif // DEBUGDEF
+
             finishSelfEnumeration();
         }
     }
@@ -207,15 +212,17 @@ unsigned int MergCBUS::mainProcess(){
         if (message.getRTR()){
         //if we are a device with can id
         //we need to answer this message
-        if (DEBUG){
-                Serial.print("RTR message received.");
-            }
+        #ifdef DEBUGDEF
+            Serial.print("RTR message received.");
+        #endif // DEBUGDEF
+
         if (nodeId.getNodeNumber()!=0){
             //create the response message with no data
-            if (DEBUG){
+            #ifdef DEBUGDEF
                 Serial.print("RTR message received. Sending can id: ");
                 Serial.println(nodeId.getCanID(),HEX);
-            }
+            #endif // DEBUGDEF
+
             Can.sendMsgBuf(nodeId.getCanID(),0,0,mergCanData);
             return OK;
         }
@@ -225,9 +232,10 @@ unsigned int MergCBUS::mainProcess(){
     if (message.getOpc()==OPC_ENUM){
 
         if (message.getNodeNumber()==nodeId.getNodeNumber()){
-            if (DEBUG){
-                    Serial.println("Starting message based self ennumeration.");
-                }
+            #ifdef DEBUGDEF
+                Serial.println("Starting message based self ennumeration.");
+            #endif // DEBUGDEF
+
             doSelfEnnumeration(true);
         }
         return OK;
@@ -241,9 +249,10 @@ unsigned int MergCBUS::mainProcess(){
         Serial.print("other msg size:");
         Serial.println(message.getCanMessageSize());
         if (message.getCanMessageSize()==0){
-            if (DEBUG){
+            #ifdef DEBUGDEF
                 Serial.println("Self ennumeration: saving others can id.");
-            }
+            #endif // DEBUGDEF
+
 
             if (bufferIndex<SELF_ENUM_BUFFER_SIZE){
                 buffer[bufferIndex]=message.getCanId();
@@ -259,15 +268,15 @@ unsigned int MergCBUS::mainProcess(){
     }
 
     //treat each message individually to interpret the code
+        #ifdef DEBUGDEF
+            Serial.print("Message type:");
+            Serial.print(message.getType());
+            Serial.print ("\t OPC:");
+            Serial.print(message.getOpc(),HEX);
+            Serial.print("\t STATE:");
+            Serial.println(state_mode);
+        #endif // DEBUGDEF
 
-    if (DEBUG){
-        Serial.print("Message type:");
-        Serial.print(message.getType());
-        Serial.print ("\t OPC:");
-        Serial.print(message.getOpc(),HEX);
-        Serial.print("\t STATE:");
-        Serial.println(state_mode);
-    }
 
     switch (message.getType()){
         case (DCC):
@@ -312,11 +321,17 @@ bool MergCBUS::readCanBus(byte buf_num){
         message.setCanMessageSize(len);
         message.setDataBuffer(&buffer[bufIdxdata]);
         if (Can.isRTMMessage()==0){
-            //Serial.println("readCanBus - unsetRTM");
+            #ifdef DEBUGDEF
+                Serial.println("readCanBus - unsetRTM");;
+            #endif // DEBUGDEF
+
             message.unsetRTR();
         }
         else{
-            //Serial.println("readCanBus - setRTM");
+            #ifdef DEBUGDEF
+                Serial.println("readCanBus - setRTM");
+            #endif // DEBUGDEF
+
             message.setRTR();
         }
         message.setHeaderBuffer(&buffer[bufIdxhead]);
@@ -342,11 +357,17 @@ bool MergCBUS::readCanBus(){
         message.setHeaderBuffer(&buffer[bufidx+2]);
         message.setDataBuffer(&buffer[bufidx+6]);
         if (buffer[bufidx+1]==0){
-            //Serial.println("readCanBus - unsetRTM");
+            #ifdef DEBUGDEF
+                Serial.println("readCanBus - unsetRTM");
+            #endif // DEBUGDEF
+
             message.unsetRTR();
         }
         else{
-            //Serial.println("readCanBus - setRTM");
+            #ifdef DEBUGDEF
+                Serial.println("readCanBus - setRTM");
+            #endif // DEBUGDEF
+
             message.setRTR();
         }
 
@@ -385,10 +406,11 @@ void MergCBUS::doSetup(){
 
     state_mode=SETUP;
     prepareMessage(OPC_RQNN);
-    if (DEBUG){
+    #ifdef DEBUGDEF
         Serial.println("Doing setup");
-        printSentMessage();
-    }
+        printSentMessage();;
+    #endif // DEBUGDEF
+
     sendCanMessage();
 }
 
@@ -429,10 +451,9 @@ void MergCBUS::finishSelfEnumeration(){
         cid++;
     }
     if (cid>99){
-
-         if (DEBUG){
-                Serial.println("Self ennumeration: no can id available.");
-            }
+        #ifdef DEBUGDEF
+            Serial.println("Self ennumeration: no can id available.");
+        #endif // DEBUGDEF
 
         //send and error message
         if (softwareEnum){
@@ -440,11 +461,11 @@ void MergCBUS::finishSelfEnumeration(){
         }
         return;
     }
+        #ifdef DEBUGDEF
+            Serial.print("Self ennumeration: new can id.");
+            Serial.println(cid);
+        #endif // DEBUGDEF
 
-    if (DEBUG){
-        Serial.print("Self ennumeration: new can id.");
-        Serial.println(cid);
-    }
     memory.setCanId(cid);
     nodeId.setCanID(cid);
     //TODO: check if it is from software
@@ -471,22 +492,25 @@ byte MergCBUS::handleConfigMessages(){
 
     //config messages should be directed to node number or device id
     if (message.getNodeNumber()!=nodeId.getNodeNumber()) {
-        if (DEBUG){
+        #ifdef DEBUGDEF
             Serial.println("handleConfigMessages- NN different from message NN");
-        }
+        #endif // DEBUGDEF
+
         if (state_mode==NORMAL || state_mode==SELF_ENUMERATION || state_mode==BOOT){
-                if (DEBUG){
+                #ifdef DEBUGDEF
                     Serial.println("handleConfigMessages- not in setup mode. leaving");
-                }
+                #endif // DEBUGDEF
+
                 return OK;
         }
     }
-    if (DEBUG){
-        Serial.println("handleConfigMessages- Processing config message");
+    #ifdef DEBUGDEF
+         Serial.println("handleConfigMessages- Processing config message");
         Serial.print("handleConfigMessages- state:");
         Serial.println(state_mode);
         printReceivedMessage();
-    }
+    #endif // DEBUGDEF
+
 
     nn=nodeId.getNodeNumber();
 
@@ -501,11 +525,11 @@ byte MergCBUS::handleConfigMessages(){
 
         if (nn>0){
             prepareMessage(OPC_PNN);
-
-            if (DEBUG){
+            #ifdef DEBUGDEF
                 Serial.println("RECEIVED OPC_QNN sending OPC_PNN");
                 printSentMessage();
-            }
+            #endif // DEBUGDEF
+
             return sendCanMessage();
         }
         break;
@@ -525,11 +549,10 @@ byte MergCBUS::handleConfigMessages(){
         if (state_mode==SETUP){
             clearMsgToSend();
             prepareMessage(OPC_PARAMS);
-
-            if (DEBUG){
+            #ifdef DEBUGDEF
                 Serial.println("RECEIVED OPC_RQNP sending OPC_PARAMS");
                 printSentMessage();
-            }
+            #endif // DEBUGDEF
 
             return sendCanMessage();
         }
@@ -538,17 +561,17 @@ byte MergCBUS::handleConfigMessages(){
         //Answer with OPC_NAME
         if (state_mode==SETUP){
             prepareMessage(OPC_NAME);
-
-            if (DEBUG){
+            #ifdef DEBUGDEF
                 Serial.println("RECEIVED OPC_RQNN sending OPC_NAME");
                 printSentMessage();
-            }
+            #endif // DEBUGDEF
+
 
             return sendCanMessage();
         }else{
-            if (DEBUG){
+            #ifdef DEBUGDEF
                 Serial.println("RECEIVED OPC_RQNN and not in setup mode.");
-            }
+            #endif // DEBUGDEF
 
             sendERRMessage(CMDERR_NOT_SETUP);
         }
@@ -558,10 +581,11 @@ byte MergCBUS::handleConfigMessages(){
         //set the node number
         //answer with OPC_NNACK
         if (state_mode==SETUP){
-            if (DEBUG){
+            #ifdef DEBUGDEF
                 Serial.println("RECEIVED OPC_SNN sending OPC_NNACK");
                 //printSentMessage();
-            }
+            #endif // DEBUGDEF
+
             nodeId.setNodeNumber(message.getNodeNumber());
             memory.setNodeNumber(nodeId.getNodeNumber());
             prepareMessage(OPC_NNACK);
@@ -571,10 +595,11 @@ byte MergCBUS::handleConfigMessages(){
             saveNodeFlags();
             return sendCanMessage();
         }else{
-
-            if (DEBUG){
+            #ifdef DEBUGDEF
                 Serial.println("RECEIVED OPC_SNN and not in setup mode.");
-            }
+                //printSentMessage();
+            #endif // DEBUGDEF
+
 
             sendERRMessage(CMDERR_NOT_SETUP);
         }
@@ -582,28 +607,30 @@ byte MergCBUS::handleConfigMessages(){
     case OPC_NNLRN:
         //put the node in the lear mode
         state_mode=LEARN;
-
-        if (DEBUG){
-            Serial.println("going to LEARN MODE.");
-        }
+        #ifdef DEBUGDEF
+                Serial.println("going to LEARN MODE.");
+                //printSentMessage();
+            #endif // DEBUGDEF
 
         break;
 
     case OPC_NNULN:
         //leaving the learn mode
         state_mode=NORMAL;
-        if (DEBUG){
-            Serial.println("going to NORMAL MODE.");
-        }
+        #ifdef DEBUGDEF
+                Serial.println("going to NORMAL MODE.");
+                //printSentMessage();
+            #endif // DEBUGDEF
+
         break;
 
     case OPC_NNCLR:
         //clear all events from the node
         if (state_mode==LEARN){
-
-            if (DEBUG){
+            #ifdef DEBUGDEF
                 Serial.println("Clear all events.");
-            }
+                //printSentMessage();
+            #endif // DEBUGDEF
 
             memory.eraseAllEvents();
             return OK;
@@ -613,10 +640,10 @@ byte MergCBUS::handleConfigMessages(){
         //read the events available in memory
         prepareMessage(OPC_EVNLF);
 
-        if (DEBUG){
+        #ifdef DEBUGDEF
                 Serial.println("RECEIVED OPC_NNEVN sending OPC_EVNLF");
                 printSentMessage();
-            }
+        #endif // DEBUGDEF
 
         return sendCanMessage();
         break;
@@ -626,11 +653,12 @@ byte MergCBUS::handleConfigMessages(){
         int i;
         i=(int)memory.getNumEvents();
 
-        if (DEBUG){
-            Serial.println("RECEIVED OPC_NERD sending OPC_ENRSP");
-            Serial.println(i);
+        #ifdef DEBUGDEF
+                Serial.println("RECEIVED OPC_NERD sending OPC_ENRSP");
+                Serial.println(i);
                     //printSentMessage();
-        }
+        #endif // DEBUGDEF
+
 
         if (i>0){
             //byte *events=memory.getEvents();
@@ -652,10 +680,11 @@ byte MergCBUS::handleConfigMessages(){
     case OPC_RQEVN:
         //request the number of stored events
         prepareMessage(OPC_NUMEV);
-        if (DEBUG){
-            Serial.println("RECEIVED OPC_RQEVN sending OPC_NUMEV");
+        #ifdef DEBUGDEF
+                Serial.println("RECEIVED OPC_RQEVN sending OPC_NUMEV");
             printSentMessage();
-        }
+        #endif // DEBUGDEF
+
         sendCanMessage();
         break;
     case OPC_BOOT:
@@ -665,9 +694,9 @@ byte MergCBUS::handleConfigMessages(){
     case OPC_ENUM:
         //has to be handled in the automatic procedure
         if (message.getNodeNumber()==nodeId.getNodeNumber()){
-            if (DEBUG){
+            #ifdef DEBUGDEF
                 Serial.println("Doing self ennumeration");
-            }
+            #endif // DEBUGDEF
 
             doSelfEnnumeration(true);
         }
@@ -678,11 +707,10 @@ byte MergCBUS::handleConfigMessages(){
         ind=message.getNodeVariableIndex();
 
         prepareMessageBuff(OPC_NVANS,highByte(nn),lowByte(nn),ind,memory.getVar(ind-1));//the CBUS index start with 1
-
-        if (DEBUG){
+        #ifdef DEBUGDEF
             Serial.println("RECEIVED OPC_NVRD sending OPC_NVANS");
             printSentMessage();
-        }
+        #endif // DEBUGDEF
 
         sendCanMessage();
         break;
@@ -695,11 +723,10 @@ byte MergCBUS::handleConfigMessages(){
         event=memory.getEvent(ind-1);//the CBUS index start with 1
         prepareMessageBuff(OPC_ENRSP,highByte(nn),lowByte(nn),event[0],event[1],event[2],event[3],ind);
 
-
-        if (DEBUG){
+        #ifdef DEBUGDEF
             Serial.println("RECEIVED OPC_NENRD sending OPC_ENRSP");
             printSentMessage();
-        }
+        #endif // DEBUGDEF
 
         sendCanMessage();
 
@@ -715,11 +742,11 @@ byte MergCBUS::handleConfigMessages(){
         else{
             prepareMessageBuff(OPC_PARAN,highByte(nn),lowByte(nn),ind,nodeId.getParameter(ind));
         }
-
-        if (DEBUG){
+        #ifdef DEBUGDEF
             Serial.println("RECEIVED OPC_RQNPN sending OPC_PARAN");
             printSentMessage();
-        }
+        #endif // DEBUGDEF
+
         sendCanMessage();
         break;
     case OPC_CANID:
@@ -728,20 +755,20 @@ byte MergCBUS::handleConfigMessages(){
         nodeId.setCanID(ind);
         memory.setCanId(ind);
         prepareMessage(OPC_NNACK);
-
-        if (DEBUG){
+        #ifdef DEBUGDEF
             Serial.println("RECEIVED OPC_CANID sending OPC_NNACK");
             printSentMessage();
-        }
+        #endif // DEBUGDEF
 
         sendCanMessage();
         break;
     case OPC_EVULN:
         //Unlearn event
-        if (DEBUG){
+        #ifdef DEBUGDEF
             Serial.println("Unlearn event");
             //printSentMessage();
-        }
+        #endif // DEBUGDEF
+
         if (state_mode==LEARN){
             ev=message.getEventNumber();
             nn=message.getNodeNumber();
@@ -770,10 +797,11 @@ byte MergCBUS::handleConfigMessages(){
         //set a node variable
         ind=message.getNodeVariableIndex()-1;//the CBUS index start with 1
         val=message.getNodeVariable();
-        if (DEBUG){
+        #ifdef DEBUGDEF
             Serial.println("Learning node variable");
             //printSentMessage();
-        }
+        #endif // DEBUGDEF
+
 
         if (ind<=nodeId.getSuportedNodeVariables()){
             memory.setVar(ind,val);
@@ -798,11 +826,10 @@ byte MergCBUS::handleConfigMessages(){
         nn=nodeId.getNodeNumber();
 
         prepareMessageBuff(OPC_NEVAL,highByte(nn),lowByte(nn),evidx,ind,val);
-
-        if (DEBUG){
+        #ifdef DEBUGDEF
             Serial.println("RECEIVED OPC_REVAL sending OPC_NEVAL");
             printSentMessage();
-        }
+        #endif // DEBUGDEF
 
         sendCanMessage();
         break;
@@ -816,10 +843,10 @@ byte MergCBUS::handleConfigMessages(){
 
             prepareMessageBuff(OPC_EVANS,highByte(nn),lowByte(nn),highByte(ev),lowByte(ev),ind,val);
 
-        if (DEBUG){
+        #ifdef DEBUGDEF
             Serial.println("RECEIVED OPC_REQEV sending OPC_EVANS");
             printSentMessage();
-        }
+        #endif // DEBUGDEF
 
             sendCanMessage();
         }else{
@@ -842,9 +869,9 @@ byte MergCBUS::handleConfigMessages(){
         if (state_mode==LEARN){
 
             //TODO: suport device number mode
-            if (DEBUG){
-                Serial.println("Learning event by index.");
-            }
+            #ifdef DEBUGDEF
+                 Serial.println("Learning event by index.");
+            #endif // DEBUGDEF
 
             ev=message.getEventNumber();
             nn=message.getNodeNumber();
@@ -861,7 +888,10 @@ byte MergCBUS::handleConfigMessages(){
 
             if ((byte)resp!=(evidx-1)){
                 //send a message error
-                Serial.println("Error EVLRNI");
+                #ifdef DEBUGDEF
+                    Serial.println("Error EVLRNI");
+                #endif // DEBUGDEF
+
                 sendERRMessage(CMDERR_INV_EV_IDX);
                 break;
             }
@@ -872,7 +902,10 @@ byte MergCBUS::handleConfigMessages(){
 
             if ((byte)resp!=(ind-1)){
                 //send a message error
-                Serial.println("Error EVLRNI 2");
+                #ifdef DEBUGDEF
+                    Serial.println("Error EVLRNI 2");
+                #endif // DEBUGDEF
+
                 sendERRMessage(CMDERR_INV_NV_IDX);
                 break;
             }
@@ -1125,13 +1158,18 @@ bool MergCBUS::hasThisEvent(){
 */
 
 void MergCBUS::printSentMessage(){
+    #ifdef DEBUGDEF
+        Serial.print("printSentMessage- message sent: ");
+    #endif // DEBUGDEF
 
-    Serial.print("printSentMessage- message sent: ");
     for (int i=0;i<8;i++){
         Serial.print(mergCanData[i],HEX);
         Serial.print(" ");
     }
-    Serial.println("");
+    #ifdef DEBUGDEF
+        Serial.println("");
+    #endif // DEBUGDEF
+
 
 }
 
@@ -1143,12 +1181,17 @@ void MergCBUS::printReceivedMessage(){
     if (message.getCanMessageSize()<=0){
         return;
     }
-    Serial.print("printReceivedMessage- message received: ");
+    #ifdef DEBUGDEF
+        Serial.print("printReceivedMessage- message received: ");
+    #endif // DEBUGDEF
+
     for (int i=0;i<8;i++){
         Serial.print(message.getByte(i),HEX);
         Serial.print(" ");
     }
-    Serial.println("");
+    #ifdef DEBUGDEF
+        Serial.println("");
+    #endif // DEBUGDEF
 
 }
 
@@ -1249,9 +1292,9 @@ byte MergCBUS::getAccExtraData(byte idx){
 }
 
 void MergCBUS::setSlimMode(){
-    if (DEBUG){
+    #ifdef DEBUGDEF
         Serial.println("Setting SLIM mode");
-    }
+    #endif // DEBUGDEF
 
     node_mode=MTYP_SLIM;
     nodeId.setSlimMode();
@@ -1259,9 +1302,9 @@ void MergCBUS::setSlimMode(){
 }
 
 void MergCBUS::setFlimMode(){
-    if (DEBUG){
+    #ifdef DEBUGDEF
         Serial.println("Setting FLIM mode");
-    }
+    #endif // DEBUGDEF
     node_mode=MTYP_FLIM;
     nodeId.setFlimMode();
     saveNodeFlags();
@@ -1274,10 +1317,10 @@ void MergCBUS::saveNodeFlags(){
 void MergCBUS::learnEvent(){
     unsigned int ev,nn,resp;
     byte ind,val,evidx;
-        if (DEBUG){
+         #ifdef DEBUGDEF
             Serial.println("Learning event.");
             //printSentMessage();
-        }
+        #endif // DEBUGDEF
 
         if (message.getType()==CONFIG){
             if (message.getOpc()!=OPC_EVLRN && message.getOpc()!=OPC_EVLRNI){
@@ -1327,34 +1370,33 @@ void MergCBUS::learnEvent(){
         if (message.getOpc()==OPC_EVLRN || message.getOpc()==OPC_EVLRNI){
             ind=message.getEventVarIndex();
             val=message.getEventVar();
-
-            //if (DEBUG){
-                    //Serial.print("Saving event var ");
-                    //Serial.print(ind);
-                    //Serial.print(" value ");
-                    //Serial.print(val);
-                    //Serial. print(" of event ");
-                    //Serial.println(evidx);
-                    //Serial.print("max events: ");
-                    //Serial.println(memory.getNumEvents());
-                    //Serial.print("max events vars: ");
-                    //Serial.println(memory.getNumEventVars());
-
-            //}
+            #ifdef DEBUGDEF
+                    Serial.print("Saving event var ");
+                    Serial.print(ind);
+                    Serial.print(" value ");
+                    Serial.print(val);
+                    Serial. print(" of event ");
+                    Serial.println(evidx);
+                    Serial.print("max events: ");
+                    Serial.println(memory.getNumEvents());
+                    Serial.print("max events vars: ");
+                    Serial.println(memory.getNumEventVars());
+            #endif // DEBUGDEF
 
 
             resp=memory.setEventVar(evidx,ind-1,val);
-            //Serial.print("resp:");
-            //Serial.println(resp);
-            /*
-            if (DEBUG){
+
+            #ifdef DEBUGDEF
                     Serial.print("Saving event var resp ");
                     Serial.println(resp);
-            }
-            */
+            #endif
+
+
             if (resp!=(ind-1)){
                 //send a message error
-                //Serial.println("Error lear event");
+                #ifdef DEBUGDEF
+                    Serial.println("Error lear event");
+                #endif
                 sendERRMessage(CMDERR_INV_NV_IDX);
                 return;
             }
@@ -1374,24 +1416,35 @@ void MergCBUS::controlPushButton(){
 
     if (digitalRead(push_button)==LOW){
         //start the timer
-        //Serial.println("Button pressed");
+        #ifdef DEBUGDEF
+            Serial.println("Button pressed");
+        #endif // DEBUGDEF
         if (pb_state==HIGH){
             startTime=millis();
             pb_state=LOW;
-            //Serial.println("Start timer");
+            #ifdef DEBUGDEF
+                Serial.println("Start timer");
+            #endif // DEBUGDEF
+
         }
     }
     else {
         //user had pressed it before and now released
         if (pb_state==LOW){
-            //Serial.println("Button released");
+             #ifdef DEBUGDEF
+                Serial.println("Button released");
+             #endif // DEBUGDEF
+
             pb_state=HIGH;
 
             //check the timer to define what to do next
             //between 3 and 8 secs is just to get another node number
             //more than 8 secs is to change from slim to flim or vice-versa
             unsigned long tdelay=millis()-startTime;
-            //Serial.println(tdelay);
+            #ifdef DEBUGDEF
+                Serial.println(tdelay);
+             #endif // DEBUGDEF
+
             if (tdelay>1000 && tdelay<6000){
                 //request a new node number
                 //request node number
@@ -1400,7 +1453,10 @@ void MergCBUS::controlPushButton(){
                             //back to normal
                             state_mode=NORMAL;
                         }else{
-                            //Serial.println("Mode FLIM. Request NN");
+                            #ifdef DEBUGDEF
+                                Serial.println("Mode FLIM. Request NN");
+                            #endif // DEBUGDEF
+
                             doSetup();
                         }
                 }
@@ -1418,7 +1474,10 @@ void MergCBUS::controlPushButton(){
                         state_mode=NORMAL;
                         return;
                     }
-                    //Serial.println("Mode SLIM. Changing to FLIM");
+                    #ifdef DEBUGDEF
+                                Serial.println("Mode SLIM. Changing to FLIM");
+                    #endif // DEBUGDEF
+
                     //turn the green led down
                     digitalWrite(greenLed,LOW);
                     //start self ennumeration
@@ -1431,7 +1490,10 @@ void MergCBUS::controlPushButton(){
                     doSetup();
                 } else{
                     //back to SLIM mode
-                    //Serial.println("Mode FLIM. Changing to SLIM");
+                    #ifdef DEBUGDEF
+                                Serial.println("Mode FLIM. Changing to SLIM");
+                    #endif // DEBUGDEF
+
                     node_mode=MTYP_SLIM;
                     nodeId.setSlimMode();
                     saveNodeFlags();
@@ -1630,11 +1692,16 @@ void MergCBUS::cbusRead(){
             buffer[bufIdx]=len;
 
             if (Can.isRTMMessage()==0){
-                //Serial.println("readCanBus - unsetRTM");
+                 #ifdef DEBUGDEF
+                                Serial.println("readCanBus - unsetRTM");
+                    #endif // DEBUGDEF
+
                 buffer[bufIdx+1]=0;
             }
             else{
-                //Serial.println("readCanBus - setRTM");
+                #ifdef DEBUGDEF
+                                Serial.println("readCanBus - setRTM");
+                    #endif // DEBUGDEF
                 buffer[bufIdx+1]=1;
             }
             msgBuffer.put(&buffer[bufIdx]);
