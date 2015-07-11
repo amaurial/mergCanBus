@@ -85,7 +85,6 @@ class Message
 
         byte getOpc();
         /** \brief Set the opc in the message
-         *  NOT USED. At the moment the messages are being assembled outside and loaded by \ref setDataBuffer
          * \param opc is the opc
          */
         void setOpc(byte val) {opc = val; }
@@ -94,28 +93,24 @@ class Message
          */
         message_type getType() { return _type; }
         /** \brief Set the message type
-         *  NOT USED. At the moment the messages are being assembled outside and loaded by \ref setDataBuffer
          * \param val is the message type @message_type
          */
         void setType(message_type val) { _type = val; }
 
         unsigned int getEventNumber();
         /** \brief Set event number to be used on message
-         *  NOT USED. At the moment the messages are being assembled outside and loaded by \ref setDataBuffer
          * \param val is the event number
          */
         void setEventNumber(unsigned int val) { _eventNumber = val; }
 
         unsigned int getNodeNumber();
         /** \brief Set the node number to be used on message
-         *  NOT USED. At the moment the messages are being assembled outside and loaded by \ref setDataBuffer
          * \param val is the node number
          */
         void setNodeNumber(unsigned int val) { _nodeNumber = val; }
 
         unsigned int getDeviceNumber();
         /** \brief Set the device number to be used on message
-         *  NOT USED. At the moment the messages are being assembled outside and loaded by \ref setDataBuffer
          * \param val is the device number
          */
         void setDeviceNumber(unsigned int val) { _deviceNumber = val; }
@@ -125,7 +120,6 @@ class Message
          */
         byte getPriority() { return _priority;}
         /** \brief Set the message priority in the CAN header
-         *  NOT USED. At the moment the messages are being assembled outside and loaded by \ref setHeaderBuffer
          * \param val is the priority
          */
         void setPriority(byte val) { _priority = val; }
@@ -136,7 +130,6 @@ class Message
          */
         unsigned int getNumBytes() { return _numBytes; }
         /** \brief Set the number of bytes parameter in the message
-        *  NOT USED. At the moment the messages are being assembled outside and loaded by \ref setDataBuffer
          * \param val is the number of bytes
          */
         void setNumBytes(unsigned int val) { _numBytes = val; }
@@ -154,7 +147,7 @@ class Message
         *  NOT USED. At the moment the messages are being assembled outside and loaded by \ref setDataBuffer
          * \param val is the session value
          */
-        void setSession(byte val) {_session=val;}
+        //void setSession(byte val) {_session=val;}
         byte getSession();
 
         unsigned int getDecoder();
@@ -162,14 +155,14 @@ class Message
         *  NOT USED. At the moment the messages are being assembled outside and loaded by \ref setDataBuffer
          * \param val is the decoder value
          */
-        void setDecoder(unsigned int val) { _decoder = val; }
+        //void setDecoder(unsigned int val) { _decoder = val; }
 
         unsigned int getCV();
         /** \brief Set the DCC CV value in the message
         *  NOT USED. At the moment the messages are being assembled outside and loaded by \ref setDataBuffer
          * \param val is the DCC CV value
          */
-        void setCV(unsigned int val) { _cv = val; }
+        //void setCV(unsigned int val) { _cv = val; }
 
         unsigned int getCVMode();
         unsigned int getCVValue();
@@ -191,11 +184,8 @@ class Message
         void clear();
         /** \brief Force the code to print debug messages to the serial interface if value is True.
          */
-
-        void setDebug(bool val){debug=val;};
         byte getCanMessageSize();
         /** \brief Set the message size
-        *  NOT USED. At the moment the messages are being assembled outside and loaded by \ref setDataBuffer
          * \param The message size
          */
         void setCanMessageSize(byte val) {canMsgSize=val;};

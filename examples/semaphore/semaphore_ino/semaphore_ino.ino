@@ -66,7 +66,7 @@ void setup(){
   cbus.setDebug(true);//print some messages on the serial port
   cbus.setUserHandlerFunction(&myUserFunc);//function that implements the node logic
   cbus.initCanBus(53,CAN_125KBPS,10,200);  //initiate the transport layer
-  cbus.setTimerInterval(10000);
+
   Timer1.initialize(10000);//microseconds
   Timer1.attachInterrupt(readCanMessages);
   Serial.println("Setup finished");

@@ -12,21 +12,13 @@
 #include <EEPROM.h>
 #include <SPI.h>
 #include <avr/wdt.h>
-//#include <TimerOne.h>
-
-//#include "CANMessage.h"
 #include "Message.h"
 #include "MergNodeIdentification.h"
 #include "mcp_can.h"
 #include "MergMemoryManagement.h"
 #include "CircularBuffer.h"
 
-
-
-//#define Reset_AVR() wdt_enable(WDTO_30MS); while(1) {} //reset
 #define Reset_AVR() asm volatile ("  jmp 0");
-
-
 
 #define SELF_ENUM_TIME 1000      /** Defines the timeout used for self ennumeration mode.Milliseconds*/
 #define TEMP_BUFFER_SIZE 128    /** Size of a internal buffer for general usage.*/
@@ -95,8 +87,9 @@ class MergCBUS
         * @param msg Message type to process.
         */
         void processMessage(message_type msg){setBitMessage (msg,false);};
-        //bool run(process_mode mode);
+
         unsigned int run();
+
         bool hasMessageToHandle();
         /**\brief Get a reference to node identification.
         * @return Pointer to a @see MergNodeIdentification
@@ -106,13 +99,9 @@ class MergCBUS
         bool initCanBus(unsigned int port,unsigned int rate, unsigned int retries,unsigned int retryIntervalMilliseconds);
         /**\brief Set the user function to handle other messages.*/
         void setUserHandlerFunction(userHandlerType f) {userHandler=f;};
-
-        void setDebug(bool debug);
         void sendERRMessage(byte code);
         bool hasThisEvent();
-        bool readCanBus();
-        bool readCanBus(byte buf_num);
-        bool readCanBus(byte *msg,byte *header,byte *length,byte buf_num);
+        void cbusRead();
         void printSentMessage();
         void printReceivedMessage();
         /**\brief Set the node to slim mode.*/
@@ -123,7 +112,7 @@ class MergCBUS
         byte getNodeMode(){return node_mode;};
         /**\brief Reset EEPROM.*/
         void setUpNewMemory();
-        /**\brief Print all EEPROM values.*/
+        /**\brief Print all EEPROM values. Works just if DEBUGREF is set.*/
         void dumpMemory(){memory.dumpMemory();};
         /**\brief Set the CBUS modules stardard leds.*/
         void setLeds(byte green,byte yellow);
@@ -142,14 +131,13 @@ class MergCBUS
         unsigned int getStdNN(){return std_nn;};
         void saveNodeFlags();
         void sendMessage(Message *msg);
-        //methods for getthing parameters
+        //methods for getting parameters
         bool isAccOn();
         bool isAccOff();
         bool eventMatch(){return eventmatch;};
         unsigned int getEventIndex(Message *msg);
         byte getNodeVar(byte varIndex);
         byte getEventVar(Message *msg,byte varIndex);
-
 
         void setDeviceNumber(unsigned int val,byte port);           //2 bytes representation for dn
         unsigned int getDeviceNumber(byte port);                             //2 bytes representation
@@ -165,12 +153,7 @@ class MergCBUS
         byte sendOnEvent3(bool longEvent,unsigned int event,byte var1,byte var2,byte var3);
         byte sendOffEvent3(bool longEvent,unsigned int event,byte var1,byte var2,byte var3);
 
-        //set timmer interval
-        void setTimerInterval(long value){timerInterval=value;};
-        long getTimerInterval(){return timerInterval;}
-        //void startTimer();
-        //void stopTimer();
-        void cbusRead();
+
 
     protected:
     private:
@@ -183,7 +166,6 @@ class MergCBUS
         byte messageFilter;                     //bit filter about each message to handle. by default avoid reserved messages
         MergMemoryManagement memory;            //organize the eeprom memory and maintain a copy in RAM
         bool softwareEnum;                      //true if the node is doing self ennumeration
-        bool DEBUG;                             //true if debug mode
         bool eventmatch;                        //true if the received message is found on learned events
         unsigned long std_nn;                   //standard node number for slim
         bool typeEventMatch;                    //true is long event, false is short event
@@ -199,11 +181,14 @@ class MergCBUS
         bool messageToHandle;                   //true if the message was not automatically handled
 
         void setBitMessage(byte pos,bool val);  /** set or unset the bit on pos for messageFilter*/
-        //void sendCanMessage();
         void getStoredEvents();                 //events that were learned
         void getStoredIDs();                    //node number,canId,device Number
         bool matchEvent();                      //
         unsigned int runAutomatic();            //process the majority of events automatic
+
+        bool readCanBus();
+        bool readCanBus(byte buf_num);
+        bool readCanBus(byte *msg,byte *header,byte *length,byte buf_num);
 
         byte handleConfigMessages();            //process config messages
         byte handleDCCMessages();               //process dcc messages

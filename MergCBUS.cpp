@@ -26,7 +26,7 @@ MergCBUS::MergCBUS(byte num_node_vars,byte num_events,byte num_events_var,byte m
     skipMessage(RESERVED);
 
     softwareEnum=false;
-    DEBUG=false;
+
     //LED vars
     greenLed=255;
     yellowLed=255;
@@ -1008,14 +1008,6 @@ byte MergCBUS::sendCanMessage(){
 }
 
 /** \brief
-* Put in debug mode
-*/
-void MergCBUS::setDebug(bool debug){
-    DEBUG=debug;
-    message.setDebug(debug);
-}
-
-/** \brief
 * Get the message size using the opc
 */
 byte MergCBUS::getMessageSize(byte opc){
@@ -1662,17 +1654,6 @@ byte MergCBUS::sendOffEvent3(bool longEvent,unsigned int event,byte var1,byte va
     }
     sendCanMessage();
 }
-
-//Timmer functions
-
-//void MergCBUS::startTimer(){
-//    Timer1.initialize(timerInterval);
-//    Timer1.attachInterrupt(cbusRead);
-//}
-//void MergCBUS::stopTimer(){
-//    Timer1.stop();
-//    Timer1.detachInterrupt();
-//}
 
 /** \brief
 * Read the can bus message and  put in circular buffer.

@@ -46,8 +46,8 @@ int sensorport[NUMSENSORS]={A8,A9 ,A10 ,A11, A12 ,A13, A14,A15};
 #define GREEN_LED 27                  //merg green led port
 #define YELLOW_LED 26                 //merg yellow led port
 #define PUSH_BUTTON 25                //std merg push button
-#define PUSH_BUTTON1 28               //debug push button 
-#define NODE_VARS 4                  //2 for togle events, 2 for spare                   
+#define PUSH_BUTTON1 28               //debug push button
+#define NODE_VARS 4                  //2 for togle events, 2 for spare
 #define NODE_EVENTS NUMSENSORS*2     //max number of events in case of teaching short events
 #define EVENTS_VARS VAR_PER_SENSOR   //number of variables per event
 #define DEVICE_NUMBERS NUMSENSORS   //number of device numbers. each servo can be a device
@@ -65,7 +65,7 @@ void readCanMessages(){
 }
 
 void setup(){
-  
+
   pinMode(PUSH_BUTTON1,INPUT_PULLUP);//debug push button
   Serial.begin(115200);
 
@@ -80,33 +80,32 @@ void setup(){
   cbus.setStdNN(999); //standard node number
 
   if (digitalRead(PUSH_BUTTON1)==LOW){
-    Serial.println("Setup new memory");
+    //Serial.println("Setup new memory");
     cbus.setUpNewMemory();
     cbus.setSlimMode();
     cbus.saveNodeFlags();
   }
   cbus.setLeds(GREEN_LED,YELLOW_LED);//set the led ports
   cbus.setPushButton(PUSH_BUTTON);//set the push button ports
-  cbus.setDebug(true);//print some messages on the serial port
   cbus.setUserHandlerFunction(&myUserFunc);//function that implements the node logic
   cbus.initCanBus(53,CAN_125KBPS,10,200);  //initiate the transport layer. pin=53, rate=125Kbps,10 tries,200 millis between each try
-  cbus.setTimerInterval(10000);  
+
   //create the servos object
   setupSensors();
   //using timer
   Timer1.initialize(10000);//microseconds
   Timer1.attachInterrupt(readCanMessages);
-  Serial.println("Setup finished");
+  //Serial.println("Setup finished");
 }
 
 void loop (){
 
   cbus.run();//do all logic
-  
+
   if (cbus.getNodeState()==NORMAL){
     checkSensors();
   }
-  
+
   //debug memory
   if (digitalRead(PUSH_BUTTON1)==LOW){
     cbus.dumpMemory();
@@ -115,57 +114,61 @@ void loop (){
 
 //user defined function. contains the module logic.called every time run() is called.
 void myUserFunc(Message *msg,MergCBUS *mcbus){
- 
+
 }
 
 void checkSensors(){
   int state;
   int i;
-  unsigned long actime;  
+  unsigned long actime;
   //int s=7;
-  
-  for (i=0;i<NUMSENSORS;i++){    
+
+  for (i=0;i<NUMSENSORS;i++){
     state=getSensorState(i);
     //Serial.println(state);
     actime=millis();
     if (state==LOW){
       if (sensors[i].state==HIGH){
         //if (i==s){
+        /*
         Serial.print("Sensor ");
         Serial.print(i);
-        Serial.println(" ON");         
+        Serial.println(" ON");
+        */
         //}
         sendMessage(true,i);
-        sensors[i].state=LOW;            
+        sensors[i].state=LOW;
       }
-      sensors[i].state=LOW;  
-      sensors[i].time=actime;   
-      sensors[i].resets++; 
+      sensors[i].state=LOW;
+      sensors[i].time=actime;
+      sensors[i].resets++;
     }
     else{
-      if (actime-sensors[i].time>TLIMIT){ 
+      if (actime-sensors[i].time>TLIMIT){
         if (sensors[i].resets<RLIMIT){
           //give extra time
           sensors[i].time=actime;
-        } 
-       else {         
-          if (sensors[i].state==LOW){     
-          //    if (i==s){      
+        }
+       else {
+          if (sensors[i].state==LOW){
+          //    if (i==s){
+          /*
               Serial.print("Sensor ");
               Serial.print(i);
               Serial.print(" OFF time: ");
               Serial.print(actime-sensors[i].time);
               Serial.print(" resets:");
-              Serial.println(sensors[i].resets); 
-              sendMessage(false,i) ;       
+              Serial.println(sensors[i].resets);
+            */
+              sendMessage(false,i) ;
             //  }
-            sensors[i].state=HIGH;            
+            sensors[i].state=HIGH;
             sensors[i].resets=0;
-          }          
+          }
        }
       }
-    }     
-  }  
+    }
+  }
 }
 
 //send the can message
@@ -176,7 +179,7 @@ void sendMessage(bool state,unsigned int sensor){
    if (togleSensor(sensor)){
      onEvent=false;
    }
-   if (onEvent){     
+   if (onEvent){
      cbus.sendOnEvent(true,event);
    }
    else{
@@ -198,15 +201,15 @@ bool togleSensor(int sensor){
   else if (sensor>8 && sensor<17){
      if (bitRead(second,sensor)==1){
       resp=true;
-    } 
+    }
   }
   return resp;
 }
 //configure the sensors
 void setupSensors(){
-  int i=0;  
-  for (i=0;i<NUMSENSORS;i++)  {  
-    sensors[i].state=HIGH;  
+  int i=0;
+  for (i=0;i<NUMSENSORS;i++)  {
+    sensors[i].state=HIGH;
     sensors[i].port=sensorport[i];
     pinMode(sensors[i].port,INPUT);
   }
@@ -214,15 +217,15 @@ void setupSensors(){
 //read the sensor state
 int getSensorState(int i){
   //return digitalRead(sensors[i].port);
-  
+
   int j;
   float ntimes;
-  ntimes=30; 
+  ntimes=30;
   for (j=0;j<ntimes;j++){
     if (digitalRead(sensors[i].port)==0){
       return 0;
-    }       
-  } 
+    }
+  }
   return 1;
-  
+
 }
