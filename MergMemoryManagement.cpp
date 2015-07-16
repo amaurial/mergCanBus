@@ -389,7 +389,7 @@ unsigned int MergMemoryManagement::eraseEvent(unsigned int nn,unsigned int ev){
 * @param val variable value
 */
 void MergMemoryManagement::setVar(unsigned int index,byte val){
-    if (index<0 || index>MAX_AVAIL_VARS){
+    if (index>MAX_AVAIL_VARS){
         return;
     }
 
@@ -408,11 +408,11 @@ void MergMemoryManagement::setVar(unsigned int index,byte val){
 unsigned int MergMemoryManagement::setEventVar(unsigned int eventIdx,unsigned int varIdx,byte val){
 
 
-    if (eventIdx<0 || eventIdx>numEvents){
+    if (eventIdx>numEvents){
         return (varIdx+1);
     }
 
-    if (varIdx<0 || varIdx>MAX_VAR_PER_EVENT){
+    if (varIdx>MAX_VAR_PER_EVENT){
         return (varIdx+1);
     }
 

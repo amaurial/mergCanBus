@@ -138,13 +138,14 @@ class MergCBUS
         bool eventMatch(){return eventmatch;};
         unsigned int getEventIndex(Message *msg);
         byte getNodeVar(byte varIndex);
+        bool setNodeVariable(byte ind, byte val);
         byte getEventVar(Message *msg,byte varIndex);
 
         void setDeviceNumber(unsigned int val,byte port);           //2 bytes representation for dn
         unsigned int getDeviceNumber(byte port);                             //2 bytes representation
         byte getDeviceNumberIndex(){return deviceNumberIdx;};
         state getNodeState(){return state_mode;};
-        bool setNodeVariable(byte ind, byte val);
+
         //send events
         byte sendOnEvent(bool longEvent,unsigned int event);
         byte sendOffEvent(bool longEvent,unsigned int event);

@@ -143,7 +143,6 @@ bool MergCBUS::initCanBus(unsigned int port){
 }
 
 
-
 /** \brief
 * Set or unset the bit in the message bit.
 * @param pos specifies the bit position @see messageFilter
@@ -172,7 +171,7 @@ unsigned int MergCBUS::run(){
     controlLeds();
     controlPushButton();
     unsigned int resp=NO_MESSAGE;
-    unsigned int resp1=NO_MESSAGE;
+    //unsigned int resp1=NO_MESSAGE;
 
     if (state_mode==SELF_ENUMERATION){
         unsigned long tdelay=millis()-startTime;
@@ -189,11 +188,12 @@ unsigned int MergCBUS::run(){
         }
     }
 
-    if (readCanBus()){
+    while (readCanBus()){
         resp=mainProcess();
-        //OK means that the message was handled internally and a response was sent
-        if (resp==OK ){
-            return OK;
+        if (resp!=OK ){
+            if (userHandler!=0){
+                userHandler(&message,this);
+            }
         }
     }
 
@@ -212,11 +212,7 @@ unsigned int MergCBUS::run(){
     }
    */
 
-
-    if (userHandler!=0){
-        userHandler(&message,this);
-    }
-    return NO_MESSAGE;
+    return OK;
 
 }
 
@@ -814,7 +810,7 @@ byte MergCBUS::handleConfigMessages(){
             //printSentMessage();
         #endif // DEBUGDEF
 
-        setNodeVariable(ind,val,true);
+        setNodeVariableAuto(ind,val,true);
 
         break;
 
@@ -935,7 +931,7 @@ byte MergCBUS::handleConfigMessages(){
 */
 
 bool MergCBUS::setNodeVariable(byte ind, byte val){
-     return setNodeVariableAuto(ind,val,false);
+     return setNodeVariableAuto(ind-1,val,false);
 }
 
 /** \brief
@@ -1160,13 +1156,13 @@ void MergCBUS::sendERRMessage(byte code){
 bool MergCBUS::hasThisEvent(){
     //long events
     if (message.isLongEvent()){
-             if (memory.getEventIndex(message.getNodeNumber(),message.getEventNumber())>=0){
+             if (memory.getEventIndex(message.getNodeNumber(),message.getEventNumber())<(memory.getMaxNumEvents()+1)){
                 return true;
              }
     }
     //short events has to check the device number
     if (message.isShortEvent()){
-            if (memory.getEventIndex(0,message.getEventNumber())>=0){
+            if (memory.getEventIndex(0,message.getEventNumber())<(memory.getMaxNumEvents()+1)){
                 return true;
              }
     }
