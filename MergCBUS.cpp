@@ -109,18 +109,7 @@ MergCBUS::~MergCBUS()
 * @param retries is the number of retries to configure the can bus
 * @param retryIntervalMilliseconds is the delay in milliseconds between each retry.
 */
-
-/** \brief
-* Initiate the CanBus layer with rate 125kps.
-* Set the port number for SPI communication.
-* @param port is the the SPI port number.
-*/
 bool MergCBUS::initCanBus(unsigned int port,unsigned int rate,unsigned int retries,unsigned int retryIntervalMilliseconds){
-
-    return initCanBus(port,CAN_125KBPS,20,30);
-}
-
-bool MergCBUS::initCanBus(unsigned int port){
 
     unsigned int r=0;
     Can.set_cs(port);
@@ -143,6 +132,18 @@ bool MergCBUS::initCanBus(unsigned int port){
 
    return false;
 }
+/** \brief
+* Initiate the CanBus layer with rate 125kps.
+* Set the port number for SPI communication.
+* @param port is the the SPI port number.
+*/
+bool MergCBUS::initCanBus(unsigned int port){
+
+
+    return initCanBus(port,CAN_125KBPS,20,30);
+}
+
+
 
 /** \brief
 * Set or unset the bit in the message bit.
