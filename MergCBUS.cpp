@@ -346,7 +346,6 @@ bool MergCBUS::readCanBus(byte buf_num){
 * @return true if a message in the can bus.
 */
 bool MergCBUS::readCanBus(){
-    byte len=0;//number of bytes read.
     bool resp;
     byte bufidx=90;//position in the general buffer. data need 8 bytes
     eventmatch=false;
@@ -1587,7 +1586,7 @@ byte MergCBUS::sendOnEvent(bool longEvent,unsigned int event){
     else{
         prepareMessageBuff(OPC_ASON,highByte(nodeId.getNodeNumber()),lowByte(nodeId.getNodeNumber()),highByte(event),lowByte(event));
     }
-    sendCanMessage();
+    return sendCanMessage();
 }
 byte MergCBUS::sendOffEvent(bool longEvent,unsigned int event){
     if (longEvent){
@@ -1596,7 +1595,7 @@ byte MergCBUS::sendOffEvent(bool longEvent,unsigned int event){
     else{
         prepareMessageBuff(OPC_ASOF,highByte(nodeId.getNodeNumber()),lowByte(nodeId.getNodeNumber()),highByte(event),lowByte(event));
     }
-    sendCanMessage();
+    return sendCanMessage();
 }
 byte MergCBUS::sendOnEvent1(bool longEvent,unsigned int event,byte var1){
     if (longEvent){
@@ -1605,7 +1604,7 @@ byte MergCBUS::sendOnEvent1(bool longEvent,unsigned int event,byte var1){
     else{
         prepareMessageBuff(OPC_ASON1,highByte(nodeId.getNodeNumber()),lowByte(nodeId.getNodeNumber()),highByte(event),lowByte(event),var1);
     }
-    sendCanMessage();
+    return sendCanMessage();
 }
 byte MergCBUS::sendOffEvent1(bool longEvent,unsigned int event,byte var1){
     if (longEvent){
@@ -1614,7 +1613,7 @@ byte MergCBUS::sendOffEvent1(bool longEvent,unsigned int event,byte var1){
     else{
         prepareMessageBuff(OPC_ASOF1,highByte(nodeId.getNodeNumber()),lowByte(nodeId.getNodeNumber()),highByte(event),lowByte(event),var1);
     }
-    sendCanMessage();
+    return sendCanMessage();
 }
 byte MergCBUS::sendOnEvent2(bool longEvent,unsigned int event,byte var1,byte var2){
     if (longEvent){
@@ -1624,7 +1623,7 @@ byte MergCBUS::sendOnEvent2(bool longEvent,unsigned int event,byte var1,byte var
         prepareMessageBuff(OPC_ASON2,highByte(nodeId.getNodeNumber()),lowByte(nodeId.getNodeNumber()),highByte(event),lowByte(event),var1,var2);
     }
 
-    sendCanMessage();
+    return sendCanMessage();
 }
 byte MergCBUS::sendOffEvent2(bool longEvent,unsigned int event,byte var1,byte var2){
     if (longEvent){
@@ -1633,7 +1632,7 @@ byte MergCBUS::sendOffEvent2(bool longEvent,unsigned int event,byte var1,byte va
     else{
         prepareMessageBuff(OPC_ASOF2,highByte(nodeId.getNodeNumber()),lowByte(nodeId.getNodeNumber()),highByte(event),lowByte(event),var1,var2);
     }
-    sendCanMessage();
+    return sendCanMessage();
 }
 byte MergCBUS::sendOnEvent3(bool longEvent,unsigned int event,byte var1,byte var2,byte var3){
     if (longEvent){
@@ -1643,7 +1642,7 @@ byte MergCBUS::sendOnEvent3(bool longEvent,unsigned int event,byte var1,byte var
         prepareMessageBuff(OPC_ASON3,highByte(nodeId.getNodeNumber()),lowByte(nodeId.getNodeNumber()),highByte(event),lowByte(event),var1,var2,var3);
     }
 
-    sendCanMessage();
+    return sendCanMessage();
 }
 byte MergCBUS::sendOffEvent3(bool longEvent,unsigned int event,byte var1,byte var2,byte var3){
     if (longEvent){
@@ -1652,7 +1651,7 @@ byte MergCBUS::sendOffEvent3(bool longEvent,unsigned int event,byte var1,byte va
     else{
         prepareMessageBuff(OPC_ASOF3,highByte(nodeId.getNodeNumber()),lowByte(nodeId.getNodeNumber()),highByte(event),lowByte(event),var1,var2,var3);
     }
-    sendCanMessage();
+    return sendCanMessage();
 }
 
 /** \brief

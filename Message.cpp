@@ -540,7 +540,7 @@ bool Message::hasThisData(byte opc, message_config_pos pos){
         return false;
     }
 
-    switch pos{
+    switch (pos){
     case (NODE_NUMBER):
         if (opc==OPC_SNN || opc==OPC_RQNN || opc==OPC_NNREL || opc==OPC_NNACK || opc==OPC_NNLRN ||
             opc==OPC_NNULN || opc==OPC_NNCLR || opc==OPC_NNEVN || opc==OPC_NERD || opc==OPC_RQEVN ||
@@ -604,7 +604,6 @@ bool Message::hasThisData(byte opc, message_config_pos pos){
             return false;
         }
         break;
-    }
     case (CV):
         if (opc==OPC_RDCC3 || opc==OPC_WCVO || opc==OPC_WCVB || opc==OPC_QCVS || opc==OPC_PCVS || opc==OPC_WCVS || opc==OPC_WCVOA){
             return true;
@@ -871,16 +870,16 @@ void Message::createOffEvent(unsigned int nodeNumber,bool longEvent,unsigned int
     data[4]=lowByte(eventNumber);
 }
 
-message_type findType(byte opc){
+message_type Message::findType(byte opc){
 
     if (opc==OPC_ACK || opc==OPC_NAK || opc==OPC_HLT ||
         opc==OPC_BON || opc==OPC_ARST || opc==OPC_EXTC ||
         opc==OPC_RST || opc==OPC_EXTC1 || opc==OPC_EXTC2 ||
         opc==OPC_EXTC3 || opc==OPC_PNN || opc==OPC_EXTC4 ||
         opc==OPC_EXTC5)
-        {
-            return GENERAL;
-        }
+    {
+        return GENERAL;
+    }
     if (opc==OPC_TOF || opc==OPC_TON || opc==OPC_ESTOP ||
         opc==OPC_RTOF || opc==OPC_RTON || opc==OPC_RESTP ||
         opc==OPC_KLOC || opc==OPC_QLOC || opc==OPC_DKEEP ||
@@ -891,8 +890,9 @@ message_type findType(byte opc){
         opc==OPC_RDCC3 || opc==OPC_WCVO || opc==OPC_WCVB ||
         opc==OPC_QCVS || opc==OPC_PCVS || opc==OPC_RDCC4 ||
         opc==OPC_WCVS || opc==OPC_RDCC5 || opc==OPC_WCVOA ||
-        opc==OPC_RDCC6 || opc==OPC_PLOC || opc==OPC_STAT){
-            return DCC;
+        opc==OPC_RDCC6 || opc==OPC_PLOC || opc==OPC_STAT)
+    {
+        return DCC;
     }
 
     if (opc==OPC_RQDAT || opc==OPC_RQDDS || opc==OPC_ACON ||
@@ -908,7 +908,8 @@ message_type findType(byte opc){
         opc==OPC_ACOF3 || opc==OPC_ARON3 || opc==OPC_AROF3 ||
         opc==OPC_ACDAT || opc==OPC_ARDAT || opc==OPC_ASON3 ||
         opc==OPC_ASOF3 || opc==OPC_DDES || opc==OPC_DDRS ||
-        opc==OPC_ARSON3 || opc==OPC_ARSOF3 || opc==OPC_EXTC6){
+        opc==OPC_ARSON3 || opc==OPC_ARSOF3 || opc==OPC_EXTC6)
+    {
         return ACCESSORY;
     }
     if (opc==OPC_RSTAT || opc==OPC_QNN || opc==OPC_RQNP ||
@@ -923,7 +924,8 @@ message_type findType(byte opc){
         opc==OPC_PARAN || opc==OPC_REVAL || opc==OPC_REQEV ||
         opc==OPC_NEVAL || opc==OPC_EVLRN || opc==OPC_EVANS ||
         opc==OPC_NAME || opc==OPC_PARAMS || opc==OPC_ENRSP ||
-        opc==OPC_EVLRNI){
+        opc==OPC_EVLRNI)
+    {
         return CONFIG;
     }
 
