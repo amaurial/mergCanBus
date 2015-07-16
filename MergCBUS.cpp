@@ -1543,7 +1543,8 @@ unsigned int MergCBUS::getEventIndex(Message *msg){
  */
 
 byte MergCBUS::getNodeVar(byte varIndex){
-    return memory.getVar(varIndex);
+    //the cbus index starts with 1
+    return memory.getVar(varIndex-1);
 }
 
 /** \brief Get the variable of a learned event
