@@ -15,31 +15,37 @@ See MemoryManagement.h for memory configuration
 
 #include <Arduino.h>
 #include <SPI.h>
-#include <TimerOne.h>
 #include <MergCBUS.h>
 #include <Message.h>
 #include <EEPROM.h>
 
-#define GREEN_LED 5       //merg green led port
-#define YELLOW_LED 4      //merg yellow led port
-#define PUSH_BUTTON 3     //std merg push button
-#define PUSH_BUTTON1 9    //debug push button
-//semaphore leds
-#define GREEN 10        //green led
-#define YELLOW 11        //green led
-#define RED 12        //green led
-#define TRANSITION_TIME  2000 //time in milli to keep the yellow light on
+#define GREEN_LED      5    //merg green led port
+#define YELLOW_LED     4    //merg yellow led port
+#define PUSH_BUTTON    3    //std merg push button
+#define NUM_NODE_VARS  1    //the transition interval
+#define NUM_EVENTS     20   //supported events
+#define NUM_EVENT_VARS 0    //no need for supported event variables
+#define NUM_DEVICES    1    //one device number
+#define MODULE_ID      55   //module id
+#define MANUFACTURER_ID 165 //manufacturer id
+#define MIN_CODE       0    //min code version
+#define MAX_CODE       1    //max code version
 
-MergCBUS cbus=MergCBUS(5,20,1,0);
+#define CANPORT        53   //attached mcp2551 pin
+
+//semaphore leds
+#define GREEN 10              //green led pin
+#define YELLOW 11             //yellow led pin
+#define RED 12                //red led pin
+#define TRANSITION_TIME  50   //time in milli to keep the yellow light on
+#define NNVar1           40   //the yellow light will stay on for 2 seconds
+
+MergCBUS cbus=MergCBUS(NUM_NODE_VARS,NUM_EVENTS,NUM_EVENT_VARS,NUM_DEVICES);
+
 byte lighton;//control the state
 byte nextlighton;//control the state
 unsigned long starttime;
 
-//timer function to read the can messages
-void readCanMessages(){
-  //read the can message and put then in a circular buffer
-  cbus.cbusRead();
-}
 
 void setup(){
 
@@ -49,40 +55,36 @@ void setup(){
 
 
   //Configuration data for the node
-  cbus.getNodeId()->setNodeName("MODTESTE",8);  //node name
-  cbus.getNodeId()->setModuleId(55);            //module number
-  cbus.getNodeId()->setManufacturerId(0xA5);    //merg code
-  cbus.getNodeId()->setMinCodeVersion(1);       //Version 1
-  cbus.getNodeId()->setMaxCodeVersion(0);
+  cbus.getNodeId()->setNodeName("SEMAPHOR",8);         //node name
+  cbus.getNodeId()->setModuleId(MODULE_ID);            //module number
+  cbus.getNodeId()->setManufacturerId(MANUFACTURER_ID);//merg code
+  cbus.getNodeId()->setMinCodeVersion(MIN_CODE);       //Version 1
+  cbus.getNodeId()->setMaxCodeVersion(MAX_CODE);
   cbus.getNodeId()->setProducerNode(false);
   cbus.getNodeId()->setConsumerNode(true);
-  cbus.setStdNN(999); //standard node number
+  cbus.setPushButton(PUSH_BUTTON);//set the push button ports
 
-  if (digitalRead(PUSH_BUTTON1)==LOW){
+  //used to manually reset the node. while turning on keep the button pressed
+  //this forces the node for slim mode with an empty memory for learned events and devices
+  if (digitalRead(PUSH_BUTTON)==LOW){
     Serial.println("Setup new memory");
     cbus.setUpNewMemory();
     cbus.saveNodeFlags();
+    //set the default value
+    cbus.setNodeVariable(1,NNVar1);
   }
 
   cbus.setLeds(GREEN_LED,YELLOW_LED);//set the led ports
-  cbus.setPushButton(PUSH_BUTTON);//set the push button ports
-  cbus.setDebug(false);//print some messages on the serial port
-  cbus.setUserHandlerFunction(&myUserFunc);//function that implements the node logic
-  cbus.initCanBus(53,CAN_125KBPS,10,200);  //initiate the transport layer
 
-  Timer1.initialize(10000);//microseconds
-  Timer1.attachInterrupt(readCanMessages);
+  cbus.setUserHandlerFunction(&myUserFunc);//function that implements the node logic
+  cbus.initCanBus(CANPORT);  //initiate the transport layer
 
   Serial.println("Setup finished");
 }
 
 void loop (){
-
+  cbus.cbusRead();
   cbus.run();//do all logic
-  //debug memory
-  if (digitalRead(PUSH_BUTTON1)==LOW){
-    cbus.dumpMemory();
-  }
 }
 
 void myUserFunc(Message *msg,MergCBUS *mcbus){
@@ -101,7 +103,11 @@ void myUserFunc(Message *msg,MergCBUS *mcbus){
       }
   }
   if (lighton==YELLOW){
-    if ((millis()-starttime)>TRANSITION_TIME){
+    byte interval=cbus.getNodeVar(1);
+    if (interval<=0){
+        interval=1;
+    }
+    if ((millis()-starttime)>(TRANSITION_TIME*interval)){
       lighton=nextlighton;
     }
   }
