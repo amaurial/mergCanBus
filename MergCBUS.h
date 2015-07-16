@@ -97,6 +97,7 @@ class MergCBUS
         MergNodeIdentification *getNodeId(){return &nodeId;};
 
         bool initCanBus(unsigned int port,unsigned int rate, unsigned int retries,unsigned int retryIntervalMilliseconds);
+        bool initCanBus(unsigned int port);
         /**\brief Set the user function to handle other messages.*/
         void setUserHandlerFunction(userHandlerType f) {userHandler=f;};
         void sendERRMessage(byte code);
