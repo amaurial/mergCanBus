@@ -26,13 +26,20 @@ See MemoryManagement.h for memory configuration
 #define NUM_EVENTS     20   //supported events
 #define NUM_EVENT_VARS 0    //no need for supported event variables
 #define DEVICE_NUM     1    //one device number
+#define MODULE_ID      55   //module id
+#define MANUFACTURER_ID 165 //manufacturer id
+#define MIN_CODE       0    //min code version
+#define MAX_CODE       1    //max code version
+
+#define CANPORT        53   //attached mcp2551 pin
+
+#define PUSH_BUTTON1    6    //std merg push button
 
 //semaphore leds
 #define GREEN 10              //green led pin
 #define YELLOW 11             //yellow led pin
 #define RED 12                //red led pin
 #define TRANSITION_TIME  20   //time in milli to keep the yellow light on
-#define
 
 MergCBUS cbus=MergCBUS(NUM_NODE_VARS,NUM_EVENTS,NUM_EVENT_VARS,DEVICE_NUM);
 
@@ -49,11 +56,11 @@ void setup(){
 
 
   //Configuration data for the node
-  cbus.getNodeId()->setNodeName("MODTESTE",8);  //node name
-  cbus.getNodeId()->setModuleId(55);            //module number
-  cbus.getNodeId()->setManufacturerId(0xA5);    //merg code
-  cbus.getNodeId()->setMinCodeVersion(1);       //Version 1
-  cbus.getNodeId()->setMaxCodeVersion(0);
+  cbus.getNodeId()->setNodeName("SEMAPHOR",8);         //node name
+  cbus.getNodeId()->setModuleId(MODULE_ID);            //module number
+  cbus.getNodeId()->setManufacturerId(MANUFACTURER_ID);//merg code
+  cbus.getNodeId()->setMinCodeVersion(MIN_CODE);       //Version 1
+  cbus.getNodeId()->setMaxCodeVersion(MAX_CODE);
   cbus.getNodeId()->setProducerNode(false);
   cbus.getNodeId()->setConsumerNode(true);
   cbus.setStdNN(999); //standard node number
@@ -69,7 +76,7 @@ void setup(){
   cbus.setLeds(GREEN_LED,YELLOW_LED);//set the led ports
   cbus.setPushButton(PUSH_BUTTON);//set the push button ports
   cbus.setUserHandlerFunction(&myUserFunc);//function that implements the node logic
-  cbus.initCanBus(53,CAN_125KBPS,10,200);  //initiate the transport layer
+  cbus.initCanBus(CANPORT);  //initiate the transport layer
 
   Serial.println("Setup finished");
 }
