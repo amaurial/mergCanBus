@@ -44,7 +44,6 @@ MergCBUS::MergCBUS(byte num_node_vars,byte num_events,byte num_events_var,byte m
     pb_state=HIGH;
     std_nn=300;//std node number for a producer
     initMemory();
-    timerInterval=0;
 }
 
 /** \brief
@@ -189,15 +188,17 @@ unsigned int MergCBUS::run(){
             finishSelfEnumeration();
         }
     }
-    if (timerInterval>0){
-        if (readCanBus()){
-            resp=mainProcess();
-            if (resp==OK ){
-                return OK;
-            }
-        }
 
+    if (readCanBus()){
+        resp=mainProcess();
+        //OK means that the message was handled internally and a response was sent
+        if (resp==OK ){
+            return OK;
+        }
     }
+
+   /*
+
     else{
         if (readCanBus(0)==true){
             resp=mainProcess();
@@ -209,7 +210,7 @@ unsigned int MergCBUS::run(){
             return OK;
         }
     }
-
+   */
 
 
     if (userHandler!=0){
@@ -813,15 +814,8 @@ byte MergCBUS::handleConfigMessages(){
             //printSentMessage();
         #endif // DEBUGDEF
 
+        setNodeVariable(ind,val,true);
 
-        if (ind<=nodeId.getSuportedNodeVariables()){
-            memory.setVar(ind,val);
-            prepareMessage(OPC_WRACK);
-            sendCanMessage();
-        }else{
-            //send error
-            sendERRMessage(CMDERR_INV_PARAM_IDX);
-        }
         break;
 
     case OPC_REVAL:
@@ -932,6 +926,43 @@ byte MergCBUS::handleConfigMessages(){
     }
     return OK;
 }
+
+/** \brief
+* Set a node variable.
+* \param ind The node varialbe index. Starting at 1. It is limited by the user defined node variables.
+* \param val The variable value
+* \return True if success els return false.
+*/
+
+bool MergCBUS::setNodeVariable(byte ind, byte val){
+     return setNodeVariableAuto(ind,val,false);
+}
+
+/** \brief
+* Set a node variable with automatic response. This function is used when learning events or receiving FCU messages.
+* \param ind The node varialbe index. Starting at 1. It is limited by the user defined node variables.
+* \param val The variable value
+* \return True if success els return false.
+*/
+bool MergCBUS::setNodeVariableAuto(byte ind, byte val,bool autoErr){
+
+     if (ind<=nodeId.getSuportedNodeVariables()){
+            memory.setVar(ind,val);
+            if (autoErr){
+                prepareMessage(OPC_WRACK);
+                sendCanMessage();
+            }
+            return true;
+     }else{
+            //send error
+            if (autoErr){
+                sendERRMessage(CMDERR_INV_PARAM_IDX);
+            }
+     }
+     return false;
+
+}
+
 
 /** \brief
 * Deals with accessory functions. No automatic response of events once the user function determines the behaviour.
@@ -1127,8 +1158,6 @@ void MergCBUS::sendERRMessage(byte code){
 */
 
 bool MergCBUS::hasThisEvent(){
-
-
     //long events
     if (message.isLongEvent()){
              if (memory.getEventIndex(message.getNodeNumber(),message.getEventNumber())>=0){
@@ -1137,20 +1166,9 @@ bool MergCBUS::hasThisEvent(){
     }
     //short events has to check the device number
     if (message.isShortEvent()){
-//            unsigned int dn=message.getDeviceNumber();
-//            deviceNumberIdx=memory.getNumDeviceNumber()+1;
-//            for (byte i=0;i<memory.getNumDeviceNumber();i++){
-//                if (memory.getDeviceNumber(i)==dn){
-//                    typeEventMatch=false;
-//                    deviceNumberIdx=i;
-//                    return true;
-//                }
-//            }
-
             if (memory.getEventIndex(0,message.getEventNumber())>=0){
                 return true;
              }
-
     }
     return false;
 }

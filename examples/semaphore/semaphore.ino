@@ -25,7 +25,7 @@ See MemoryManagement.h for memory configuration
 #define NUM_NODE_VARS  1    //the transition interval
 #define NUM_EVENTS     20   //supported events
 #define NUM_EVENT_VARS 0    //no need for supported event variables
-#define DEVICE_NUM     1    //one device number
+#define NUM_DEVICES    1    //one device number
 #define MODULE_ID      55   //module id
 #define MANUFACTURER_ID 165 //manufacturer id
 #define MIN_CODE       0    //min code version
@@ -33,15 +33,14 @@ See MemoryManagement.h for memory configuration
 
 #define CANPORT        53   //attached mcp2551 pin
 
-#define PUSH_BUTTON1    6    //std merg push button
-
 //semaphore leds
 #define GREEN 10              //green led pin
 #define YELLOW 11             //yellow led pin
 #define RED 12                //red led pin
-#define TRANSITION_TIME  20   //time in milli to keep the yellow light on
+#define TRANSITION_TIME  50   //time in milli to keep the yellow light on
+#define NNVar1           40   //the yellow light will stay on for 2 seconds
 
-MergCBUS cbus=MergCBUS(NUM_NODE_VARS,NUM_EVENTS,NUM_EVENT_VARS,DEVICE_NUM);
+MergCBUS cbus=MergCBUS(NUM_NODE_VARS,NUM_EVENTS,NUM_EVENT_VARS,NUM_DEVICES);
 
 byte lighton;//control the state
 byte nextlighton;//control the state
@@ -63,18 +62,20 @@ void setup(){
   cbus.getNodeId()->setMaxCodeVersion(MAX_CODE);
   cbus.getNodeId()->setProducerNode(false);
   cbus.getNodeId()->setConsumerNode(true);
-  cbus.setStdNN(999); //standard node number
+  cbus.setPushButton(PUSH_BUTTON);//set the push button ports
 
   //used to manually reset the node. while turning on keep the button pressed
   //this forces the node for slim mode with an empty memory for learned events and devices
-  if (digitalRead(PUSH_BUTTON1)==LOW){
+  if (digitalRead(PUSH_BUTTON)==LOW){
     Serial.println("Setup new memory");
     cbus.setUpNewMemory();
     cbus.saveNodeFlags();
+    //set the default value
+    cbus.setNodeVariable(1,NNVar1);
   }
 
   cbus.setLeds(GREEN_LED,YELLOW_LED);//set the led ports
-  cbus.setPushButton(PUSH_BUTTON);//set the push button ports
+
   cbus.setUserHandlerFunction(&myUserFunc);//function that implements the node logic
   cbus.initCanBus(CANPORT);  //initiate the transport layer
 
@@ -84,10 +85,6 @@ void setup(){
 void loop (){
   cbus.cbusRead();
   cbus.run();//do all logic
-  //debug memory
-  if (digitalRead(PUSH_BUTTON1)==LOW){
-    cbus.dumpMemory();
-  }
 }
 
 void myUserFunc(Message *msg,MergCBUS *mcbus){

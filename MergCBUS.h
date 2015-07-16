@@ -144,6 +144,7 @@ class MergCBUS
         unsigned int getDeviceNumber(byte port);                             //2 bytes representation
         byte getDeviceNumberIndex(){return deviceNumberIdx;};
         state getNodeState(){return state_mode;};
+        bool setNodeVariable(byte ind, byte val);
         //send events
         byte sendOnEvent(bool longEvent,unsigned int event);
         byte sendOffEvent(bool longEvent,unsigned int event);
@@ -186,6 +187,7 @@ class MergCBUS
         void getStoredIDs();                    //node number,canId,device Number
         bool matchEvent();                      //
         unsigned int runAutomatic();            //process the majority of events automatic
+        bool setNodeVariableAuto(byte ind, byte val,bool autoErr);
 
         bool readCanBus();
         bool readCanBus(byte buf_num);
