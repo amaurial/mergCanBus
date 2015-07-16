@@ -93,6 +93,7 @@ class MergMemoryManagement
 
         void setUpNewMemory();
         void dumpMemory();
+        byte getMaxNumEvents(){return MAX_NUM_EVENTS;};
 
     protected:
 

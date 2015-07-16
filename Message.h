@@ -220,7 +220,7 @@ class Message
         bool _RTR;                              /** If the message is a RTR message*/
         message_type messages[MSGSIZE];         /** Holds the message type for each opc. Make an index of message types. Opc is the array index*/
         unsigned int message_params[MSGSIZE];   /** Use each bit to hold a true false information about the message. Used to make the search faster.*/
-        bool hasThisData(byte opc, message_config_pos pos);/** Check if a field is present in a message.*/
+        bool hasThisData(message_config_pos pos);/** Check if a field is present in a message.*/
         void loadMessageConfig();               /** Load standard message config.*/
         void loadMessageType();                 /** Load standard message types config.*/
 

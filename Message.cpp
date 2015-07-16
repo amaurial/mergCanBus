@@ -169,7 +169,7 @@ unsigned int Message::getNodeNumber(){
         Serial.println(data[0],HEX);
     #endif // DEBUGDEF
 
-    if (hasThisData(data[0],NODE_NUMBER)){
+    if (hasThisData(NODE_NUMBER)){
             #ifdef DEBUGDEF
                 Serial.println("NN OK");
             #endif // DEBUGDEF
@@ -189,7 +189,7 @@ byte Message::getSession(){
     //session is always at the position 1
     //byte* data=_canMessage->getData();
     byte r=0;
-    if (hasThisData(opc,SESSION)){
+    if (hasThisData(SESSION)){
             r=data[1];
     }
 
@@ -204,7 +204,7 @@ unsigned int Message::getEventNumber(){
     //node number is always at the position 3 and 4
     //byte* data=_canMessage->getData();
     unsigned int r=0;
-    if (hasThisData(opc,EVENT_NUMBER)){
+    if (hasThisData(EVENT_NUMBER)){
             r=data[3];
             r=r<<8;
             r=r|data[4];
@@ -222,7 +222,7 @@ unsigned int Message::getDeviceNumber(){
     //OPC_DDRS OPC_DDES OPC_RQDDS
     //byte* data=_canMessage->getData();
     unsigned int r=0;
-    if (hasThisData(opc,DEVICE_NUMBER)){
+    if (hasThisData(DEVICE_NUMBER)){
             if ((opc==OPC_DDRS) || (opc==OPC_DDES) || (opc==OPC_RQDDS)){
                 r=data[1];
                 r=r<<8;
@@ -247,7 +247,7 @@ unsigned int Message::getDecoder(){
     //node number is always at the position 2 and 3
     //byte* data=_canMessage->getData();
     unsigned int r=0;
-    if (hasThisData(opc,DECODER)){
+    if (hasThisData(DECODER)){
             //r=(unsigned int)word(data[2],data[3]);
             r=data[2];
             r=r<<8;
@@ -265,7 +265,7 @@ unsigned int Message::getCV(){
     //cv number is always at the position 2 and 3
     //byte* data=_canMessage->getData();
     unsigned int r=0;
-    if (hasThisData(opc,CV)){
+    if (hasThisData(CV)){
             //r=(unsigned int)word(data[2],data[3]);
             r=data[2];
             r=r<<8;
@@ -539,7 +539,7 @@ byte Message::getEventVar(){
 * @param pos Which field to look
 */
 
-bool Message::hasThisData(byte opc, message_config_pos pos){
+bool Message::hasThisData(message_config_pos pos){
     byte topc=getOpc();
     if (!((topc>=0) && (topc<MSGSIZE))){
         return false;

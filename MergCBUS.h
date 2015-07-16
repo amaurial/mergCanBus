@@ -119,7 +119,7 @@ class MergCBUS
         void setLeds(byte green,byte yellow);
         /**\brief Set the CBUS modules stardard push button.*/
         void setPushButton(byte pb) {push_button=pb;pinMode(pb,INPUT_PULLUP);};
-
+        bool setNodeVariable(byte ind, byte val);
         /**\brief Set the standard node number for slim mode.
         * The user of this library has to create its own way of letting a customer set a node number in SLIM mode.
         * If a standard value is not set and a push button is set then the library will use the value 0 if it is a consumer and 4444 if it is a producer.
@@ -186,6 +186,7 @@ class MergCBUS
         void getStoredIDs();                    //node number,canId,device Number
         bool matchEvent();                      //
         unsigned int runAutomatic();            //process the majority of events automatic
+        bool setNodeVariableAuto(byte ind, byte val,bool autoErr);
 
         bool readCanBus();
         bool readCanBus(byte buf_num);

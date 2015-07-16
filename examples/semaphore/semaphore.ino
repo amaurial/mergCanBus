@@ -50,7 +50,6 @@ unsigned long starttime;
 void setup(){
 
   setLedPorts();     //setup the sensor ports
-  pinMode(PUSH_BUTTON1,INPUT_PULLUP);//debug push button
   Serial.begin(115200);
 
 
