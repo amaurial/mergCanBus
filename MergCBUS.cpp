@@ -134,6 +134,17 @@ bool MergCBUS::initCanBus(unsigned int port,unsigned int rate,unsigned int retri
 }
 
 /** \brief
+ * * Initiate the CanBus layer with rate 125kps.
+ * * Set the port number for SPI communication.
+ * * @param port is the the SPI port number.
+ * */
+bool MergCBUS::initCanBus(unsigned int port,unsigned int rate,unsigned int retries,unsigned int retryIntervalMilliseconds){
+
+	    return initCanBus(port,CAN_125KBPS,20,30);
+}
+
+
+/** \brief
 * Set or unset the bit in the message bit.
 * @param pos specifies the bit position @see messageFilter
 * @param val if true set bit to 1, else set bit to 0
