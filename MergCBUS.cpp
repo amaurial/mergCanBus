@@ -1698,6 +1698,23 @@ void MergCBUS::cbusRead(){
         if (resp){
             buffer[bufIdx]=len;
 
+           #ifdef DEBUGDEF
+            // print message
+                int j=0;
+
+                Serial.print("Message: ");
+                for (j=0;j<len;j++){
+                    Serial.print (buffer[bufIdx+6+j]);
+                    Serial.print("\t");
+                }
+                Serial.print("Header: ");
+                for (j=0;j<4;j++){
+                    Serial.print (buffer[bufIdx+2+j]);
+                    Serial.print("\t");
+                }
+                Serial.println();
+            #endif // DEBUGDEF
+
             if (Can.isRTMMessage()==0){
                  #ifdef DEBUGDEF
                                 Serial.println("readCanBus - unsetRTM");
