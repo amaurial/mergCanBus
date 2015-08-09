@@ -62,13 +62,15 @@ void setup(){
   cbus.getNodeId()->setProducerNode(false);
   cbus.getNodeId()->setConsumerNode(true);
   cbus.setPushButton(PUSH_BUTTON);//set the push button ports
-
+  cbus.setStdNN(999); //standard node number
+  
   //used to manually reset the node. while turning on keep the button pressed
   //this forces the node for slim mode with an empty memory for learned events and devices
   if (digitalRead(PUSH_BUTTON)==LOW){
     Serial.println("Setup new memory");
     cbus.setUpNewMemory();
-    cbus.saveNodeFlags();
+    cbus.setSlimMode();
+    cbus.saveNodeFlags();    
     //set the default value
     cbus.setNodeVariable(1,NNVar1);
   }
