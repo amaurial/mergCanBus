@@ -1572,12 +1572,13 @@ byte MergCBUS::getNodeVar(byte varIndex){
 /** \brief Get the variable of a learned event
  *
  * \param msg Pointer to a received message. It will use the node number and the event number from the msg *
- * \param varIndex the index in the variable to be retrieved.
+ * \param varIndex the index in the variable to be retrieved starting on 1.
  * \return Returns the variable value.
  *
  */
 byte MergCBUS::getEventVar(Message *msg,byte varIndex){
     unsigned int idx;
+    byte vidx;
 
     if (msg->isShortEvent()){
         idx=memory.getEventIndex(0,msg->getDeviceNumber());
@@ -1586,13 +1587,20 @@ byte MergCBUS::getEventVar(Message *msg,byte varIndex){
         idx=memory.getEventIndex(msg->getNodeNumber(),msg->getEventNumber());
     }
 
+    if (varIndex>0){
+        vidx=varIndex-1;
+    }
+    else {
+        vidx=0;
+    }
 
     if (idx<nodeId.getSuportedEvents()){
-        return memory.getEventVar(idx,varIndex);
+        return memory.getEventVar(idx,vidx);
     }
     return 0x00;
 
 }
+
 /** \brief Set the device number for a specific port
  *
  * \param val The device number
