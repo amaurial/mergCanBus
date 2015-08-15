@@ -200,6 +200,8 @@ byte MergMemoryManagement::getVar(unsigned int index){
 
 /**\brief
 * Return the event variable for a specific event
+* @param eventIdx is the event index starting on 0.
+* @param index indicates the variable position startin on 0
 * @return FAILED_INDEX if index out of bounds
 */
 byte MergMemoryManagement::getEventVar(unsigned int eventIdx,unsigned int index){

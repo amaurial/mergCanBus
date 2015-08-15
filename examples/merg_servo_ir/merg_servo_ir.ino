@@ -24,24 +24,23 @@ To clear the memory, press pushbutton1 while reseting the arduino
 #include <EEPROM.h> //required by the library
 #include <VarSpeedServo.h>
 
+#define DEBUGNODE
+
 //Module definitions servo
 #define NUM_SERVOS 8      //number of servos
-// first byte is to indicate which servo is on.
-// 1 byte to indicate to togle. 
-// 2 for start and end angle in % of 360 grad
-#define VAR_PER_SERVO 6       //variables per servo
+
 #define SPEED 50              //servo speed
 #define SERVO_START 0         //servo start angle
 #define SERVO_END 180         //servo end angle
 //pins where the servos are attached
 //pins 9,10 and 15 don't work for many servos. servo library limitation
-byte servopins[]={1,2,3,4,5,6,7,8};
+byte servopins[]={2,3,4,5,6,7,8,9};
+byte servo_vars[5];
 VarSpeedServo servos[NUM_SERVOS];
-byte active_servo;
-byte togle_servo;
-
+int tlimit;
+int rlimit;
 //Module definitions sensor
-#define NUMSENSORS 8
+#define NUMSENSORS 6
 #define TLIMIT 500
 #define RLIMIT 25
 struct SENSOR {
@@ -51,33 +50,25 @@ struct SENSOR {
   unsigned long resets;
 };
 byte togle_ir;
+byte active_ir;
 
 struct SENSOR sensors[NUMSENSORS];
-int sensorport[NUMSENSORS]={A0, A1 ,A2 ,A3, A4 ,A5, A6,A7};
-
-//first 2 are to indicate which servo is on. 2 bytes to indicate to togle. 2 for start and end angle
-#define VAR_PER_SENSOR 1  //variables per servo. used as reserve. it is mostly used by consumers
+int sensorport[NUMSENSORS]={A0, A1 ,A2 ,A3, A6,A7};
 
 //CBUS definitions
-#define GREEN_LED 27                            //merg green led port
-#define YELLOW_LED 26                           //merg yellow led port
-#define PUSH_BUTTON 25                          //std merg push button
-#define PUSH_BUTTON1 28                         //debug push button
-#define NODE_VARS 4                             //2 for togle events, 2 for spare
+#define GREEN_LED 0                            //merg green led port
+#define YELLOW_LED 1                           //merg yellow led port
+#define PUSH_BUTTON A4                          //std merg push button
+#define PUSH_BUTTON1 A5                         //debug push button
 #define NODE_EVENTS 30                          //max number of events
-#define EVENTS_VARS VAR_PER_SENSOR              //number of variables per event
+#define EVENTS_VARS 1                          //number of variables per event
 #define DEVICE_NUMBERS NUMSENSORS+NUM_SERVOS   //number of device numbers. each servo can be a device
 
-
-#define EVENTS_VARS VAR_PER_SERVO   //number of variables per event
-#define DEVICE_NUMBERS NUM_SERVOS   //number of device numbers. each servo can be a device
+#define NODE_VARS 4 + 3*NUM_SERVOS
+//4 bytes for togle and activate the sensors and the servos
+//2 * NUM_SERVOS of start, end angle, speed (3 bits when on and 3 bit when off) and initial position (2 bits)
 #define TOGLE_IR_VAR       1
-#define TOGLE_SERVO_VAR    2
-#define ACTIVE_SERVO_VAR   3
-#define START_ANGLE_VAR    4          //var index for the start angle
-#define END_ANGLE_VAR      5            //var index for the end angle
-
-//arduino mega has 4K, so it is ok.
+#define ACTIVE_IR_VAR      2
 
 
 //create the merg object
@@ -86,7 +77,9 @@ MergCBUS cbus=MergCBUS(NODE_VARS,NODE_EVENTS,EVENTS_VARS,DEVICE_NUMBERS);
 void setup(){
 
   pinMode(PUSH_BUTTON1,INPUT_PULLUP);//debug push button
+  #ifdef DEBUGNODE
   Serial.begin(115200);
+  #endif
 
   //Configuration data for the node
   cbus.getNodeId()->setNodeName("MSERVOIR",8);  //node name
@@ -98,7 +91,7 @@ void setup(){
   cbus.getNodeId()->setConsumerNode(true);
   cbus.setStdNN(999); //standard node number
 
-  if (digitalRead(PUSH_BUTTON1)==LOW){
+  if (digitalRead(PUSH_BUTTON)==LOW){
     //Serial.println("Setup new memory");
     cbus.setUpNewMemory();
     cbus.setSlimMode();
@@ -107,12 +100,16 @@ void setup(){
   cbus.setLeds(GREEN_LED,YELLOW_LED);//set the led ports
   cbus.setPushButton(PUSH_BUTTON);//set the push button ports
   cbus.setUserHandlerFunction(&myUserFunc);//function that implements the node logic
-  cbus.initCanBus(53);  //initiate the transport layer. pin=53, rate=125Kbps,10 tries,200 millis between each try
+  cbus.initCanBus(10);  //initiate the transport layer. pin=53, rate=125Kbps,10 tries,200 millis between each try
 
-  //create the servos object
+  //create the sensors
   setupSensors();
+  //create the servos object
   setUpServos();  
-  //Serial.println("Setup finished");
+  #ifdef DEBUGNODE
+  Serial.println("Setup finished");
+  #endif
+  
 }
 
 void loop (){
@@ -120,7 +117,7 @@ void loop (){
   cbus.run();//do all logic
 
   if (cbus.getNodeState()==NORMAL){
-    checkSensors();
+    //checkSensors();
   }
 
   //debug memory
@@ -131,32 +128,31 @@ void loop (){
 
 //user defined function. contains the module logic.called every time run() is called.
 void myUserFunc(Message *msg,MergCBUS *mcbus){
-  boolean onEvent;
-  unsigned int converted_speed;
-  int varidx=0;
+  boolean onEvent;  
+  byte p;
 
-  byte servo_start,servo_end;
+  
   if (mcbus->eventMatch()){
      onEvent=mcbus->isAccOn();
-     getServosArray(msg,mcbus);
-     Serial.println("event match");
-     servo_start=mcbus->getEventVar(msg,START_ANGLE_VAR);
-     servo_end=mcbus->getEventVar(msg,END_ANGLE_VAR);
-     Serial.println(servo_start);
-     Serial.println(servo_end);
-      //get the events var and control the servos
+     
+     #ifdef DEBUGNODE
+      Serial.println("event match");
+     #endif
+     
+     //get the events var and control the servos
+     p=mcbus->getEventVar(msg,1);
       for (int i=0;i<NUM_SERVOS;i++){
-
-        if (isServoActive(i)){
-          moveServo(onEvent,i,servo_start,servo_end);
+        getServoNodeVar(i);
+        if (isServoAffected(i,p)){          
+          if (onEvent){
+            servos[i].write(servo_vars[1],map(servo_vars[2],0,7,127,1));
+          }
+          else{
+            servos[i].write(servo_vars[0],map(servo_vars[3],0,7,127,1));
+          }         
         }
       }
-  }
-  else{
-    //feedback messages
-
-
-  }
+  }  
 }
 
 void checkSensors(){
@@ -164,7 +160,9 @@ void checkSensors(){
   int i;
   unsigned long actime;
   //int s=7;
-
+  togle_ir=cbus.getNodeVar(1);  
+  active_ir=cbus.getNodeVar(2); 
+  
   for (i=0;i<NUMSENSORS;i++){
     state=getSensorState(i);
     //Serial.println(state);
@@ -272,46 +270,47 @@ int getSensorState(int i){
 
 }
 
-void moveServo(boolean event,byte servoidx,byte servo_start,byte servo_end){
-    if (event){
-      if (isServoToTogle(servoidx)){
-        servos[servoidx].write(servo_start,SPEED);
-      }
-      else {
-        Serial.println("moving servo");
-        servos[servoidx].write(servo_end,SPEED);
-      }
-    }
-    else{
-      if (isServoToTogle(servoidx)){
-        servos[servoidx].write(servo_end,SPEED);
-      }
-      else {
-        servos[servoidx].write(servo_start,SPEED);
-      }
-    }
-}
-
 //create the objects for each servo
 void setUpServos(){
-  for (int i=0;i<NUM_SERVOS;i++){
+  for (int i=0;i<NUM_SERVOS;i++){    
     servos[i].attach(servopins[i]);
-    servos[i].write(0,127);
+    getServoNodeVar(i);
+    switch (servo_vars[4]){
+      case 0:
+        //do nothing
+      break;
+      case 1:
+        //move to start position
+        servos[i].write(servo_vars[0],127);
+      break;
+      case 2:
+        //mode to end position
+        servos[i].write(servo_vars[1],127);
+      break;
+      case 3:
+        //do nothing
+      break;
+      default: {
+             
+      }
+    }
+    
   }
 }
-//is the servo to be activated or not
-boolean isServoActive(int index){
-  
-  if (bitRead(active_servo,index)==1){
+
+//is the servo by index to togle or not
+boolean isIrToTogle(int index){
+  if (bitRead(togle_ir,index)==1){
     return true;
   }
   else{
      return false;
   }  
 }
-//is the servo by index to togle or not
-boolean isServoToTogle(int index){
-  if (bitRead(togle_servo,index)==1){
+
+//is the servo by index affected by the event?
+boolean isServoAffected(byte index,byte flag){
+  if (bitRead(flag,index)==1){
     return true;
   }
   else{
@@ -321,9 +320,16 @@ boolean isServoToTogle(int index){
 
 //
 //get the events vars for activate servos and to togle the servos:invert behaviour on on/off events
-void getServosArray(Message *msg,MergCBUS *mcbus){
-  active_servo=mcbus->getEventVar(msg,2);  
-  togle_servo=mcbus->getEventVar(msg,1);  
-  togle_ir=mcbus->getEventVar(msg,0);  
+void getServoNodeVar(byte servo_idx){
+  byte p;
+  
+  servo_vars[0]=cbus.getNodeVar(3+3*servo_idx);//angle when off event. start angle
+  servo_vars[1]=cbus.getNodeVar(4+3*servo_idx);//angle when on event. end angle
+  p=cbus.getNodeVar(5+3*servo_idx);  
+  servo_vars[2]=p & B11100000;//speed when on event
+  servo_vars[3]=p & B00011100;//speed when off event
+  servo_vars[4]=p & B00000011;//where to move on startup
+      
 }
+
 
