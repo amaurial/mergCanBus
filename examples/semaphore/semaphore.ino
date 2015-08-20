@@ -31,7 +31,7 @@ See MemoryManagement.h for memory configuration
 #define MIN_CODE       0    //min code version
 #define MAX_CODE       1    //max code version
 
-#define CANPORT        53   //attached mcp2551 pin
+#define CANPORT        10   //attached mcp2551 pin. if using mega pin is 53
 
 //semaphore leds
 #define GREEN 10              //green led pin
@@ -50,7 +50,7 @@ unsigned long starttime;
 void setup(){
 
   setLedPorts();     //setup the sensor ports
-  pinMode(PUSH_BUTTON1,INPUT_PULLUP);//debug push button
+  //pinMode(PUSH_BUTTON1,INPUT_PULLUP);//debug push button
   Serial.begin(115200);
 
 

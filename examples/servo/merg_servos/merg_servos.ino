@@ -60,11 +60,6 @@ byte servopins[]={2,3,4,5,6,7,8,11,12,13,14,16,17,18,19,20};//,19,20,21,22,23,24
 byte active_servo[2];
 byte togle_servo[2];
 
-//timer function to read the can messages
-void readCanMessages(){
-  //read the can message and put then in a circular buffer
-  cbus.cbusRead();
-}
 
 void setup(){
 
@@ -90,16 +85,14 @@ void setup(){
   cbus.setLeds(GREEN_LED,YELLOW_LED);//set the led ports
   cbus.setPushButton(PUSH_BUTTON);//set the push button ports
   cbus.setUserHandlerFunction(&myUserFunc);//function that implements the node logic
-  cbus.initCanBus(53,CAN_125KBPS,10,200);  //initiate the transport layer. pin=53, rate=125Kbps,10 tries,200 millis between each try
+  cbus.initCanBus(53);  //initiate the transport layer. pin=53, rate=125Kbps,10 tries,200 millis between each try
   //create the servos object
-  setUpServos();
-  Timer1.initialize(10000);//microseconds
-  Timer1.attachInterrupt(readCanMessages);
+  setUpServos();  
   Serial.println("Setup finished");
 }
 
 void loop (){
-
+  cbus.cbusRead();
   cbus.run();//do all logic
   //debug memory
   if (digitalRead(PUSH_BUTTON1)==LOW){

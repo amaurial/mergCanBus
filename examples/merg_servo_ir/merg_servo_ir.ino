@@ -56,10 +56,10 @@ struct SENSOR sensors[NUMSENSORS];
 int sensorport[NUMSENSORS]={A0, A1 ,A2 ,A3, A6,A7};
 
 //CBUS definitions
-#define GREEN_LED 0                            //merg green led port
-#define YELLOW_LED 1                           //merg yellow led port
-#define PUSH_BUTTON A4                          //std merg push button
-#define PUSH_BUTTON1 A5                         //debug push button
+#define GREEN_LED A4                            //merg green led port
+#define YELLOW_LED A5                           //merg yellow led port
+#define PUSH_BUTTON 0                          //std merg push button
+#define PUSH_BUTTON1 1                         //debug push button
 #define NODE_EVENTS 30                          //max number of events
 #define EVENTS_VARS 1                          //number of variables per event
 #define DEVICE_NUMBERS NUMSENSORS+NUM_SERVOS   //number of device numbers. each servo can be a device
@@ -100,6 +100,7 @@ void setup(){
   cbus.setLeds(GREEN_LED,YELLOW_LED);//set the led ports
   cbus.setPushButton(PUSH_BUTTON);//set the push button ports
   cbus.setUserHandlerFunction(&myUserFunc);//function that implements the node logic
+  //if using mega. the pin is 53
   cbus.initCanBus(10);  //initiate the transport layer. pin=53, rate=125Kbps,10 tries,200 millis between each try
 
   //create the sensors
