@@ -101,6 +101,7 @@ class MergCBUS
         bool initCanBus(unsigned int port);
         /**\brief Set the user function to handle other messages.*/
         void setUserHandlerFunction(userHandlerType f) {userHandler=f;};
+        void setDCCHandlerFunction(userHandlerType f) {dccHandler=f;};
         void sendERRMessage(byte code);
         bool hasThisEvent();
         void cbusRead();
@@ -182,6 +183,7 @@ class MergCBUS
         byte bufferIndex;                     //index that indicates the buffer size
         //unsigned int (*userHandler)(message*);  //pointer to function
         userHandlerType userHandler;
+        dccHandlerType userHandler;
         bool messageToHandle;                   //true if the message was not automatically handled
 
         void setBitMessage(byte pos,bool val);  /** set or unset the bit on pos for messageFilter*/

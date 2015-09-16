@@ -42,6 +42,8 @@
 		<Unit filename="LICENSE" />
 		<Unit filename="MergCBUS.cpp" />
 		<Unit filename="MergCBUS.h" />
+		<Unit filename="MergCBUSThrottle.cpp" />
+		<Unit filename="MergCBUSThrottle.h" />
 		<Unit filename="MergMemoryManagement.cpp" />
 		<Unit filename="MergMemoryManagement.h" />
 		<Unit filename="MergNodeIdentification.cpp" />

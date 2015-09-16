@@ -289,9 +289,7 @@ unsigned int MergCBUS::mainProcess(){
 
     switch (message.getType()){
         case (DCC):
-            if (nodeId.isConsumerNode()){
-                handleDCCMessages();
-            }
+            dccHandler(&message,this);
         break;
         case (ACCESSORY):
              if (nodeId.isConsumerNode()){
