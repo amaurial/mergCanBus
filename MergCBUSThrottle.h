@@ -8,7 +8,7 @@ class MergCBUSThrottle
     public:
         MergCBUSThrottle(MergCBUS *cbus,Message *message);
         virtual ~MergCBUSThrottle();
-        bool getSession(uint16_t loco,uint8_t *session);
+        bool getSession(uint16_t loco);
         bool releaseSession(uint8_t session);
         bool consist(uint16_t loco1,uint16_t loco2);
         void setKeepAliveInterval(uint16_t interval_milli);

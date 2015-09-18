@@ -158,7 +158,10 @@ class MergCBUS
         byte sendOnEvent3(bool longEvent,unsigned int event,byte var1,byte var2,byte var3);
         byte sendOffEvent3(bool longEvent,unsigned int event,byte var1,byte var2,byte var3);
 
-
+        //send DCC Events
+        byte sendGetSession(uint16_t loco);
+        byte sendReleaseSession(uint16_t loco);
+        byte
 
     protected:
     private:

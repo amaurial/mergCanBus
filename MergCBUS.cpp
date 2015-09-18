@@ -1686,6 +1686,23 @@ byte MergCBUS::sendOffEvent3(bool longEvent,unsigned int event,byte var1,byte va
     return sendCanMessage();
 }
 
+byte MergCBUS::sendGetSession(uint16_t loco){
+    byte H,L;
+
+    if (loco<=127){
+        H=0;
+        L=loco<<8;
+    }
+
+    if (longEvent){
+        prepareMessageBuff(OPC_ACOF3,highByte(nodeId.getNodeNumber()),lowByte(nodeId.getNodeNumber()),highByte(event),lowByte(event),var1,var2,var3);
+    }
+    else{
+        prepareMessageBuff(OPC_ASOF3,highByte(nodeId.getNodeNumber()),lowByte(nodeId.getNodeNumber()),highByte(event),lowByte(event),var1,var2,var3);
+    }
+    return sendCanMessage();
+}
+
 /** \brief
 * Read the can bus message and  put in circular buffer.
 * Used by the timer
