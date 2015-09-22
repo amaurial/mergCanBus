@@ -1693,13 +1693,96 @@ byte MergCBUS::sendGetSession(uint16_t loco){
         H=0;
         L=loco<<8;
     }
+    else if (loco <= 10239) {
+        H=(loco>>8) | (xA0);
+        L=loco<<8;
+    }
+    else {
+        return 255;
+    }
+    prepareMessageBuff(OPC_RLOC,H,L);
 
-    if (longEvent){
-        prepareMessageBuff(OPC_ACOF3,highByte(nodeId.getNodeNumber()),lowByte(nodeId.getNodeNumber()),highByte(event),lowByte(event),var1,var2,var3);
+    return sendCanMessage();
+}
+
+byte MergCBUS::sendReleaseSession(uint8_t locsession){
+
+    prepareMessageBuff(OPC_KLOC,locsession);
+
+    return sendCanMessage();
+}
+byte MergCBUS::sendKeepAliveSession(uint8_t locsession){
+
+    prepareMessageBuff(OPC_DKEEP,locsession);
+
+    return sendCanMessage();
+}
+
+byte MergCBUS::sendSpeedDir(uint8_t speed,bool dforward){
+
+    byte dspd;
+    dspd=speed & 0x7F;
+    bitSet(dspd,7);
+    if (!dforward){
+        bitClear(dspd,7);
     }
-    else{
-        prepareMessageBuff(OPC_ASOF3,highByte(nodeId.getNodeNumber()),lowByte(nodeId.getNodeNumber()),highByte(event),lowByte(event),var1,var2,var3);
+    prepareMessageBuff(OPC_DSPD,dspd);
+
+    return sendCanMessage();
+}
+
+byte MergCBUS::sendShareSession(uint16_t loco){
+    byte H,L;
+
+    if (loco<=127){
+        H=0;
+        L=loco<<8;
     }
+    else if (loco <= 10239) {
+        H=(loco>>8) | (xA0);
+        L=loco<<8;
+    }
+    else {
+        return 255;
+    }
+    prepareMessageBuff(OPC_GLOC,H,L,2);
+
+    return sendCanMessage();
+}
+byte MergCBUS::sendStealSession(uint16_t loco){
+    byte H,L;
+
+    if (loco<=127){
+        H=0;
+        L=loco<<8;
+    }
+    else if (loco <= 10239) {
+        H=(loco>>8) | (xA0);
+        L=loco<<8;
+    }
+    else {
+        return 255;
+    }
+    prepareMessageBuff(OPC_GLOC,H,L,1);
+
+    return sendCanMessage();
+}
+
+byte MergCBUS::sendSetFun(uint8_t locsession,uint8_t fn){
+
+    if (fn>28){
+        return 255;
+    }
+    prepareMessageBuff(OPC_DFNON,locsession,fn);
+    return sendCanMessage();
+}
+
+byte MergCBUS::sendUnsetFun(uint8_t locsession,uint8_t fn){
+
+    if (fn>28){
+        return 255;
+    }
+    prepareMessageBuff(OPC_DFNOF,locsession,fn);
     return sendCanMessage();
 }
 
