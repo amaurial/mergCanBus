@@ -144,11 +144,11 @@ class MergCBUS
         byte getEventVar(Message *msg,byte varIndex);
 
         void setDeviceNumber(unsigned int val,byte port);           //2 bytes representation for dn
-        unsigned int getDeviceNumber(byte port);                             //2 bytes representation
+        unsigned int getDeviceNumber(byte port);                    //2 bytes representation
         byte getDeviceNumberIndex(){return deviceNumberIdx;};
         state getNodeState(){return state_mode;};
 
-        //send events
+        //send on/off events
         byte sendOnEvent(bool longEvent,unsigned int event);
         byte sendOffEvent(bool longEvent,unsigned int event);
         byte sendOnEvent1(bool longEvent,unsigned int event,byte var1);
@@ -192,7 +192,7 @@ class MergCBUS
         byte bufferIndex;                     //index that indicates the buffer size
         //unsigned int (*userHandler)(message*);  //pointer to function
         userHandlerType userHandler;
-        dccHandlerType userHandler;
+        userHandlerType dccHandler;
         bool messageToHandle;                   //true if the message was not automatically handled
 
         void setBitMessage(byte pos,bool val);  /** set or unset the bit on pos for messageFilter*/
@@ -250,6 +250,9 @@ class MergCBUS
 
         //timer functions for reading messages
         long timerInterval;
+
+        //DCC functions
+        byte sendShareStealSession(uint16_t loco,uint8_t mode);
 
 };
 

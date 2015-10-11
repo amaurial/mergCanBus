@@ -51,6 +51,8 @@
 		<Unit filename="Message.cpp" />
 		<Unit filename="Message.h" />
 		<Unit filename="README.md" />
+		<Unit filename="ThrottleInfo.cpp" />
+		<Unit filename="ThrottleInfo.h" />
 		<Unit filename="mcp_can.cpp" />
 		<Unit filename="mcp_can.h" />
 		<Unit filename="mcp_can_dfs.h" />

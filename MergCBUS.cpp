@@ -1694,7 +1694,7 @@ byte MergCBUS::sendGetSession(uint16_t loco){
         L=loco<<8;
     }
     else if (loco <= 10239) {
-        H=(loco>>8) | (xA0);
+        H=(loco>>8) | (0xA0);
         L=loco<<8;
     }
     else {
@@ -1732,24 +1732,12 @@ byte MergCBUS::sendSpeedDir(uint8_t speed,bool dforward){
 }
 
 byte MergCBUS::sendShareSession(uint16_t loco){
-    byte H,L;
-
-    if (loco<=127){
-        H=0;
-        L=loco<<8;
-    }
-    else if (loco <= 10239) {
-        H=(loco>>8) | (xA0);
-        L=loco<<8;
-    }
-    else {
-        return 255;
-    }
-    prepareMessageBuff(OPC_GLOC,H,L,2);
-
-    return sendCanMessage();
+    return sendShareStealSession(loco,2);
 }
 byte MergCBUS::sendStealSession(uint16_t loco){
+    return sendShareStealSession(loco,1);
+}
+byte MergCBUS::sendShareStealSession(uint16_t loco,uint8_t mode){
     byte H,L;
 
     if (loco<=127){
@@ -1757,15 +1745,16 @@ byte MergCBUS::sendStealSession(uint16_t loco){
         L=loco<<8;
     }
     else if (loco <= 10239) {
-        H=(loco>>8) | (xA0);
+        H=(loco>>8) | (0xA0);
         L=loco<<8;
     }
     else {
         return 255;
     }
-    prepareMessageBuff(OPC_GLOC,H,L,1);
+    prepareMessageBuff(OPC_GLOC,H,L,mode);
 
     return sendCanMessage();
+
 }
 
 byte MergCBUS::sendSetFun(uint8_t locsession,uint8_t fn){
