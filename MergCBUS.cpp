@@ -75,6 +75,7 @@ void MergCBUS::loadMemory(){
             Serial.println("FLIM mode");
         #endif // DEBUGDEF
     }
+    state_mode=NORMAL;
 }
 
 /** \brief
@@ -189,6 +190,7 @@ unsigned int MergCBUS::run(){
     }
 
     while (readCanBus()){
+
         resp=mainProcess();
         if (resp!=OK ){
             if (userHandler!=0){
@@ -218,7 +220,8 @@ unsigned int MergCBUS::run(){
 
 unsigned int MergCBUS::mainProcess(){
 
-        if (message.getRTR()){
+
+    if (message.getRTR()){
         //if we are a device with can id
         //we need to answer this message
         #ifdef DEBUGDEF
@@ -255,8 +258,10 @@ unsigned int MergCBUS::mainProcess(){
     //the state can be a message or manually
 
     if (state_mode==SELF_ENUMERATION){
-        Serial.print("other msg size:");
-        Serial.println(message.getCanMessageSize());
+        #ifdef DEBUGDEF
+            Serial.print("other msg size:");
+            Serial.println(message.getCanMessageSize());
+        #endif // DEBUGDEF
         if (message.getCanMessageSize()==0){
             #ifdef DEBUGDEF
                 Serial.println("Self ennumeration: saving others can id.");
@@ -289,7 +294,10 @@ unsigned int MergCBUS::mainProcess(){
 
     switch (message.getType()){
         case (DCC):
-            dccHandler(&message,this);
+
+            if (dccHandler != 0){
+                dccHandler(&message,this);
+            }
         break;
         case (ACCESSORY):
              if (nodeId.isConsumerNode()){
@@ -356,6 +364,7 @@ bool MergCBUS::readCanBus(){
     bool resp;
     byte bufidx=90;//position in the general buffer. data need 8 bytes
     eventmatch=false;
+
     resp=msgBuffer.get(&buffer[bufidx]);
     if (resp){
         message.clear();

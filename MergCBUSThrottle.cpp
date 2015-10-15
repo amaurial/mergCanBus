@@ -1,14 +1,15 @@
 #include "MergCBUSThrottle.h"
 
-MergCBUSThrottle::MergCBUSThrottle(MergCBUS *cbus,Message *message)
+MergCBUSThrottle::MergCBUSThrottle(MergCBUS *cbus)
 {
     //ctor
     this->cbus=cbus;
-    this->message=message;
+    //this->message=message;
     for (int i=0;i<NUM_SESSIONS;i++){
         tinfo[i].setSession(255);
         tinfo[i].setLoco(0);
     }
+    setKeepAliveInterval(2000);
 }
 
 MergCBUSThrottle::~MergCBUSThrottle()

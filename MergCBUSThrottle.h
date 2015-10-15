@@ -11,7 +11,7 @@
 class MergCBUSThrottle
 {
     public:
-        MergCBUSThrottle(MergCBUS *cbus,Message *message);
+        MergCBUSThrottle(MergCBUS *cbus);
         virtual ~MergCBUSThrottle();
 
         bool getSession(uint16_t loco);
