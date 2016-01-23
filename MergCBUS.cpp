@@ -1045,6 +1045,15 @@ byte MergCBUS::sendCanMessage(){
     byte message_size;
     message_size=getMessageSize(mergCanData[0]);
     Can.setPriority(PRIO_LOW,PRIO_MIN_LOWEST);
+
+    #ifdef DEBUGMSG
+        Serial.print("Send Message: ");
+        for (int j=0;j<7;j++){
+            Serial.print (mergCanData[j]);
+            Serial.print("\t");
+        }
+        Serial.println();
+    #endif // DEBUGMSG
     byte r=Can.sendMsgBuf(nodeId.getCanID(),0,message_size,mergCanData);
     if (CAN_OK!=r){
         return r;

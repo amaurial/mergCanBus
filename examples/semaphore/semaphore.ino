@@ -19,9 +19,9 @@ See MemoryManagement.h for memory configuration
 #include <Message.h>
 #include <EEPROM.h>
 
-#define GREEN_LED      5    //merg green led port
-#define YELLOW_LED     4    //merg yellow led port
-#define PUSH_BUTTON    3    //std merg push button
+#define GREEN_LED      A6    //merg green led port
+#define YELLOW_LED     A7   //merg yellow led port
+#define PUSH_BUTTON    9    //std merg push button
 #define NUM_NODE_VARS  1    //the transition interval
 #define NUM_EVENTS     20   //supported events
 #define NUM_EVENT_VARS 0    //no need for supported event variables

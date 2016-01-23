@@ -168,6 +168,9 @@ class MergCBUS
         byte sendSetFun(uint8_t locsession,uint8_t fn);
         byte sendUnsetFun(uint8_t locsession, uint8_t fn);
 
+        void doSelfEnnumeration(bool soft); //put the node in the self enummeration mode
+        void doSetup();                     // put the node in the setup mode
+        bool isSelfEnumMode();              //check if the node is in the self enum mode
 
     protected:
     private:
@@ -235,11 +238,10 @@ class MergCBUS
         void(* resetFunc) (void);           //declare reset function @ address 0. resets the arduino
         void learnEvent();                  //put the node in the learn event mode
         unsigned int mainProcess();
-        void doSelfEnnumeration(bool soft); //put the node in the self enummeration mode
-        void doSetup();                     // put the node in the setup mode
+
         void doOutOfService();              //put the node in the out of service node
         void initMemory();                  //load the eprom memory
-        bool isSelfEnumMode();              //check if the node is in the self enum mode
+
 
         /**\brief Set the node state to a new state.
         * @param newstate One of states @see state
