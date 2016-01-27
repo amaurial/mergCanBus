@@ -27,25 +27,25 @@ To clear the memory, press pushbutton1 while reseting the arduino
 
 
 //Module definitions
-#define NUM_SERVOS 6      //number of servos
+#define NUM_SERVOS 5      //number of servos
 //first 2 are to indicate which servo is on. 2 bytes to indicate to togle. 2 for start and end angle
 #define VAR_PER_SERVO 6  //variables per servo
 #define SPEED 50        //servo speed
-#define SERVO_START 0        //servo start angle
+#define SERVO_START 15        //servo start angle.start at 15 to avoid jitter
 #define SERVO_END 180        //servo end angle
 
 
 //CBUS definitions
-#define GREEN_LED D8                  //merg green led port
-#define YELLOW_LED D7                 //merg yellow led port
-#define PUSH_BUTTON D9                //std merg push button
-#define PUSH_BUTTON1 28               //debug push button
+#define GREEN_LED 8                  //merg green led port
+#define YELLOW_LED 7                 //merg yellow led port
+#define PUSH_BUTTON 9                //std merg push button
+//#define PUSH_BUTTON1 28               //debug push button
 #define NODE_VARS 1                  //number o node variables.Servo speed
 #define NODE_EVENTS 30              //max number of events
 #define EVENTS_VARS VAR_PER_SERVO   //number of variables per event
 #define DEVICE_NUMBERS NUM_SERVOS   //number of device numbers. each servo can be a device
-#define START_ANGLE_VAR 4          //var index for the start angle
-#define END_ANGLE_VAR 5            //var index for the end angle
+#define START_ANGLE_VAR 5          //var index for the start angle
+#define END_ANGLE_VAR 6            //var index for the end angle
 
 //arduino mega has 4K, so it is ok.
 
@@ -57,14 +57,14 @@ VarSpeedServo servos[NUM_SERVOS];
 //pins where the servos are attached
 //pins 9,10 and 15 don't work for many servos. servo library limitation
 //byte servopins[]={2,3,4,5,6,7,8,11,12,13,14,16,17,18,19,20};//,19,20,21,22,23,24,25,26,27,28,29,30};
-byte servopins[]={2,3,4,5,6,7};//,19,20,21,22,23,24,25,26,27,28,29,30};
+byte servopins[]={2,3,4,5,6};//,19,20,21,22,23,24,25,26,27,28,29,30};
 byte active_servo[2];
 byte togle_servo[2];
 
 
 void setup(){
 
-  pinMode(PUSH_BUTTON1,INPUT_PULLUP);//debug push button
+  pinMode(PUSH_BUTTON,INPUT);//debug push button
   Serial.begin(115200);
 
   //Configuration data for the node
@@ -96,8 +96,9 @@ void loop (){
   cbus.cbusRead();
   cbus.run();//do all logic
   //debug memory
-  if (digitalRead(PUSH_BUTTON1)==LOW){
+  if (digitalRead(PUSH_BUTTON)==LOW){
     cbus.dumpMemory();
+    Serial.println("alive");
   }
 }
 
@@ -109,6 +110,12 @@ void myUserFunc(Message *msg,MergCBUS *mcbus){
   unsigned int converted_speed;
   int varidx=0;
 
+  //Serial.println("Hello");
+  /*
+  if (onEvent){
+    Serial.println("On Event");
+  }*/
+
   byte servo_start,servo_end;
   if (mcbus->eventMatch()){
      onEvent=mcbus->isAccOn();
@@ -116,11 +123,13 @@ void myUserFunc(Message *msg,MergCBUS *mcbus){
      Serial.println("event match");
      servo_start=mcbus->getEventVar(msg,START_ANGLE_VAR);
      servo_end=mcbus->getEventVar(msg,END_ANGLE_VAR);
-     Serial.println(servo_start);
-     Serial.println(servo_end);
+     //Serial.println(servo_start);
+     //Serial.println(servo_end);
       //get the events var and control the servos
       for (int i=0;i<NUM_SERVOS;i++){
         if (isServoActive(i)){
+          //Serial.print("S ");
+          //Serial.println(i);
           moveServo(onEvent,i,servo_start,servo_end);
         }
       }
@@ -135,18 +144,21 @@ void myUserFunc(Message *msg,MergCBUS *mcbus){
 void moveServo(boolean event,byte servoidx,byte servo_start,byte servo_end){
     if (event){
       if (isServoToTogle(servoidx)){
+        //Serial.println("on-moving servo t");
         servos[servoidx].write(servo_start,SPEED);
       }
       else {
-        Serial.println("moving servo");
+        //Serial.println("on-moving servo");
         servos[servoidx].write(servo_end,SPEED);
       }
     }
     else{
       if (isServoToTogle(servoidx)){
+        //Serial.println("off-moving servo t");
         servos[servoidx].write(servo_end,SPEED);
       }
       else {
+        //Serial.println("off-moving servo");
         servos[servoidx].write(servo_start,SPEED);
       }
     }
@@ -156,7 +168,7 @@ void moveServo(boolean event,byte servoidx,byte servo_start,byte servo_end){
 void setUpServos(){
   for (int i=0;i<NUM_SERVOS;i++){
     servos[i].attach(servopins[i]);
-    servos[i].write(0,127);
+    servos[i].write(SERVO_START,SPEED);
   }
 }
 //is the servo to be activated or not
@@ -194,4 +206,3 @@ void getServosArray(Message *msg,MergCBUS *mcbus){
   togle_servo[0]=mcbus->getEventVar(msg,2);
   togle_servo[1]=mcbus->getEventVar(msg,3);
 }
-

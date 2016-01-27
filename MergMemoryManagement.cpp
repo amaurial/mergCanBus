@@ -161,11 +161,19 @@ unsigned int MergMemoryManagement::getEventIndex(unsigned int nn,unsigned int ev
 unsigned int MergMemoryManagement::getEventIndex(byte ev1,byte ev2,byte ev3,byte ev4){
    unsigned int n=EVENTS_MEMPOS;
     for (int i=0;i<numEvents;i++){
-        if (ev1==EEPROM.read(n) &&
-            ev2==EEPROM.read(n+1) &&
-            ev3==EEPROM.read(n+2) &&
-            ev4==EEPROM.read(n+3)){
-            return i;
+        if (ev1!=0 || ev2!=0){
+            if (ev1==EEPROM.read(n) &&
+                ev2==EEPROM.read(n+1) &&
+                ev3==EEPROM.read(n+2) &&
+                ev4==EEPROM.read(n+3)){
+                return i;
+            }
+        }
+        else{
+            if (ev3==EEPROM.read(n+2) &&
+                ev4==EEPROM.read(n+3)){
+                return i;
+            }
         }
         n=incEventPos(n);
     }
@@ -509,7 +517,7 @@ void MergMemoryManagement::dumpMemory(){
 /**\brief
 * Find the event variable position in memory
 */
-#ifdef DEBUGDEF
+//#ifdef DEBUGDEF
     read();
     byte a;
     Serial.println("MEMORY DUMP");
@@ -557,7 +565,7 @@ void MergMemoryManagement::dumpMemory(){
         }
         Serial.println();
     }
-#endif // DEBUGDEF
+//#endif // DEBUGDEF
 }
 unsigned int MergMemoryManagement::resolveEvVarArrayPos(byte evidx,byte varidx){
 

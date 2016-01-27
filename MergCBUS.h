@@ -7,7 +7,7 @@
 #define MESSAGEPARSER_H
 
 //#define DEBUGDEF 1
-#define DEBUGMSG 1
+//#define DEBUGMSG 1
 
 #include <Arduino.h>
 #include <EEPROM.h>

@@ -316,7 +316,7 @@ unsigned int MergCBUS::mainProcess(){
             return UNKNOWN_MSG_TYPE;
     }
 
-    return OK;
+    return UNKNOWN_MSG_TYPE;
 
 }
 
@@ -1178,7 +1178,7 @@ bool MergCBUS::hasThisEvent(){
     }
     //short events has to check the device number
     if (message.isShortEvent()){
-            if (memory.getEventIndex(0,message.getEventNumber())<(memory.getMaxNumEvents()+1)){
+            if (memory.getEventIndex(0,message.getDeviceNumber())<(memory.getMaxNumEvents()+1)){
                 return true;
              }
     }
