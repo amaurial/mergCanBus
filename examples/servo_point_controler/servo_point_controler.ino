@@ -27,7 +27,7 @@ To clear the memory, press pushbutton1 while reseting the arduino
 
 
 //Module definitions
-#define NUM_SERVOS 5      //number of servos
+#define NUM_SERVOS 8      //number of servos
 //first 2 are to indicate which servo is on. 2 bytes to indicate to togle. 2 for start and end angle
 #define VAR_PER_SERVO 6  //variables per servo
 #define SPEED 50        //servo speed
@@ -57,7 +57,7 @@ VarSpeedServo servos[NUM_SERVOS];
 //pins where the servos are attached
 //pins 9,10 and 15 don't work for many servos. servo library limitation
 //byte servopins[]={2,3,4,5,6,7,8,11,12,13,14,16,17,18,19,20};//,19,20,21,22,23,24,25,26,27,28,29,30};
-byte servopins[]={2,3,4,5,6};//,19,20,21,22,23,24,25,26,27,28,29,30};
+byte servopins[]={1,2,3,4,5,6,7,8};//,19,20,21,22,23,24,25,26,27,28,29,30};
 byte active_servo[2];
 byte togle_servo[2];
 
@@ -65,7 +65,8 @@ byte togle_servo[2];
 void setup(){
 
   pinMode(PUSH_BUTTON,INPUT);//debug push button
-  Serial.begin(115200);
+  //Serial.begin(115200);
+  Serial.end();
 
   //Configuration data for the node
   cbus.getNodeId()->setNodeName("MODSERV",7);  //node name
@@ -78,7 +79,7 @@ void setup(){
   cbus.setStdNN(999); //standard node number
 
   if (digitalRead(PUSH_BUTTON)==LOW){
-    Serial.println("Setup new memory");
+   // Serial.println("Setup new memory");
     cbus.setUpNewMemory();
     cbus.setSlimMode();
     cbus.saveNodeFlags();
@@ -89,7 +90,7 @@ void setup(){
   cbus.initCanBus(10);  //initiate the transport layer. pin=53, rate=125Kbps,10 tries,200 millis between each try
   //create the servos object
   setUpServos();  
-  Serial.println("Setup finished");
+  //Serial.println("Setup finished");
 }
 
 void loop (){
@@ -98,7 +99,7 @@ void loop (){
   //debug memory
   if (digitalRead(PUSH_BUTTON)==LOW){
     cbus.dumpMemory();
-    Serial.println("alive");
+    //Serial.println("alive");
   }
 }
 
@@ -120,7 +121,7 @@ void myUserFunc(Message *msg,MergCBUS *mcbus){
   if (mcbus->eventMatch()){
      onEvent=mcbus->isAccOn();
      getServosArray(msg,mcbus);
-     Serial.println("event match");
+    // Serial.println("event match");
      servo_start=mcbus->getEventVar(msg,START_ANGLE_VAR);
      servo_end=mcbus->getEventVar(msg,END_ANGLE_VAR);
      //Serial.println(servo_start);
