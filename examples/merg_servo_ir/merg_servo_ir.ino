@@ -53,13 +53,12 @@ byte togle_ir;
 byte active_ir;
 
 struct SENSOR sensors[NUMSENSORS];
-int sensorport[NUMSENSORS]={A0, A1 ,A2 ,A3, A6,A7};
+int sensorport[NUMSENSORS]={A0, A1 ,A2 ,A3, A4, A5, A6, A7};
 
 //CBUS definitions
-#define GREEN_LED A4                            //merg green led port
-#define YELLOW_LED A5                           //merg yellow led port
-#define PUSH_BUTTON 0                          //std merg push button
-#define PUSH_BUTTON1 1                         //debug push button
+#define GREEN_LED 8                            //merg green led port
+#define YELLOW_LED 7                           //merg yellow led port
+#define PUSH_BUTTON 9                          //std merg push button
 #define NODE_EVENTS 30                          //max number of events
 #define EVENTS_VARS 1                          //number of variables per event
 #define DEVICE_NUMBERS NUMSENSORS+NUM_SERVOS   //number of device numbers. each servo can be a device
