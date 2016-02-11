@@ -19,7 +19,7 @@ To clear the memory, press pushbutton1 while reseting the arduino
 
 #include <Arduino.h>
 #include <SPI.h> //required by the library
-#include <TimerOne.h>
+//#include <TimerOne.h>
 #include <MergCBUS.h>
 #include <Message.h>
 #include <EEPROM.h> //required by the library
@@ -40,7 +40,11 @@ To clear the memory, press pushbutton1 while reseting the arduino
 #define YELLOW_LED 7                 //merg yellow led port
 #define PUSH_BUTTON 9                //std merg push button
 //#define PUSH_BUTTON1 28               //debug push button
-#define NODE_VARS 1                  //number o node variables.Servo speed
+#define NODE_VARS 2                  //number o node variables.Servo speed, action to take on starting. see setupServos
+
+#define SERVO_SPEED_VAR        0
+#define SERVO_STARTACTION_VAR  1 
+
 #define NODE_EVENTS 30              //max number of events
 #define EVENTS_VARS VAR_PER_SERVO   //number of variables per event
 #define DEVICE_NUMBERS NUM_SERVOS   //number of device numbers. each servo can be a device
@@ -109,7 +113,7 @@ void myUserFunc(Message *msg,MergCBUS *mcbus){
 
   boolean onEvent;
   unsigned int converted_speed;
-  int varidx=0;
+  uint8_t varidx=0;
 
   //Serial.println("Hello");
   /*
@@ -127,7 +131,7 @@ void myUserFunc(Message *msg,MergCBUS *mcbus){
      //Serial.println(servo_start);
      //Serial.println(servo_end);
       //get the events var and control the servos
-      for (int i=0;i<NUM_SERVOS;i++){
+      for (uint8_t i=0;i<NUM_SERVOS;i++){
         if (isServoActive(i)){
           //Serial.print("S ");
           //Serial.println(i);
@@ -167,22 +171,39 @@ void moveServo(boolean event,byte servoidx,byte servo_start,byte servo_end){
 
 //create the objects for each servo
 void setUpServos(){
-  for (int i=0;i<NUM_SERVOS;i++){
+  byte ac = cbus.getNodeVar(SERVO_STARTACTION_VAR);
+  for (uint8_t i=0;i<NUM_SERVOS;i++){
     servos[i].attach(servopins[i]);
-    servos[i].write(SERVO_START,SPEED);
+
+    switch (ac){
+      case 0:
+        //do nothing
+      break;
+      case 1:
+        //move to start position
+	servos[i].write(15,SPEED);
+      break;
+      case 2:
+        //mode to end position
+      	servos[i].write(170,SPEED);
+      break;
+      default: {
+	        //do nothing             
+      }
+    }    
   }
 }
 //is the servo to be activated or not
-boolean isServoActive(int index){
+boolean isServoActive(uint8_t index){
   return checkBit(active_servo,index);
 }
 //is the servo by index to togle or not
-boolean isServoToTogle(int index){
+boolean isServoToTogle(uint8_t index){
   return checkBit(togle_servo,index);
 }
 
 //check the if a bit is set or not
-boolean checkBit(byte *array,int index){
+boolean checkBit(byte *array,uint8_t index){
   byte a,i;
   if (index<8){
     a=array[0];
