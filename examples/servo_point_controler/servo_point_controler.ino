@@ -42,8 +42,8 @@ To clear the memory, press pushbutton1 while reseting the arduino
 //#define PUSH_BUTTON1 28               //debug push button
 #define NODE_VARS 2                  //number o node variables.Servo speed, action to take on starting. see setupServos
 
-#define SERVO_SPEED_VAR        0
-#define SERVO_STARTACTION_VAR  1 
+#define SERVO_SPEED_VAR        1
+#define SERVO_STARTACTION_VAR  2 
 
 #define NODE_EVENTS 30              //max number of events
 #define EVENTS_VARS VAR_PER_SERVO   //number of variables per event
@@ -165,7 +165,7 @@ void moveServo(boolean event,byte servoidx,byte servo_start,byte servo_end){
       if (isServoToTogle(servoidx)){
         //Serial.println("off-moving servo t");
         servos[servoidx].write(servo_end,SPEED);
-	lastPos = servo_end;
+	      lastPos = servo_end;
       }
       else {
         //Serial.println("off-moving servo");
@@ -174,13 +174,14 @@ void moveServo(boolean event,byte servoidx,byte servo_start,byte servo_end){
       }
     }
    //write last pos to eprom
-   //variables start with number 1
+   //variables start with number 1   
    cbus.setInternalNodeVariable(servoidx+1,lastPos);
 }
 
 //create the objects for each servo
-void setUpServos(){
+void setUpServos(){  
   byte ac = cbus.getNodeVar(SERVO_STARTACTION_VAR);
+  Serial.println(ac);
   for (uint8_t i=0;i<NUM_SERVOS;i++){
     servos[i].attach(servopins[i]);
 
@@ -188,12 +189,12 @@ void setUpServos(){
       case 0: //do nothing        
       break;
       case 1://move to start position
-	servos[i].write(15,SPEED);
+	       servos[i].write(15,SPEED);
       break;
       case 2://mode to end position        
       	servos[i].write(170,SPEED);
       break;
-      case 3://move to last position
+      case 3://move to last position          
           moveServoToLastPosition(i);
       break;
     }    
@@ -201,7 +202,7 @@ void setUpServos(){
 }
 
 void moveServoToLastPosition(byte idx){
-    byte pos=cbus.getInternalNodeVar(idx+1);
+    byte pos=cbus.getInternalNodeVar(idx+1);    
     if (pos < 175){
        servos[idx].write(pos,SPEED);
     }
