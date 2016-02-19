@@ -141,6 +141,9 @@ class MergCBUS
         uint8_t getEventIndex(Message *msg);
         byte getNodeVar(byte varIndex);
         bool setNodeVariable(byte ind, byte val);
+        byte getInternalNodeVar(byte varIndex);
+        void setInternalNodeVariable(byte ind, byte val);		
+
         byte getEventVar(Message *msg,byte varIndex);
 
         void setDeviceNumber(unsigned int val,byte port);           //2 bytes representation for dn

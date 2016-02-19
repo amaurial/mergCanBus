@@ -958,6 +958,16 @@ bool MergCBUS::setNodeVariable(byte ind, byte val){
 }
 
 /** \brief
+* Set a internal node variable.
+* \param ind The node varialbe index. Starting at 1. It is limited by the user defined node variables.
+* \param val The variable value
+*/
+
+void MergCBUS::setInternalNodeVariable(byte ind, byte val){
+     return memory.setInternalVar(ind-1,val);
+}
+
+/** \brief
 * Set a node variable with automatic response. This function is used when learning events or receiving FCU messages.
 * \param ind The node varialbe index. Starting at 1. It is limited by the user defined node variables.
 * \param val The variable value
@@ -1592,6 +1602,18 @@ uint8_t MergCBUS::getEventIndex(Message *msg){
 byte MergCBUS::getNodeVar(byte varIndex){
     //the cbus index starts with 1
     return memory.getVar(varIndex-1);
+}
+
+/** \brief Get internal node variable by index
+ *
+ * \param varIndex index of the variable
+ * \return Returns the variable. One byte
+ *
+ */
+
+byte MergCBUS::getInternalNodeVar(byte varIndex){
+    //the cbus index starts with 1
+    return memory.getInternalVar(varIndex-1);
 }
 
 /** \brief Get the variable of a learned event

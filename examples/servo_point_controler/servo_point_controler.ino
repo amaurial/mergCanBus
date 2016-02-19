@@ -146,27 +146,36 @@ void myUserFunc(Message *msg,MergCBUS *mcbus){
   }
 }
 
+
 void moveServo(boolean event,byte servoidx,byte servo_start,byte servo_end){
+    byte lastPos;
     if (event){
       if (isServoToTogle(servoidx)){
         //Serial.println("on-moving servo t");
         servos[servoidx].write(servo_start,SPEED);
+        lastPos = servo_start;
       }
       else {
         //Serial.println("on-moving servo");
         servos[servoidx].write(servo_end,SPEED);
+        lastPos = servo_end;
       }
     }
     else{
       if (isServoToTogle(servoidx)){
         //Serial.println("off-moving servo t");
         servos[servoidx].write(servo_end,SPEED);
+	lastPos = servo_end;
       }
       else {
         //Serial.println("off-moving servo");
         servos[servoidx].write(servo_start,SPEED);
+        lastPos = servo_start;
       }
     }
+   //write last pos to eprom
+   //variables start with number 1
+   cbus.setInternalNodeVariable(servoidx+1,lastPos);
 }
 
 //create the objects for each servo
@@ -176,23 +185,28 @@ void setUpServos(){
     servos[i].attach(servopins[i]);
 
     switch (ac){
-      case 0:
-        //do nothing
+      case 0: //do nothing        
       break;
-      case 1:
-        //move to start position
+      case 1://move to start position
 	servos[i].write(15,SPEED);
       break;
-      case 2:
-        //mode to end position
+      case 2://mode to end position        
       	servos[i].write(170,SPEED);
       break;
-      default: {
-	        //do nothing             
-      }
+      case 3://move to last position
+          moveServoToLastPosition(i);
+      break;
     }    
   }
 }
+
+void moveServoToLastPosition(byte idx){
+    byte pos=cbus.getInternalNodeVar(idx+1);
+    if (pos < 175){
+       servos[idx].write(pos,SPEED);
+    }
+}
+
 //is the servo to be activated or not
 boolean isServoActive(uint8_t index){
   return checkBit(active_servo,index);
