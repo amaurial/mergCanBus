@@ -89,7 +89,7 @@ class MergCBUS
         */
         void processMessage(message_type msg){setBitMessage (msg,false);};
 
-        unsigned int run();
+        uint8_t run();
 
         bool hasMessageToHandle();
         /**\brief Get a reference to node identification.
@@ -97,8 +97,8 @@ class MergCBUS
         */
         MergNodeIdentification *getNodeId(){return &nodeId;};
 
-        bool initCanBus(unsigned int port,unsigned int rate, unsigned int retries,unsigned int retryIntervalMilliseconds);
-        bool initCanBus(unsigned int port);
+        bool initCanBus(uint8_t port,unsigned int rate, unsigned int retries,unsigned int retryIntervalMilliseconds);
+        bool initCanBus(uint8_t port);
         /**\brief Set the user function to handle other messages.*/
         void setUserHandlerFunction(userHandlerType f) {userHandler=f;};
         void setDCCHandlerFunction(userHandlerType f) {dccHandler=f;};
@@ -138,7 +138,7 @@ class MergCBUS
         bool isAccOn();
         bool isAccOff();
         bool eventMatch(){return eventmatch;};
-        unsigned int getEventIndex(Message *msg);
+        uint8_t getEventIndex(Message *msg);
         byte getNodeVar(byte varIndex);
         bool setNodeVariable(byte ind, byte val);
         byte getEventVar(Message *msg,byte varIndex);
@@ -202,7 +202,7 @@ class MergCBUS
         void getStoredEvents();                 //events that were learned
         void getStoredIDs();                    //node number,canId,device Number
         bool matchEvent();                      //
-        unsigned int runAutomatic();            //process the majority of events automatic
+        uint8_t runAutomatic();            //process the majority of events automatic
         bool setNodeVariableAuto(byte ind, byte val,bool autoErr);
 
         bool readCanBus();
@@ -237,7 +237,7 @@ class MergCBUS
 
         void(* resetFunc) (void);           //declare reset function @ address 0. resets the arduino
         void learnEvent();                  //put the node in the learn event mode
-        unsigned int mainProcess();
+        uint8_t mainProcess();
 
         void doOutOfService();              //put the node in the out of service node
         void initMemory();                  //load the eprom memory

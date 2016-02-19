@@ -55,7 +55,7 @@ class Message
     public:
         Message();
         Message(unsigned int canId,
-                 unsigned int opc,
+                 uint8_t opc,
                  unsigned int nodeNumber,
                  unsigned int eventNumber,
                  byte data [CANDATA_SIZE] ,
@@ -128,11 +128,11 @@ class Message
         /** \brief Get the number of bytes parameter in the message
          * \return The number of bytes
          */
-        unsigned int getNumBytes() { return _numBytes; }
+        uint8_t getNumBytes() { return _numBytes; }
         /** \brief Set the number of bytes parameter in the message
          * \param val is the number of bytes
          */
-        void setNumBytes(unsigned int val) { _numBytes = val; }
+        void setNumBytes(uint8_t val) { _numBytes = val; }
         /** \brief Set the CAN RTR parameter. Set after reading the CAN header.
          */
         void setRTR() {_RTR=true;};

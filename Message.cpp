@@ -23,7 +23,7 @@ Message::Message()
 */
 
 Message::Message(unsigned int canId,
-                 unsigned int opc,
+                 uint8_t opc,
                  unsigned int nodeNumber,
                  unsigned int eventNumber,
                  byte data [CANDATA_SIZE] ,
@@ -36,7 +36,7 @@ Message::Message(unsigned int canId,
     setNodeNumber(nodeNumber);
     setEventNumber(eventNumber);
     setPriority(priority);
-    int i=0;
+    uint8_t i=0;
     for (i=0;i<CANDATA_SIZE;i++){data[i]=data[i];}
 }
 
@@ -92,7 +92,7 @@ byte Message::getOpc()
 */
 void Message::setDataBuffer(byte val[CANDATA_SIZE] )
 {
-    int i=0;
+    uint8_t i=0;
     for (i=0;i<CANDATA_SIZE;i++){data[i]=val[i];}
     setOpc(data[0]);
     setType(findType(getOpc()));
@@ -104,7 +104,7 @@ void Message::setDataBuffer(byte val[CANDATA_SIZE] )
 */
 void Message::setHeaderBuffer(byte val[HEADER_SIZE] )
 {
-    int i=0;
+    uint8_t i=0;
     for (i=0;i<HEADER_SIZE;i++){header[i]=val[i];}
 
 }
@@ -119,10 +119,10 @@ void Message::clear(){
     //setEventNumber(0);
     //setNodeNumber(0);
     //setData((byte*)"00000000");
-    for (int i=0;i<CANDATA_SIZE;i++){
+    for (uint8_t i=0;i<CANDATA_SIZE;i++){
         data[i]=0;
     }
-    for (int i=0;i<HEADER_SIZE;i++){
+    for (uint8_t i=0;i<HEADER_SIZE;i++){
         header[i]=0;
     }
     setPriority(0);
