@@ -47,19 +47,32 @@ int rlimit;
 byte active_servo[2];
 byte togle_servo[2];
 
-//Module definitions sensor
+
+
+//###############
+//sensor definitions
 #define NUMSENSORS 8
-#define TLIMIT 500
-#define RLIMIT 25
-struct SENSOR {
-  int port;
-  int state;
-  unsigned long time;
-  unsigned long resets;
+#define WAIT 500 //time to reset the counters
+#define D 3   //number of multiple ocurrences of 1s
+#define R 400 //analog level threshold. active when lower this number
+#define C 2 //number of 1s after each other
+#define E 200 //number of 0s ocurrences
+
+long t;
+int r;
+byte i,s,x,l;
+typedef struct SENSORS{
+  byte port;
+  long ones;
+  long zeros;
+  long seqones;
+  byte state;//bit 1 = estado atual bit2=ultimos estado  
 };
 
-struct SENSOR sensors[NUMSENSORS];
-int sensorport[NUMSENSORS]={A0, A1 ,A2 ,A3, A4, A5, A6, A7};
+SENSORS sensors[NUMSENSORS];
+//##############
+
+
 
 //CBUS definitions
 #define GREEN_LED 8                            //merg green led port
@@ -69,19 +82,19 @@ int sensorport[NUMSENSORS]={A0, A1 ,A2 ,A3, A4, A5, A6, A7};
 #define EVENTS_VARS VAR_PER_SERVO              //number of variables per event
 #define DEVICE_NUMBERS NUMSENSORS+NUM_SERVOS   //number of device numbers. each servo can be a device
 
-#define NODE_VARS 3
+#define NODE_VARS 4
 //2 bytes for togle and activate the sensors
 //1 for servo speed
 //1 for servo action on starting
 //[0] = sensor active
 //[1] = togle sensor
 //[2] = servo speed
+//[3] = define where the servo should start
 
-#define ACTIVE_IR_VAR               0
-#define TOGLE_IR_VAR                1
-#define SERVO_SPEED_VAR             2
-#define SERVO_STARTACTION_VAR       3
-
+#define ACTIVE_IR_VAR               1
+#define TOGLE_IR_VAR                2
+#define SERVO_SPEED_VAR             3
+#define SERVO_STARTACTION_VAR       4
 
 
 //create the merg object
@@ -91,7 +104,8 @@ void setup(){
   
   #ifdef DEBUGNODE
   Serial.begin(115200);
-  #elseif
+  delay(100);
+  #else
   Serial.end();
   #endif
 
@@ -123,6 +137,15 @@ void setup(){
   setupServos();  
   #ifdef DEBUGNODE
   Serial.println("Setup finished");
+  Serial.print("NNN: ");
+  Serial.print(cbus.getNN());
+  Serial.print("\t");
+  Serial.println(cbus.getPromNN());
+  Serial.print("CANID: ");
+  Serial.println(cbus.getNodeId()->getCanID());
+  
+  Serial.print("Flim: ");
+  Serial.println(cbus.getNodeId()->isFlimMode());
   #endif
   
 }
@@ -201,7 +224,13 @@ void moveServo(boolean event,byte servoidx,byte servo_start,byte servo_end){
       }
     }
    //write last pos to eprom
-   //variables start with number 1   
+   //variables start with number 1  
+   #ifdef  DEBUGNODE
+      Serial.print("saving: ");
+      Serial.print(servoidx+1);
+      Serial.print("\t");
+      Serial.println(lastPos);
+   #endif
    cbus.setInternalNodeVariable(servoidx+1,lastPos);
 }
 
@@ -259,7 +288,15 @@ void setupServos(){
 }
 
 void moveServoToLastPosition(byte idx){
-    byte pos=cbus.getInternalNodeVar(idx+1);    
+    byte pos=cbus.getInternalNodeVar(idx+1);  
+
+    #ifdef  DEBUGNODE
+      Serial.print("moving: ");
+      Serial.print(idx+1);
+      Serial.print("\tlast");
+      Serial.println(pos);
+   #endif
+      
     if (pos < 175){
        servos[idx].write(pos,SPEED);
     }
@@ -277,62 +314,96 @@ void getServosArray(Message *msg,MergCBUS *mcbus){
 
 //########## START SENSOR CODE ##############
 
-void checkSensors(){
-  uint8_t state;
-  uint8_t i;
-  unsigned long actime;
-    
-  for (i=0;i<NUMSENSORS;i++){
-    state=getSensorState(i);
-    //Serial.println(state);
-    actime=millis();
-    if (state==LOW){
-      if (sensors[i].state==HIGH){        
-        sendMessage(true,i);
-        sensors[i].state=LOW;
-      }
-      sensors[i].state=LOW;
-      sensors[i].time=actime;
-      sensors[i].resets++;
-    }
-    else{
-      if (actime-sensors[i].time>TLIMIT){
-        if (sensors[i].resets<RLIMIT){
-          //give extra time
-          sensors[i].time=actime;
-        }
-       else {
-          if (sensors[i].state==LOW){
-          //    if (i==s){
-          /*
-              Serial.print("Sensor ");
-              Serial.print(i);
-              Serial.print(" OFF time: ");
-              Serial.print(actime-sensors[i].time);
-              Serial.print(" resets:");
-              Serial.println(sensors[i].resets);
-            */
-              if (isSensorActive(i)){
-                  sendMessage(false,i) ;
-	      }
-            //  }
-            sensors[i].state=HIGH;
-            sensors[i].resets=0;
+void checkSensors(){ 
+
+    for (i=0;i<NUMSENSORS;i++){
+        r=analogRead(sensors[i].port);
+        //Serial.print("S");
+        //Serial.print(i);
+        //Serial.print("\t");
+        //Serial.print(r);
+        //Serial.print("\t");
+        if (r<R) r=1;
+        else r=0;
+        //read last read
+        s = bitRead(sensors[i].state,2);
+        
+        if ((r == s) && (s == 1)){
+          sensors[i].seqones++;
+          if (sensors[i].seqones>C){
+            sensors[i].ones++;  
+            //Serial.println("d");     
+            sensors[i].zeros=0;     
           }
-       }
-      }
+        }
+        else{
+          sensors[i].seqones=0;
+          sensors[i].zeros++;
+        }
+        //save last read
+        bitWrite(sensors[i].state,2,r);
+  
+        //set the actual state
+        if (sensors[i].ones>D){
+          bitWrite(sensors[i].state,0,1);      
+        }
+      
+        if (sensors[i].zeros>E){        
+          bitWrite(sensors[i].state,0,0);         
+        }
+        //compare last state
+        s = bitRead(sensors[i].state,0);
+        x = bitRead(sensors[i].state,1);
+        if (s!=x){        
+          bitWrite(sensors[i].state,1,s);
+           #ifdef  DEBUGNODE
+            Serial.print("s");
+            Serial.print(i);
+            Serial.print(": ");
+            Serial.println(s);
+           #endif
+
+            if (isSensorActive(i)){
+               sendMessage(s,i);          
+            }      
+        }
     }
-  }
+    //Serial.println();
+    /*
+    for (i=0;i<NUMSENSORS;i++){
+      Serial.print("S");
+      Serial.print(i);
+      Serial.print("\t");
+      Serial.print(sensors[i].ones);
+      Serial.print("\t");
+      Serial.print(sensors[i].seqones);
+      Serial.print("\t");
+      Serial.print(sensors[i].zeros);
+      Serial.println();
+    }
+    Serial.println();
+    */
+    if ((millis() - t) > WAIT ){
+      t=millis();
+      for (i=0;i<NUMSENSORS;i++){
+        sensors[i].ones=0;
+        sensors[i].zeros=0;
+        sensors[i].seqones=0;
+      }       
+    }
+
+    
+  
 }
 
 //send the can message
 void sendMessage(bool state,uint8_t sensor){
    unsigned int event;
-   bool onEvent=true;    
+   bool onEvent=state;    
    
-   event=sensor;
+   event=sensor+1;
    if (togleSensor(sensor)){
-     onEvent=false;
+     onEvent=!onEvent;
    }
    if (onEvent){
      cbus.sendOnEvent(true,event);
@@ -364,7 +435,7 @@ bool isSensorActive(uint8_t sensor){
   byte active_ir=cbus.getNodeVar(ACTIVE_IR_VAR); 
     
   //check if the bit is set
-  if (sensor>0 && sensor<9){
+  if (sensor<NUMSENSORS){
     if (bitRead(active_ir,sensor)==1){
       resp=true;
     }
@@ -374,36 +445,13 @@ bool isSensorActive(uint8_t sensor){
 
 //configure the sensors
 void setupSensors(){
-  int i=0;
-  for (i=0;i<NUMSENSORS;i++)  {
-    sensors[i].state=HIGH;
-    sensors[i].port=sensorport[i];
-    pinMode(sensors[i].port,INPUT);
-  }
-}
-//read the sensor state
-uint8_t getSensorState(uint8_t i){
-  //return digitalRead(sensors[i].port);
-
-  uint8_t j;
-  uint8_t ntimes;
-  ntimes=30;
-  for (j=0;j<ntimes;j++){
-    if (digitalRead(sensors[i].port)==0){
-      return 0;
-    }
-  }
-  return 1;
-}
-
-//is the servo by index to togle or not
-boolean isIrToTogle(uint8_t index){
-  byte togle_ir=cbus.getNodeVar(TOGLE_IR_VAR); 
-  if (bitRead(togle_ir,index)==1){
-    return true;
-  }
-  else{
-     return false;
-  }  
+   sensors[0].port=A0;
+   sensors[1].port=A1;
+   sensors[2].port=A2;
+   sensors[3].port=A3;
+   sensors[4].port=A4;
+   sensors[5].port=A5;
+   sensors[6].port=A6;
+   sensors[7].port=A7;
 }
 

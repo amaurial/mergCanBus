@@ -142,7 +142,7 @@ class MergCBUS
         byte getNodeVar(byte varIndex);
         bool setNodeVariable(byte ind, byte val);
         byte getInternalNodeVar(byte varIndex);
-        void setInternalNodeVariable(byte ind, byte val);		
+        void setInternalNodeVariable(byte ind, byte val);
 
         byte getEventVar(Message *msg,byte varIndex);
 
@@ -174,6 +174,8 @@ class MergCBUS
         void doSelfEnnumeration(bool soft); //put the node in the self enummeration mode
         void doSetup();                     // put the node in the setup mode
         bool isSelfEnumMode();              //check if the node is in the self enum mode
+        uint16_t getPromNN();
+        uint16_t getNN();
 
     protected:
     private:

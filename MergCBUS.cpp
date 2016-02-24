@@ -78,6 +78,13 @@ void MergCBUS::loadMemory(){
     state_mode=NORMAL;
 }
 
+uint16_t MergCBUS::getPromNN(){
+    return memory.getNodeNumber();
+}
+uint16_t MergCBUS::getNN(){
+    return nodeId.getNodeNumber();
+}
+
 /** \brief
 * Destructor
 * Not used.
@@ -531,7 +538,7 @@ byte MergCBUS::handleConfigMessages(){
     uint8_t opc=message.getOpc();
 
     switch (opc){
-    
+
     case OPC_RSTAT:
         //command station
         return OK;
@@ -671,7 +678,7 @@ byte MergCBUS::handleConfigMessages(){
         break;
 
     case OPC_NERD:
-        //send back all stored events in message OPC_ENRSP       
+        //send back all stored events in message OPC_ENRSP
         uint8_t i;
 	i = memory.getNumEvents();
 
@@ -886,7 +893,7 @@ byte MergCBUS::handleConfigMessages(){
 
     case OPC_EVLRNI:
         //learn event by index. like an update
-        
+
         if (state_mode==LEARN){
 
             //TODO: suport device number mode
@@ -906,7 +913,7 @@ byte MergCBUS::handleConfigMessages(){
             buffer[2]=highByte(ev);
             buffer[3]=lowByte(ev);
             resp=memory.setEvent(buffer,evidx-1);
-	    
+
             if (resp != (evidx-1)){
                 //send a message error
                 #ifdef DEBUGDEF
@@ -919,7 +926,7 @@ byte MergCBUS::handleConfigMessages(){
 
             //save the parameter
             //the CBUS index start with 1
-	    
+
             resp = memory.setEventVar(evidx-1,ind-1,val);
 
             if (resp != (ind-1)){

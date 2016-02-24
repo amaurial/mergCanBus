@@ -427,7 +427,7 @@ void MergMemoryManagement::setVar(uint8_t index,byte val){
 void MergMemoryManagement::setInternalVar(uint8_t index,byte val){
     if (index>INTERNAL_VARS){
         return;
-    }    
+    }
     EEPROM.write(NODE_INTERNAL_VAR + index,val);
     return;
 }
@@ -566,6 +566,12 @@ void MergMemoryManagement::dumpMemory(){
         Serial.print(EEPROM.read(VARS_MEMPOS+i),HEX);
         Serial.print(" ");
     }
+    Serial.print("\nINTERNAL VARS:");
+    for (uint8_t i=0;i<INTERNAL_VARS;i++){
+        Serial.print(EEPROM.read(NODE_INTERNAL_VAR+i),HEX);
+        Serial.print(" ");
+    }
+
     Serial.print("\nDEVICE NUMBERS:");
     for (uint8_t i=0;i<MAX_NUM_DEVICE_NUMBERS;i++){
         Serial.print(EEPROM.read(DN_MEMPOS+i*NNDD_SIZE),HEX);
