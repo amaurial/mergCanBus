@@ -25,6 +25,7 @@ To clear the memory, press pushbutton1 while reseting the arduino
 #include <EEPROM.h> //required by the library
 #include <VarSpeedServo.h>
 
+//#define DEBUGNODE
 
 //Module definitions
 #define NUM_SERVOS 8      //number of servos
@@ -69,8 +70,11 @@ byte togle_servo[2];
 void setup(){
 
   pinMode(PUSH_BUTTON,INPUT);//debug push button
-  //Serial.begin(115200);
+  #ifdef DEBUGNODE
+  Serial.begin(115200);
+  #elseif
   Serial.end();
+  #endif
 
   //Configuration data for the node
   cbus.getNodeId()->setNodeName("MODSERV",7);  //node name
@@ -181,7 +185,7 @@ void moveServo(boolean event,byte servoidx,byte servo_start,byte servo_end){
 //create the objects for each servo
 void setUpServos(){  
   byte ac = cbus.getNodeVar(SERVO_STARTACTION_VAR);
-  Serial.println(ac);
+  
   for (uint8_t i=0;i<NUM_SERVOS;i++){
     servos[i].attach(servopins[i]);
 
@@ -238,8 +242,8 @@ boolean checkBit(byte *array,uint8_t index){
 }
 //get the events vars for activate servos and to togle the servos:invert behaviour on on/off events
 void getServosArray(Message *msg,MergCBUS *mcbus){
-  active_servo[0]=mcbus->getEventVar(msg,0);
-  active_servo[1]=mcbus->getEventVar(msg,1);
-  togle_servo[0]=mcbus->getEventVar(msg,2);
-  togle_servo[1]=mcbus->getEventVar(msg,3);
+  active_servo[0]=mcbus->getEventVar(msg,1);
+  active_servo[1]=mcbus->getEventVar(msg,2);
+  togle_servo[0]=mcbus->getEventVar(msg,3);
+  togle_servo[1]=mcbus->getEventVar(msg,4);
 }

@@ -5,7 +5,7 @@ MergCBUSThrottle::MergCBUSThrottle(MergCBUS *cbus)
     //ctor
     this->cbus=cbus;
     //this->message=message;
-    for (int i=0;i<NUM_SESSIONS;i++){
+    for (uint8_t i=0;i<NUM_SESSIONS;i++){
         tinfo[i].setSession(255);
         tinfo[i].setLoco(0);
     }
@@ -24,11 +24,13 @@ void MergCBUSThrottle::run(){
 void MergCBUSThrottle::sendKeepAlive(){
 
     uint32_t t;
-    for (int i=0;i<NUM_SESSIONS;i++){
+    for (uint8_t i=0;i<NUM_SESSIONS;i++){
         t=millis();
-        if ((t-tinfo[i].getTime())>keepalive_interval){
-            tinfo[i].setTime(t);
-            cbus->sendKeepAliveSession(tinfo[i].getSession());
+        if (tinfo[i].getLoco() != 0){
+            if ((t-tinfo[i].getTime())>keepalive_interval){
+                tinfo[i].setTime(t);
+                cbus->sendKeepAliveSession(tinfo[i].getSession());
+            }
         }
     }
 }
@@ -49,7 +51,7 @@ bool MergCBUSThrottle::releaseSession(uint8_t session){
 
 bool MergCBUSThrottle::setSession(uint8_t session,uint16_t loco){
 
-    for (int i=0;i<NUM_SESSIONS;i++){
+    for (uint8_t i=0;i<NUM_SESSIONS;i++){
         if (tinfo[i].getLoco() == 0 ){
             tinfo[i].setTime(millis());
             tinfo[i].setSession(session);

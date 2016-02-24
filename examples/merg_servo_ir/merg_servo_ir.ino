@@ -1,8 +1,8 @@
 /*
-This example implements a ir sensor controller to detect block occupancy.
-It drives 16 ir. Can be more in arduino Mega, but it just an example.
-The module produces ON/OFF events.
-The vents can be toogled by the first 2 node variables. 0 means ON when train enters, OFF when trains leaves.
+This example implements a ir sensor controller to detect block occupancy and servos.
+It drives 8 ir and 8 servos. Can be more in arduino Mega, but it just an example.
+The module produces ON/OFF events and drives the servos based on other events.
+The events can be toogled by the first 2 node variables. 0 means ON when train enters, OFF when trains leaves.
 1 means the oposit. Each bit of the 2 bytes are to ser togle or not.
 Usim FLIM mode teach on/off events.
 It implements all automatic configuration, including learning events.
@@ -10,11 +10,9 @@ It does not handle DCC messages, but you can do it on your user function.
 You can change the ports to fit to your arduino.
 This node uses 500 bytes of EPROM to store events and the other information.
 See MemoryManagement.h for memory configuration
-To clear the memory, press pushbutton1 while reseting the arduino
+To clear the memory, press pushbutton while reseting the arduino
 
 */
-
-
 
 #include <Arduino.h>
 #include <SPI.h> //required by the library
@@ -23,7 +21,7 @@ To clear the memory, press pushbutton1 while reseting the arduino
 #include <EEPROM.h> //required by the library
 #include <VarSpeedServo.h>
 
-#define DEBUGNODE
+//#define DEBUGNODE
 
 //Module definitions servo
 #define NUM_SERVOS 8      //number of servos
@@ -79,9 +77,9 @@ int sensorport[NUMSENSORS]={A0, A1 ,A2 ,A3, A4, A5, A6, A7};
 //[1] = togle sensor
 //[2] = servo speed
 
-#define ACTIVE_IR_VAR         0
-#define TOGLE_IR_VAR          1
-#define SERVO_SPEED_VAR       2
+#define ACTIVE_IR_VAR               0
+#define TOGLE_IR_VAR                1
+#define SERVO_SPEED_VAR             2
 #define SERVO_STARTACTION_VAR       3
 
 
@@ -93,6 +91,8 @@ void setup(){
   
   #ifdef DEBUGNODE
   Serial.begin(115200);
+  #elseif
+  Serial.end();
   #endif
 
   //Configuration data for the node
@@ -147,12 +147,6 @@ void myUserFunc(Message *msg,MergCBUS *mcbus){
   unsigned int converted_speed;
   int varidx=0;
 
-  //Serial.println("Hello");
-  /*
-  if (onEvent){
-    Serial.println("On Event");
-  }*/
-
   byte servo_start,servo_end;
   if (mcbus->eventMatch()){
      onEvent=mcbus->isAccOn();
@@ -181,26 +175,34 @@ void myUserFunc(Message *msg,MergCBUS *mcbus){
 //########## START SERVO CODE ##############
 
 void moveServo(boolean event,byte servoidx,byte servo_start,byte servo_end){
+    byte lastPos;
     if (event){
       if (isServoToTogle(servoidx)){
         //Serial.println("on-moving servo t");
         servos[servoidx].write(servo_start,SPEED);
+        lastPos = servo_start;
       }
       else {
         //Serial.println("on-moving servo");
         servos[servoidx].write(servo_end,SPEED);
+        lastPos = servo_end;
       }
     }
     else{
       if (isServoToTogle(servoidx)){
         //Serial.println("off-moving servo t");
         servos[servoidx].write(servo_end,SPEED);
+        lastPos = servo_end;
       }
       else {
         //Serial.println("off-moving servo");
         servos[servoidx].write(servo_start,SPEED);
+        lastPos = servo_start;
       }
     }
+   //write last pos to eprom
+   //variables start with number 1   
+   cbus.setInternalNodeVariable(servoidx+1,lastPos);
 }
 
 //is the servo to be activated or not
@@ -249,19 +251,26 @@ void setupServos(){
         //mode to end position
         servos[i].write(170,SPEED);
       break;      
-      default: {
-            //do nothing 
-      }
+      case 3://move to last position          
+          moveServoToLastPosition(i);
+      break;
     }    
   }
 }
 
+void moveServoToLastPosition(byte idx){
+    byte pos=cbus.getInternalNodeVar(idx+1);    
+    if (pos < 175){
+       servos[idx].write(pos,SPEED);
+    }
+}
+
 //get the events vars for activate servos and to togle the servos:invert behaviour on on/off events
 void getServosArray(Message *msg,MergCBUS *mcbus){
-  active_servo[0]=mcbus->getEventVar(msg,0);
-  active_servo[1]=mcbus->getEventVar(msg,1);
-  togle_servo[0]=mcbus->getEventVar(msg,2);
-  togle_servo[1]=mcbus->getEventVar(msg,3);
+  active_servo[0]=mcbus->getEventVar(msg,1);
+  active_servo[1]=mcbus->getEventVar(msg,2);
+  togle_servo[0]=mcbus->getEventVar(msg,3);
+  togle_servo[1]=mcbus->getEventVar(msg,4);
 }
 
 //################## END SERVO CODE ##################
@@ -272,22 +281,13 @@ void checkSensors(){
   uint8_t state;
   uint8_t i;
   unsigned long actime;
-  //int s=7;
-  
-  
+    
   for (i=0;i<NUMSENSORS;i++){
     state=getSensorState(i);
     //Serial.println(state);
     actime=millis();
     if (state==LOW){
-      if (sensors[i].state==HIGH){
-        //if (i==s){
-        /*
-        Serial.print("Sensor ");
-        Serial.print(i);
-        Serial.println(" ON");
-        */
-        //}
+      if (sensors[i].state==HIGH){        
         sendMessage(true,i);
         sensors[i].state=LOW;
       }
@@ -341,6 +341,7 @@ void sendMessage(bool state,uint8_t sensor){
      cbus.sendOffEvent(true,event);
    }
 }
+
 //check if we have to togle the event
 bool togleSensor(uint8_t sensor){
   
@@ -381,11 +382,11 @@ void setupSensors(){
   }
 }
 //read the sensor state
-int getSensorState(int i){
+uint8_t getSensorState(uint8_t i){
   //return digitalRead(sensors[i].port);
 
-  int j;
-  float ntimes;
+  uint8_t j;
+  uint8_t ntimes;
   ntimes=30;
   for (j=0;j<ntimes;j++){
     if (digitalRead(sensors[i].port)==0){
@@ -393,9 +394,7 @@ int getSensorState(int i){
     }
   }
   return 1;
-
 }
-
 
 //is the servo by index to togle or not
 boolean isIrToTogle(uint8_t index){
