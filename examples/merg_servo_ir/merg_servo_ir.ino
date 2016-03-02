@@ -47,6 +47,7 @@ int rlimit;
 byte active_servo[2];
 byte togle_servo[2];
 
+long detachservos_time = 0; //control the time to detach the servo
 
 
 //###############
@@ -102,6 +103,11 @@ MergCBUS cbus=MergCBUS(NODE_VARS,NODE_EVENTS,EVENTS_VARS,DEVICE_NUMBERS);
 
 void setup(){
   
+  //create the sensors
+  setupSensors();
+  //create the servos object
+  setupServos();  
+  
   #ifdef DEBUGNODE
   Serial.begin(115200);
   delay(100);
@@ -131,10 +137,6 @@ void setup(){
   //if using mega. the pin is 53
   cbus.initCanBus(10);  //initiate the transport layer. pin=53, rate=125Kbps,10 tries,200 millis between each try
 
-  //create the sensors
-  setupSensors();
-  //create the servos object
-  setupServos();  
   #ifdef DEBUGNODE
   Serial.println("Setup finished");
   Serial.print("NNN: ");
@@ -162,6 +164,12 @@ void loop (){
   if (digitalRead(PUSH_BUTTON)==LOW){
     cbus.dumpMemory();
   }
+
+  if (detachservos_time > 0 && detachservos_time < millis()){
+      detachServos();
+      detachservos_time = 0;
+  }
+
 }
 
 //user defined function. contains the module logic.called every time run() is called.
@@ -187,6 +195,8 @@ void myUserFunc(Message *msg,MergCBUS *mcbus){
           moveServo(onEvent,i,servo_start,servo_end);
         }
       }
+      //set time to detach the servos. detach after 2 seconds
+      detachservos_time=millis() + 2000;
   }
   else{
     //feedback messages
@@ -201,28 +211,27 @@ void moveServo(boolean event,byte servoidx,byte servo_start,byte servo_end){
     byte lastPos;
     if (event){
       if (isServoToTogle(servoidx)){
-        //Serial.println("on-moving servo t");
-        servos[servoidx].write(servo_start,SPEED);
+	//servos[servoidx].write(servo_start,SPEED);
         lastPos = servo_start;
       }
       else {
-        //Serial.println("on-moving servo");
-        servos[servoidx].write(servo_end,SPEED);
+	//servos[servoidx].write(servo_end,SPEED);
         lastPos = servo_end;
       }
     }
     else{
       if (isServoToTogle(servoidx)){
-        //Serial.println("off-moving servo t");
-        servos[servoidx].write(servo_end,SPEED);
+        //servos[servoidx].write(servo_end,SPEED);
         lastPos = servo_end;
       }
       else {
-        //Serial.println("off-moving servo");
-        servos[servoidx].write(servo_start,SPEED);
+        //servos[servoidx].write(servo_start,SPEED);
         lastPos = servo_start;
       }
     }
+    servos[servoidx].attach(servopins[servoidx]);
+    servos[servoidx].write(last_pos,SPEED);
+
    //write last pos to eprom
    //variables start with number 1  
    #ifdef  DEBUGNODE
@@ -284,6 +293,14 @@ void setupServos(){
           moveServoToLastPosition(i);
       break;
     }    
+  }
+  delay(1000);
+  detachServos();
+}
+
+void detachServos(){
+  for (uint8_t i=0;i<NUM_SERVOS;i++){  
+     if (servos[i].attached())  servos[i].detach();
   }
 }
 
