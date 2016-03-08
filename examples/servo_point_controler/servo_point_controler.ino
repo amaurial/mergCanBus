@@ -65,9 +65,12 @@ VarSpeedServo servos[NUM_SERVOS];
 byte servopins[]={1,2,3,4,5,6,7,8};//,19,20,21,22,23,24,25,26,27,28,29,30};
 byte active_servo[2];
 byte togle_servo[2];
-
+long detachservos_time = 0; //control the time to detach the servo
 
 void setup(){
+
+  //create the servos object
+  setupServos();  
 
   pinMode(PUSH_BUTTON,INPUT);//debug push button
   #ifdef DEBUGNODE
@@ -96,8 +99,7 @@ void setup(){
   cbus.setPushButton(PUSH_BUTTON);//set the push button ports
   cbus.setUserHandlerFunction(&myUserFunc);//function that implements the node logic
   cbus.initCanBus(10);  //initiate the transport layer. pin=53, rate=125Kbps,10 tries,200 millis between each try
-  //create the servos object
-  setUpServos();  
+  
   //Serial.println("Setup finished");
 }
 
@@ -108,6 +110,10 @@ void loop (){
   if (digitalRead(PUSH_BUTTON)==LOW){
     cbus.dumpMemory();
     //Serial.println("alive");
+  }
+  if (detachservos_time > 0 && detachservos_time < millis()){
+      detachServos();
+      detachservos_time = 0;
   }
 }
 
@@ -142,6 +148,8 @@ void myUserFunc(Message *msg,MergCBUS *mcbus){
           moveServo(onEvent,i,servo_start,servo_end);
         }
       }
+      //set time to detach the servos. detach after 2 seconds
+      detachservos_time=millis() + 2000;
   }
   else{
     //feedback messages
@@ -154,61 +162,68 @@ void myUserFunc(Message *msg,MergCBUS *mcbus){
 void moveServo(boolean event,byte servoidx,byte servo_start,byte servo_end){
     byte lastPos;
     if (event){
-      if (isServoToTogle(servoidx)){
-        //Serial.println("on-moving servo t");
-        servos[servoidx].write(servo_start,SPEED);
+      if (isServoToTogle(servoidx)){        
         lastPos = servo_start;
       }
       else {
-        //Serial.println("on-moving servo");
-        servos[servoidx].write(servo_end,SPEED);
         lastPos = servo_end;
       }
     }
     else{
-      if (isServoToTogle(servoidx)){
-        //Serial.println("off-moving servo t");
-        servos[servoidx].write(servo_end,SPEED);
+      if (isServoToTogle(servoidx)){        
 	      lastPos = servo_end;
       }
-      else {
-        //Serial.println("off-moving servo");
-        servos[servoidx].write(servo_start,SPEED);
+      else {        
         lastPos = servo_start;
       }
     }
-   //write last pos to eprom
-   //variables start with number 1   
-   cbus.setInternalNodeVariable(servoidx+1,lastPos);
+    //write last pos to eprom
+   //variables start with number 1  
+    cbus.setInternalNodeVariable(servoidx+1,lastPos);
+    servos[servoidx].attach(servopins[servoidx]);
+    servos[servoidx].write(lastPos,SPEED);
+   
+  
 }
 
 //create the objects for each servo
-void setUpServos(){  
+void setupServos(){
   byte ac = cbus.getNodeVar(SERVO_STARTACTION_VAR);
-  
-  for (uint8_t i=0;i<NUM_SERVOS;i++){
-    servos[i].attach(servopins[i]);
-
+  for (uint8_t i=0;i<NUM_SERVOS;i++){     
     switch (ac){
-      case 0: //do nothing        
+      case 0:
+        //do nothing
       break;
-      case 1://move to start position
-	       servos[i].write(15,SPEED);
+      case 1:
+        //move to start position
+        //servos[i].write(15,SPEED);
       break;
-      case 2://mode to end position        
-      	servos[i].write(170,SPEED);
-      break;
+      case 2:
+        //mode to end position
+        //servos[i].write(170,SPEED);
+      break;      
       case 3://move to last position          
           moveServoToLastPosition(i);
       break;
     }    
   }
+  delay(1000);
+  detachServos();
+}
+
+void detachServos(){
+  for (uint8_t i=0;i<NUM_SERVOS;i++){  
+     if (servos[i].attached())  servos[i].detach();
+  }
 }
 
 void moveServoToLastPosition(byte idx){
     byte pos=cbus.getInternalNodeVar(idx+1);    
-    if (pos < 175){
-       servos[idx].write(pos,SPEED);
+    if (pos < 175){    
+      servos[idx].write(pos,SPEED);//avoid the kick when power on
+      delay(300);  //wait the timmer to be ok
+      servos[idx].attach(servopins[idx]); 
+      servos[idx].write(pos,SPEED);
     }
 }
 

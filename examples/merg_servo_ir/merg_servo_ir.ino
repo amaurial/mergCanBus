@@ -27,8 +27,7 @@ To clear the memory, press pushbutton while reseting the arduino
 #define NUM_SERVOS 8      //number of servos
 
 #define SPEED 50              //servo speed
-#define SERVO_START 0         //servo start angle
-#define SERVO_END 180         //servo end angle
+
 //first 2 are to indicate which servo is on. 2 bytes to indicate to togle. 2 for start and end angle
 #define VAR_PER_SERVO 6  //variables per servo
 
@@ -210,27 +209,26 @@ void myUserFunc(Message *msg,MergCBUS *mcbus){
 void moveServo(boolean event,byte servoidx,byte servo_start,byte servo_end){
     byte lastPos;
     if (event){
-      if (isServoToTogle(servoidx)){
-	//servos[servoidx].write(servo_start,SPEED);
+      if (isServoToTogle(servoidx)){	
         lastPos = servo_start;
       }
-      else {
-	//servos[servoidx].write(servo_end,SPEED);
+      else {	
         lastPos = servo_end;
       }
     }
     else{
-      if (isServoToTogle(servoidx)){
-        //servos[servoidx].write(servo_end,SPEED);
+      if (isServoToTogle(servoidx)){       
         lastPos = servo_end;
       }
-      else {
-        //servos[servoidx].write(servo_start,SPEED);
+      else {        
         lastPos = servo_start;
       }
     }
+    //write last pos to eprom
+   //variables start with number 1  
+    cbus.setInternalNodeVariable(servoidx+1,lastPos);
     servos[servoidx].attach(servopins[servoidx]);
-    servos[servoidx].write(last_pos,SPEED);
+    servos[servoidx].write(lastPos,SPEED);
 
    //write last pos to eprom
    //variables start with number 1  
@@ -240,7 +238,7 @@ void moveServo(boolean event,byte servoidx,byte servo_start,byte servo_end){
       Serial.print("\t");
       Serial.println(lastPos);
    #endif
-   cbus.setInternalNodeVariable(servoidx+1,lastPos);
+   
 }
 
 //is the servo to be activated or not
@@ -275,19 +273,18 @@ boolean checkBit(byte *array,uint8_t index){
 //create the objects for each servo
 void setupServos(){
   byte ac = cbus.getNodeVar(SERVO_STARTACTION_VAR);
-  for (uint8_t i=0;i<NUM_SERVOS;i++){    
-    servos[i].attach(servopins[i]);    
+  for (uint8_t i=0;i<NUM_SERVOS;i++){     
     switch (ac){
       case 0:
         //do nothing
       break;
       case 1:
         //move to start position
-        servos[i].write(15,SPEED);
+        //servos[i].write(15,SPEED);
       break;
       case 2:
         //mode to end position
-        servos[i].write(170,SPEED);
+        //servos[i].write(170,SPEED);
       break;      
       case 3://move to last position          
           moveServoToLastPosition(i);
@@ -314,8 +311,11 @@ void moveServoToLastPosition(byte idx){
       Serial.println(pos);
    #endif
       
-    if (pos < 175){
-       servos[idx].write(pos,SPEED);
+    if (pos < 175){    
+      servos[idx].write(pos,SPEED);//avoid the kick when power on
+      delay(300);  //wait the timmer to be ok
+      servos[idx].attach(servopins[idx]); 
+      servos[idx].write(pos,SPEED);
     }
 }
 

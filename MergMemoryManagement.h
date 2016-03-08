@@ -15,8 +15,8 @@
 
 #define MERG_MEMPOS               0                                               /** Position in memory. has the value 0xaa to mark it is from this mod       */
 #define MERG_MEMORY_MODEL         MERG_MEMPOS + 1                                 /**< Mark the current memory model for this node*/
-#define NODE_INTERNAL_VAR         MERG_MEMORY_MODEL + INTERNAL_VARS		  /** Provides space for the node to save internal states*/
-#define CAN_ID_MEMPOS             NODE_INTERNAL_VAR + 1                           /**Position in memory.can id has 1 byte                                    */
+#define NODE_INTERNAL_VAR         MERG_MEMORY_MODEL + 1		  /** Provides space for the node to save internal states*/
+#define CAN_ID_MEMPOS             NODE_INTERNAL_VAR + INTERNAL_VARS                           /**Position in memory.can id has 1 byte                                    */
 #define NN_MEMPOS                 CAN_ID_MEMPOS + 1                               /**Position in memory.Node mumber has 2 bytes                               */
 #define FLAGS_MEMPOS              NN_MEMPOS + NNDD_SIZE                           /**Position in memory.flags                          */
 #define NUM_VARS_MEMPOS           FLAGS_MEMPOS + FLAG_SIZE                        /**Position in memory.amount of variables for this module- 1 byte          */
