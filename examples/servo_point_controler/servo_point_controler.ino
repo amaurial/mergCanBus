@@ -1,10 +1,10 @@
 /*
 This example implements a servo controler.
-It drives 16 servos. Can be more in arduino Mega, but it just an example.
-Each servo has the parameter start,end.
-Start and end are integers in degrees from 0 to 180. and the velocity from 1 to 255:
-Each event can control the 16 servos, therefore each event has 6 variables. 16 bits to define which servo is activated and 16 bits to define if the
-servo will togle upon an event. invert the behaviour
+It drives 8 servos. Can be more in arduino Mega, but it just an example.
+Each event has the parameter start,end.
+Start and end are integers in degrees from 0 to 180. The velocity is set by node parameter
+Each event can control the 8 servos (or more), therefore each event has 6 variables. 16 bits to define which servo is activated and 16 bits to define if the
+servo will togle upon an event. invert the behaviour and 2 bytes to define the start and end position.
 Usim FLIM mode teach on/off events.
 It implements all automatic configuration, including learning events.
 It does not handle DCC messages, but you can do it on your user function.
@@ -16,7 +16,6 @@ To clear the memory, press pushbutton1 while reseting the arduino
 */
 
 
-
 #include <Arduino.h>
 #include <SPI.h> //required by the library
 //#include <TimerOne.h>
@@ -25,6 +24,7 @@ To clear the memory, press pushbutton1 while reseting the arduino
 #include <EEPROM.h> //required by the library
 #include <VarSpeedServo.h>
 
+//uncomment this line to see debug messages
 //#define DEBUGNODE
 
 //Module definitions
@@ -40,36 +40,46 @@ To clear the memory, press pushbutton1 while reseting the arduino
 #define GREEN_LED 8                  //merg green led port
 #define YELLOW_LED 7                 //merg yellow led port
 #define PUSH_BUTTON 9                //std merg push button
-//#define PUSH_BUTTON1 28               //debug push button
-#define NODE_VARS 2                  //number o node variables.Servo speed, action to take on starting. see setupServos
 
-#define SERVO_SPEED_VAR        1
-#define SERVO_STARTACTION_VAR  2 
+//Node definition
+//number o node variables
+#define NODE_VARS 2                  
+//var1 = Servo speed
+//var2 = flags
+//flag1 (2 first bits) action to take on starting. see setupServos
+//flag2 (bit 3), indicate to maintain the servo attached after moving. default is 0 = detached
+#define SERVO_SPEED_VAR  1
+#define SERVO_FLAGS_VAR  2 
 
 #define NODE_EVENTS 30              //max number of events
 #define EVENTS_VARS VAR_PER_SERVO   //number of variables per event
 #define DEVICE_NUMBERS NUM_SERVOS   //number of device numbers. each servo can be a device
-#define START_ANGLE_VAR 5          //var index for the start angle
-#define END_ANGLE_VAR 6            //var index for the end angle
-
-//arduino mega has 4K, so it is ok.
+//the indexes start at 1 not at 0
+#define ACTIVE_SERVO_VAR 1          //2 bytes for that
+#define TOGLE_SERVO_VAR  3          //2 bytes for that
+#define START_ANGLE_VAR  5          //var index for the start angle
+#define END_ANGLE_VAR    6          //var index for the end angle
 
 
 //create the merg object
 MergCBUS cbus=MergCBUS(NODE_VARS,NODE_EVENTS,EVENTS_VARS,DEVICE_NUMBERS);
+
 //servo controler
 VarSpeedServo servos[NUM_SERVOS];
+
 //pins where the servos are attached
 //pins 9,10 and 15 don't work for many servos. servo library limitation
-//byte servopins[]={2,3,4,5,6,7,8,11,12,13,14,16,17,18,19,20};//,19,20,21,22,23,24,25,26,27,28,29,30};
 byte servopins[]={1,2,3,4,5,6,7,8};//,19,20,21,22,23,24,25,26,27,28,29,30};
-byte active_servo[2];
-byte togle_servo[2];
+byte active_servo[2]; //store the active servo event var
+byte togle_servo[2]; //store the togle servo event var
+boolean attach_servo = false;
+byte start_action = 3; //move to last position
 long detachservos_time = 0; //control the time to detach the servo
 
 void setup(){
 
-  //create the servos object
+  //create the servos object  
+  initializeFlags();
   setupServos();  
 
   pinMode(PUSH_BUTTON,INPUT);//debug push button
@@ -108,8 +118,7 @@ void loop (){
   cbus.run();//do all logic
   //debug memory
   if (digitalRead(PUSH_BUTTON)==LOW){
-    cbus.dumpMemory();
-    //Serial.println("alive");
+    cbus.dumpMemory();    
   }
   if (detachservos_time > 0 && detachservos_time < millis()){
       detachServos();
@@ -123,16 +132,11 @@ void myUserFunc(Message *msg,MergCBUS *mcbus){
 
   boolean onEvent;
   unsigned int converted_speed;
-  uint8_t varidx=0;
-
-  //Serial.println("Hello");
-  /*
-  if (onEvent){
-    Serial.println("On Event");
-  }*/
+  uint8_t varidx=0;  
 
   byte servo_start,servo_end;
   if (mcbus->eventMatch()){
+     initializeFlags();
      onEvent=mcbus->isAccOn();
      getServosArray(msg,mcbus);
     // Serial.println("event match");
@@ -150,17 +154,12 @@ void myUserFunc(Message *msg,MergCBUS *mcbus){
       }
       //set time to detach the servos. detach after 2 seconds
       detachservos_time=millis() + 2000;
-  }
-  else{
-    //feedback messages
-
-
-  }
+  }  
 }
 
 
 void moveServo(boolean event,byte servoidx,byte servo_start,byte servo_end){
-    byte lastPos;
+    byte lastPos;    
     if (event){
       if (isServoToTogle(servoidx)){        
         lastPos = servo_start;
@@ -180,7 +179,12 @@ void moveServo(boolean event,byte servoidx,byte servo_start,byte servo_end){
     //write last pos to eprom
    //variables start with number 1  
     cbus.setInternalNodeVariable(servoidx+1,lastPos);
-    servos[servoidx].attach(servopins[servoidx]);
+
+    servos[servoidx].write(lastPos,SPEED);
+    //servos already attached
+    //if (!attach_servo){
+	servos[servoidx].attach(servopins[servoidx]);
+    //}
     servos[servoidx].write(lastPos,SPEED);
    
   
@@ -188,9 +192,9 @@ void moveServo(boolean event,byte servoidx,byte servo_start,byte servo_end){
 
 //create the objects for each servo
 void setupServos(){
-  byte ac = cbus.getNodeVar(SERVO_STARTACTION_VAR);
+  
   for (uint8_t i=0;i<NUM_SERVOS;i++){     
-    switch (ac){
+    switch (start_action){
       case 0:
         //do nothing
       break;
@@ -207,11 +211,14 @@ void setupServos(){
       break;
     }    
   }
-  delay(1000);
+  delay(1000);  
   detachServos();
 }
 
 void detachServos(){
+
+  if (attach_servo) return; //don't dettach
+
   for (uint8_t i=0;i<NUM_SERVOS;i++){  
      if (servos[i].attached())  servos[i].detach();
   }
@@ -257,8 +264,15 @@ boolean checkBit(byte *array,uint8_t index){
 }
 //get the events vars for activate servos and to togle the servos:invert behaviour on on/off events
 void getServosArray(Message *msg,MergCBUS *mcbus){
-  active_servo[0]=mcbus->getEventVar(msg,1);
-  active_servo[1]=mcbus->getEventVar(msg,2);
-  togle_servo[0]=mcbus->getEventVar(msg,3);
-  togle_servo[1]=mcbus->getEventVar(msg,4);
+  active_servo[0]=mcbus->getEventVar(msg,ACTIVE_SERVO_VAR);
+  active_servo[1]=mcbus->getEventVar(msg,ACTIVE_SERVO_VAR + 1);
+  togle_servo[0]=mcbus->getEventVar(msg,TOGLE_SERVO_VAR);
+  togle_servo[1]=mcbus->getEventVar(msg,TOGLE_SERVO_VAR + 1);
+}
+
+//the the flags var and initialize them
+void initializeFlags(){
+    byte flag = cbus.getNodeVar(SERVO_FLAGS_VAR);
+    start_action = flag && 0x03; //first 2 bits    
+    attach_servo = flag && 0x04; //bit 3        
 }
