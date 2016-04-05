@@ -3,22 +3,45 @@
   2012 Copyright (c) Seeed Technology Inc.  All right reserved.
 
   Author:Loovee
-  Contributor: Cory J. Fowler
   2014-1-16
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU Lesser General Public
-  License as published by the Free Software Foundation; either
-  version 2.1 of the License, or (at your option) any later version.
+  
+  Contributor: 
+  
+  Cory J. Fowler
+  Latonita
+  Woodward1
+  Mehtajaghvi
+  BykeBlast
+  TheRo0T
+  Tsipizic
+  ralfEdmund
+  Nathancheek
+  BlueAndi
+  Adlerweb
+  Btetz
+  Hurvajs
+  
+  The MIT License (MIT)
 
-  This library is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-  Lesser General Public License for more details.
+  Copyright (c) 2013 Seeed Technology Inc.
 
-  You should have received a copy of the GNU Lesser General Public
-  License along with this library; if not, write to the Free Software
-  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-
-  1301  USA
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  THE SOFTWARE.
 */
 #ifndef _MCP2515DFS_H_
 #define _MCP2515DFS_H_
@@ -287,6 +310,14 @@
 #define MCP_16MHz_100kBPS_CFG2 (0xFA)
 #define MCP_16MHz_100kBPS_CFG3 (0x87)
 
+#define MCP_16MHz_95kBPS_CFG1 (0x03)
+#define MCP_16MHz_95kBPS_CFG2 (0xAD)
+#define MCP_16MHz_95kBPS_CFG3 (0x07)
+
+#define MCP_16MHz_83k3BPS_CFG1 (0x03)
+#define MCP_16MHz_83k3BPS_CFG2 (0xBE)
+#define MCP_16MHz_83k3BPS_CFG3 (0x07)
+
 #define MCP_16MHz_80kBPS_CFG1 (0x03)
 #define MCP_16MHz_80kBPS_CFG2 (0xFF)
 #define MCP_16MHz_80kBPS_CFG3 (0x87)
@@ -299,9 +330,17 @@
 #define MCP_16MHz_40kBPS_CFG2 (0xFF)
 #define MCP_16MHz_40kBPS_CFG3 (0x87)
 
+#define MCP_16MHz_33kBPS_CFG1 (0x09)
+#define MCP_16MHz_33kBPS_CFG2 (0xBE)
+#define MCP_16MHz_33kBPS_CFG3 (0x07)
+
 #define MCP_16MHz_31k25BPS_CFG1 (0x0F)
 #define MCP_16MHz_31k25BPS_CFG2 (0xF1)
 #define MCP_16MHz_31k25BPS_CFG3 (0x85)
+
+#define MCP_16MHz_25kBPS_CFG1 (0X0F)
+#define MCP_16MHz_25kBPS_CFG2 (0XBA)
+#define MCP_16MHz_25kBPS_CFG3 (0X07)
 
 #define MCP_16MHz_20kBPS_CFG1 (0x0F)
 #define MCP_16MHz_20kBPS_CFG2 (0xFF)
@@ -315,6 +354,9 @@
 #define MCP_16MHz_5kBPS_CFG2 (0xFF)
 #define MCP_16MHz_5kBPS_CFG3 (0x87)
 
+#define MCP_16MHz_666kBPS_CFG1 (0x00)
+#define MCP_16MHz_666kBPS_CFG2 (0xA0)
+#define MCP_16MHz_666kBPS_CFG3 (0x04)
 
 
 #define MCPDEBUG        (0)
@@ -354,16 +396,21 @@
 #define CAN_5KBPS    1
 #define CAN_10KBPS   2
 #define CAN_20KBPS   3
-#define CAN_31K25BPS 4
-#define CAN_40KBPS   5
-#define CAN_50KBPS   6
-#define CAN_80KBPS   7
-#define CAN_100KBPS  8
-#define CAN_125KBPS  9
-#define CAN_200KBPS  10
-#define CAN_250KBPS  11
-#define CAN_500KBPS  12
-#define CAN_1000KBPS 13
+#define CAN_25KBPS   4 
+#define CAN_31K25BPS 5
+#define CAN_33KBPS   6
+#define CAN_40KBPS   7
+#define CAN_50KBPS   8
+#define CAN_80KBPS   9
+#define CAN_83K3BPS  10
+#define CAN_95KBPS   11
+#define CAN_100KBPS  12
+#define CAN_125KBPS  13
+#define CAN_200KBPS  14
+#define CAN_250KBPS  15
+#define CAN_500KBPS  16
+#define CAN_666KBPS  17
+#define CAN_1000KBPS 18
 
 #define CAN_OK                  (0)
 #define CAN_FAILINIT            (1)

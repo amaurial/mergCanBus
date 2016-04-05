@@ -44,7 +44,6 @@ MergCBUS::MergCBUS(byte num_node_vars,byte num_events,byte num_events_var,byte m
     pb_state=HIGH;
     std_nn=300;//std node number for a producer
     initMemory();
-    timerInterval=0;
 }
 
 /** \brief
@@ -76,6 +75,14 @@ void MergCBUS::loadMemory(){
             Serial.println("FLIM mode");
         #endif // DEBUGDEF
     }
+    state_mode=NORMAL;
+}
+
+uint16_t MergCBUS::getPromNN(){
+    return memory.getNodeNumber();
+}
+uint16_t MergCBUS::getNN(){
+    return nodeId.getNodeNumber();
 }
 
 /** \brief
@@ -88,6 +95,7 @@ MergCBUS::~MergCBUS()
     //dtor
 }
 /** \brief
+* Initiate the CanBus layer.
 * Set the port number for SPI communication.
 * Set the CBUS rate and initiate the transport layer.
 * @param port is the the SPI port number.
@@ -108,8 +116,7 @@ MergCBUS::~MergCBUS()
 * @param retries is the number of retries to configure the can bus
 * @param retryIntervalMilliseconds is the delay in milliseconds between each retry.
 */
-
-bool MergCBUS::initCanBus(unsigned int port,unsigned int rate,unsigned int retries,unsigned int retryIntervalMilliseconds){
+bool MergCBUS::initCanBus(uint8_t port,unsigned int rate,unsigned int retries,unsigned int retryIntervalMilliseconds){
 
     unsigned int r=0;
     Can.set_cs(port);
@@ -117,7 +124,7 @@ bool MergCBUS::initCanBus(unsigned int port,unsigned int rate,unsigned int retri
     do {
         if (CAN_OK==Can.begin(rate)){
 
-            #ifdef DEBUGDEF
+            #ifdef DEBUGMSG
                 Serial.println("Can rate set");
             #endif // DEBUGDEF
             return true;
@@ -126,21 +133,21 @@ bool MergCBUS::initCanBus(unsigned int port,unsigned int rate,unsigned int retri
         delay(retryIntervalMilliseconds);
     }while (r<retries);
 
-    #ifdef DEBUGDEF
+    #ifdef DEBUGMSG
                 Serial.println("Failed to set Can rate");
     #endif // DEBUGDEF
 
    return false;
 }
-
 /** \brief
- * * Initiate the CanBus layer with rate 125kps.
- * * Set the port number for SPI communication.
- * * @param port is the the SPI port number.
- * */
-bool MergCBUS::initCanBus(unsigned int port){
+* Initiate the CanBus layer with rate 125kps.
+* Set the port number for SPI communication.
+* @param port is the the SPI port number.
+*/
+bool MergCBUS::initCanBus(uint8_t port){
 
-	    return initCanBus(port,CAN_125KBPS,20,30);
+
+    return initCanBus(port,CAN_125KBPS,20,30);
 }
 
 
@@ -167,11 +174,11 @@ void MergCBUS::setBitMessage(byte pos,bool val){
 * @see setUserHandlerFunction
 * If the green and yellow leds are set ,it also control the standard their behaviour based on node state.
 */
-unsigned int MergCBUS::run(){
+uint8_t MergCBUS::run(){
 
     controlLeds();
     controlPushButton();
-    unsigned int resp=NO_MESSAGE;
+    uint8_t resp=NO_MESSAGE;
     //unsigned int resp1=NO_MESSAGE;
 
     if (state_mode==SELF_ENUMERATION){
@@ -190,6 +197,7 @@ unsigned int MergCBUS::run(){
     }
 
     while (readCanBus()){
+
         resp=mainProcess();
         if (resp!=OK ){
             if (userHandler!=0){
@@ -197,7 +205,9 @@ unsigned int MergCBUS::run(){
             }
         }
     }
-/*
+
+   /*
+
     else{
         if (readCanBus(0)==true){
             resp=mainProcess();
@@ -209,13 +219,16 @@ unsigned int MergCBUS::run(){
             return OK;
         }
     }
-*/
+   */
+
     return OK;
+
 }
 
-unsigned int MergCBUS::mainProcess(){
+uint8_t MergCBUS::mainProcess(){
 
-        if (message.getRTR()){
+
+    if (message.getRTR()){
         //if we are a device with can id
         //we need to answer this message
         #ifdef DEBUGDEF
@@ -252,8 +265,10 @@ unsigned int MergCBUS::mainProcess(){
     //the state can be a message or manually
 
     if (state_mode==SELF_ENUMERATION){
-        Serial.print("other msg size:");
-        Serial.println(message.getCanMessageSize());
+        #ifdef DEBUGDEF
+            Serial.print("other msg size:");
+            Serial.println(message.getCanMessageSize());
+        #endif // DEBUGDEF
         if (message.getCanMessageSize()==0){
             #ifdef DEBUGDEF
                 Serial.println("Self ennumeration: saving others can id.");
@@ -286,8 +301,9 @@ unsigned int MergCBUS::mainProcess(){
 
     switch (message.getType()){
         case (DCC):
-            if (nodeId.isConsumerNode()){
-                handleDCCMessages();
+
+            if (dccHandler != 0){
+                dccHandler(&message,this);
             }
         break;
         case (ACCESSORY):
@@ -307,7 +323,7 @@ unsigned int MergCBUS::mainProcess(){
             return UNKNOWN_MSG_TYPE;
     }
 
-    return OK;
+    return UNKNOWN_MSG_TYPE;
 
 }
 
@@ -352,10 +368,10 @@ bool MergCBUS::readCanBus(byte buf_num){
 * @return true if a message in the can bus.
 */
 bool MergCBUS::readCanBus(){
-
-    bool resp=false;
+    bool resp;
     byte bufidx=90;//position in the general buffer. data need 8 bytes
     eventmatch=false;
+
     resp=msgBuffer.get(&buffer[bufidx]);
     if (resp){
         message.clear();
@@ -493,8 +509,8 @@ void MergCBUS::finishSelfEnumeration(){
 */
 byte MergCBUS::handleConfigMessages(){
 
-    byte ind,val,evidx;
-    unsigned int ev,nn,resp;
+    uint8_t ind,val,evidx,resp;
+    unsigned int ev,nn;
 
     //config messages should be directed to node number or device id
     if (message.getNodeNumber()!=nodeId.getNodeNumber()) {
@@ -519,12 +535,15 @@ byte MergCBUS::handleConfigMessages(){
 
 
     nn=nodeId.getNodeNumber();
+    uint8_t opc=message.getOpc();
 
-    switch ((unsigned int)message.getOpc()){
+    switch (opc){
+
     case OPC_RSTAT:
         //command station
         return OK;
         break;
+
     case OPC_QNN:
         //response with a OPC_PNN if we have a node ID
         //[<MjPri><MinPri=3><CANID>]<B6><NN Hi><NN Lo><Manuf Id><Module Id><Flags>
@@ -539,6 +558,7 @@ byte MergCBUS::handleConfigMessages(){
             return sendCanMessage();
         }
         break;
+
     case OPC_RQNP:
         //Answer with OPC_PARAMS
         //<0xEF><PARA 1><PARA 2><PARA 3> <PARA 4><PARA 5><PARA 6><PARA 7>
@@ -563,6 +583,7 @@ byte MergCBUS::handleConfigMessages(){
             return sendCanMessage();
         }
         break;
+
     case OPC_RQMN:
         //Answer with OPC_NAME
         if (state_mode==SETUP){
@@ -610,6 +631,7 @@ byte MergCBUS::handleConfigMessages(){
             sendERRMessage(CMDERR_NOT_SETUP);
         }
         break;
+
     case OPC_NNLRN:
         //put the node in the lear mode
         state_mode=LEARN;
@@ -642,6 +664,7 @@ byte MergCBUS::handleConfigMessages(){
             return OK;
         }
         break;
+
     case OPC_NNEVN:
         //read the events available in memory
         prepareMessage(OPC_EVNLF);
@@ -656,8 +679,8 @@ byte MergCBUS::handleConfigMessages(){
 
     case OPC_NERD:
         //send back all stored events in message OPC_ENRSP
-        int i;
-        i=(int)memory.getNumEvents();
+        uint8_t i;
+	i = memory.getNumEvents();
 
         #ifdef DEBUGDEF
                 Serial.println("RECEIVED OPC_NERD sending OPC_ENRSP");
@@ -668,8 +691,8 @@ byte MergCBUS::handleConfigMessages(){
 
         if (i>0){
             //byte *events=memory.getEvents();
-            int pos=0;
-            for (int j=0;j<i;j++){
+            uint8_t pos=0;
+            for (uint8_t j=0;j<i;j++){
                 byte *event=memory.getEvent(j);
                 prepareMessageBuff(OPC_ENRSP,highByte(nn),lowByte(nn),
                                 event[pos],
@@ -708,6 +731,7 @@ byte MergCBUS::handleConfigMessages(){
         }
 
         break;
+
     case OPC_NVRD:
         //answer with NVANS
         ind=message.getNodeVariableIndex();
@@ -755,6 +779,7 @@ byte MergCBUS::handleConfigMessages(){
 
         sendCanMessage();
         break;
+
     case OPC_CANID:
         //force a new can id
         ind=message.getByte(3);
@@ -768,6 +793,7 @@ byte MergCBUS::handleConfigMessages(){
 
         sendCanMessage();
         break;
+
     case OPC_EVULN:
         //Unlearn event
         #ifdef DEBUGDEF
@@ -799,6 +825,7 @@ byte MergCBUS::handleConfigMessages(){
         }
 
         break;
+
     case OPC_NVSET:
         //set a node variable
         ind=message.getNodeVariableIndex()-1;//the CBUS index start with 1
@@ -832,6 +859,7 @@ byte MergCBUS::handleConfigMessages(){
 
         sendCanMessage();
         break;
+
     case OPC_REQEV:
         //Read event variable in learn mode
         if (state_mode==LEARN){
@@ -865,6 +893,7 @@ byte MergCBUS::handleConfigMessages(){
 
     case OPC_EVLRNI:
         //learn event by index. like an update
+
         if (state_mode==LEARN){
 
             //TODO: suport device number mode
@@ -885,41 +914,45 @@ byte MergCBUS::handleConfigMessages(){
             buffer[3]=lowByte(ev);
             resp=memory.setEvent(buffer,evidx-1);
 
-            if ((byte)resp!=(evidx-1)){
+            if (resp != (evidx-1)){
                 //send a message error
                 #ifdef DEBUGDEF
                     Serial.println("Error EVLRNI");
                 #endif // DEBUGDEF
 
                 sendERRMessage(CMDERR_INV_EV_IDX);
-                break;
+                return OK;
             }
 
             //save the parameter
             //the CBUS index start with 1
-            resp=memory.setEventVar(evidx-1,ind-1,val);
 
-            if ((byte)resp!=(ind-1)){
+            resp = memory.setEventVar(evidx-1,ind-1,val);
+
+            if (resp != (ind-1)){
                 //send a message error
                 #ifdef DEBUGDEF
                     Serial.println("Error EVLRNI 2");
                 #endif // DEBUGDEF
 
                 sendERRMessage(CMDERR_INV_NV_IDX);
-                break;
+                return OK;
             }
+
             //send a WRACK back
             prepareMessage(OPC_WRACK);
             sendCanMessage();
-
-        }else{
+        }
+	else{
             sendERRMessage(CMDERR_NOT_LRN);
         }
 
         break;
-    }
+   }
+
     return OK;
 }
+
 /** \brief
 * Set a node variable.
 * \param ind The node varialbe index. Starting at 1. It is limited by the user defined node variables.
@@ -929,6 +962,16 @@ byte MergCBUS::handleConfigMessages(){
 
 bool MergCBUS::setNodeVariable(byte ind, byte val){
      return setNodeVariableAuto(ind-1,val,false);
+}
+
+/** \brief
+* Set a internal node variable.
+* \param ind The node varialbe index. Starting at 1. It is limited by the user defined node variables.
+* \param val The variable value
+*/
+
+void MergCBUS::setInternalNodeVariable(byte ind, byte val){
+     return memory.setInternalVar(ind-1,val);
 }
 
 /** \brief
@@ -955,6 +998,8 @@ bool MergCBUS::setNodeVariableAuto(byte ind, byte val,bool autoErr){
      return false;
 
 }
+
+
 /** \brief
 * Deals with accessory functions. No automatic response of events once the user function determines the behaviour.
 * The accessory messages has to be threated by the user function
@@ -974,7 +1019,7 @@ byte MergCBUS::handleACCMessages(){
 */
 byte MergCBUS::handleGeneralMessages(){
 
-    switch ((unsigned int) message.getOpc()){
+    switch ((uint8_t) message.getOpc()){
     case OPC_ARST:
             //reset arduino
             Reset_AVR();
@@ -1020,7 +1065,7 @@ void MergCBUS::sortArray(byte *a, byte n){
 * Clear the message buffer
 */
 void MergCBUS::clearMsgToSend(){
-    for (int i=0;i<CANDATA_SIZE;i++){
+    for (uint8_t i=0;i<CANDATA_SIZE;i++){
         mergCanData[i]=0;
     }
 }
@@ -1032,11 +1077,23 @@ void MergCBUS::clearMsgToSend(){
 byte MergCBUS::sendCanMessage(){
     byte message_size;
     message_size=getMessageSize(mergCanData[0]);
-    Can.setPriority(PRIO_LOW,PRIO_MIN_LOWEST);
+    Can.setPriority(PRIO_NEXT,PRIO_MIN_NORMAL);
+
+    #ifdef DEBUGMSG
+        Serial.print("Send Message: ");
+        for (uint8_t j=0;j<7;j++){
+            Serial.print (mergCanData[j]);
+            Serial.print("\t");
+        }
+        Serial.println();
+    #endif // DEBUGMSG
     byte r=Can.sendMsgBuf(nodeId.getCanID(),0,message_size,mergCanData);
     if (CAN_OK!=r){
+        //TODO
+         Serial.println("N");
         return r;
     }
+    Serial.println("S");
     return OK;
 }
 
@@ -1149,8 +1206,6 @@ void MergCBUS::sendERRMessage(byte code){
 */
 
 bool MergCBUS::hasThisEvent(){
-
-
     //long events
     if (message.isLongEvent()){
              if (memory.getEventIndex(message.getNodeNumber(),message.getEventNumber())<(memory.getMaxNumEvents()+1)){
@@ -1159,20 +1214,9 @@ bool MergCBUS::hasThisEvent(){
     }
     //short events has to check the device number
     if (message.isShortEvent()){
-//            unsigned int dn=message.getDeviceNumber();
-//            deviceNumberIdx=memory.getNumDeviceNumber()+1;
-//            for (byte i=0;i<memory.getNumDeviceNumber();i++){
-//                if (memory.getDeviceNumber(i)==dn){
-//                    typeEventMatch=false;
-//                    deviceNumberIdx=i;
-//                    return true;
-//                }
-//            }
-
-            if (memory.getEventIndex(0,message.getEventNumber())<(memory.getMaxNumEvents()+1)){
+            if (memory.getEventIndex(0,message.getDeviceNumber())<(memory.getMaxNumEvents()+1)){
                 return true;
              }
-
     }
     return false;
 }
@@ -1187,7 +1231,7 @@ void MergCBUS::printSentMessage(){
         Serial.print("printSentMessage- message sent: ");
     #endif // DEBUGDEF
 
-    for (int i=0;i<8;i++){
+    for (uint8_t i=0;i<8;i++){
         Serial.print(mergCanData[i],HEX);
         Serial.print(" ");
     }
@@ -1210,7 +1254,7 @@ void MergCBUS::printReceivedMessage(){
         Serial.print("printReceivedMessage- message received: ");
     #endif // DEBUGDEF
 
-    for (int i=0;i<8;i++){
+    for (uint8_t i=0;i<8;i++){
         Serial.print(message.getByte(i),HEX);
         Serial.print(" ");
     }
@@ -1542,7 +1586,7 @@ void MergCBUS::controlPushButton(){
 }
 
 void MergCBUS::sendMessage(Message *msg){
-    for (int i=0;i<CANDATA_SIZE;i++){
+    for (uint8_t i=0;i<CANDATA_SIZE;i++){
         mergCanData[i]=msg->getDataBuffer()[i];
     }
     sendCanMessage();
@@ -1554,7 +1598,7 @@ void MergCBUS::sendMessage(Message *msg){
  *
  */
 
-unsigned int MergCBUS::getEventIndex(Message *msg){
+uint8_t MergCBUS::getEventIndex(Message *msg){
     return memory.getEventIndex(msg->getNodeNumber(),msg->getEventNumber());
 }
 
@@ -1566,7 +1610,20 @@ unsigned int MergCBUS::getEventIndex(Message *msg){
  */
 
 byte MergCBUS::getNodeVar(byte varIndex){
-    return memory.getVar(varIndex);
+    //the cbus index starts with 1
+    return memory.getVar(varIndex-1);
+}
+
+/** \brief Get internal node variable by index
+ *
+ * \param varIndex index of the variable
+ * \return Returns the variable. One byte
+ *
+ */
+
+byte MergCBUS::getInternalNodeVar(byte varIndex){
+    //the cbus index starts with 1
+    return memory.getInternalVar(varIndex-1);
 }
 
 /** \brief Get the variable of a learned event
@@ -1577,7 +1634,7 @@ byte MergCBUS::getNodeVar(byte varIndex){
  *
  */
 byte MergCBUS::getEventVar(Message *msg,byte varIndex){
-    unsigned int idx;
+    uint8_t idx;
     byte vidx;
 
     if (msg->isShortEvent()){
@@ -1600,7 +1657,6 @@ byte MergCBUS::getEventVar(Message *msg,byte varIndex){
     return 0x00;
 
 }
-
 /** \brief Set the device number for a specific port
  *
  * \param val The device number
@@ -1696,6 +1752,95 @@ byte MergCBUS::sendOffEvent3(bool longEvent,unsigned int event,byte var1,byte va
     return sendCanMessage();
 }
 
+byte MergCBUS::sendGetSession(uint16_t loco){
+    byte H,L;
+
+    if (loco<=127){
+        H=0;
+        L=loco<<8;
+    }
+    else if (loco <= 10239) {
+        H=(loco>>8) | (0xA0);
+        L=loco<<8;
+    }
+    else {
+        return 255;
+    }
+    prepareMessageBuff(OPC_RLOC,H,L);
+
+    return sendCanMessage();
+}
+
+byte MergCBUS::sendReleaseSession(uint8_t locsession){
+
+    prepareMessageBuff(OPC_KLOC,locsession);
+
+    return sendCanMessage();
+}
+byte MergCBUS::sendKeepAliveSession(uint8_t locsession){
+
+    prepareMessageBuff(OPC_DKEEP,locsession);
+
+    return sendCanMessage();
+}
+
+byte MergCBUS::sendSpeedDir(uint8_t speed,bool dforward){
+
+    byte dspd;
+    dspd=speed & 0x7F;
+    bitSet(dspd,7);
+    if (!dforward){
+        bitClear(dspd,7);
+    }
+    prepareMessageBuff(OPC_DSPD,dspd);
+
+    return sendCanMessage();
+}
+
+byte MergCBUS::sendShareSession(uint16_t loco){
+    return sendShareStealSession(loco,2);
+}
+byte MergCBUS::sendStealSession(uint16_t loco){
+    return sendShareStealSession(loco,1);
+}
+byte MergCBUS::sendShareStealSession(uint16_t loco,uint8_t mode){
+    byte H,L;
+
+    if (loco<=127){
+        H=0;
+        L=loco<<8;
+    }
+    else if (loco <= 10239) {
+        H=(loco>>8) | (0xA0);
+        L=loco<<8;
+    }
+    else {
+        return 255;
+    }
+    prepareMessageBuff(OPC_GLOC,H,L,mode);
+
+    return sendCanMessage();
+
+}
+
+byte MergCBUS::sendSetFun(uint8_t locsession,uint8_t fn){
+
+    if (fn>28){
+        return 255;
+    }
+    prepareMessageBuff(OPC_DFNON,locsession,fn);
+    return sendCanMessage();
+}
+
+byte MergCBUS::sendUnsetFun(uint8_t locsession,uint8_t fn){
+
+    if (fn>28){
+        return 255;
+    }
+    prepareMessageBuff(OPC_DFNOF,locsession,fn);
+    return sendCanMessage();
+}
+
 /** \brief
 * Read the can bus message and  put in circular buffer.
 * Used by the timer
@@ -1708,11 +1853,12 @@ void MergCBUS::cbusRead(){
 
     bool resp;
     //read buffer 0 and buffer 1
-    for (int i=0;i<2;i++){
+    for (uint8_t i=0;i<2;i++){
         resp=readCanBus(&buffer[bufIdx+6],&buffer[bufIdx+2],&len,i);
         if (resp){
             buffer[bufIdx]=len;
-            #ifdef DEBUGDEF
+
+           #ifdef DEBUGMSG
             // print message
                 int j=0;
 

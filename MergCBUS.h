@@ -7,6 +7,7 @@
 #define MESSAGEPARSER_H
 
 //#define DEBUGDEF 1
+//#define DEBUGMSG 1
 
 #include <Arduino.h>
 #include <EEPROM.h>
@@ -88,7 +89,7 @@ class MergCBUS
         */
         void processMessage(message_type msg){setBitMessage (msg,false);};
 
-        unsigned int run();
+        uint8_t run();
 
         bool hasMessageToHandle();
         /**\brief Get a reference to node identification.
@@ -96,10 +97,11 @@ class MergCBUS
         */
         MergNodeIdentification *getNodeId(){return &nodeId;};
 
-        bool initCanBus(unsigned int port,unsigned int rate, unsigned int retries,unsigned int retryIntervalMilliseconds);
-        bool initCanBus(unsigned int port);
+        bool initCanBus(uint8_t port,unsigned int rate, unsigned int retries,unsigned int retryIntervalMilliseconds);
+        bool initCanBus(uint8_t port);
         /**\brief Set the user function to handle other messages.*/
         void setUserHandlerFunction(userHandlerType f) {userHandler=f;};
+        void setDCCHandlerFunction(userHandlerType f) {dccHandler=f;};
         void sendERRMessage(byte code);
         bool hasThisEvent();
         void cbusRead();
@@ -119,7 +121,7 @@ class MergCBUS
         void setLeds(byte green,byte yellow);
         /**\brief Set the CBUS modules stardard push button.*/
         void setPushButton(byte pb) {push_button=pb;pinMode(pb,INPUT_PULLUP);};
-        bool setNodeVariable(byte ind, byte val);
+
         /**\brief Set the standard node number for slim mode.
         * The user of this library has to create its own way of letting a customer set a node number in SLIM mode.
         * If a standard value is not set and a push button is set then the library will use the value 0 if it is a consumer and 4444 if it is a producer.
@@ -136,15 +138,20 @@ class MergCBUS
         bool isAccOn();
         bool isAccOff();
         bool eventMatch(){return eventmatch;};
-        unsigned int getEventIndex(Message *msg);
+        uint8_t getEventIndex(Message *msg);
         byte getNodeVar(byte varIndex);
+        bool setNodeVariable(byte ind, byte val);
+        byte getInternalNodeVar(byte varIndex);
+        void setInternalNodeVariable(byte ind, byte val);
+
         byte getEventVar(Message *msg,byte varIndex);
 
         void setDeviceNumber(unsigned int val,byte port);           //2 bytes representation for dn
-        unsigned int getDeviceNumber(byte port);                             //2 bytes representation
+        unsigned int getDeviceNumber(byte port);                    //2 bytes representation
         byte getDeviceNumberIndex(){return deviceNumberIdx;};
         state getNodeState(){return state_mode;};
-        //send events
+
+        //send on/off events
         byte sendOnEvent(bool longEvent,unsigned int event);
         byte sendOffEvent(bool longEvent,unsigned int event);
         byte sendOnEvent1(bool longEvent,unsigned int event,byte var1);
@@ -154,7 +161,21 @@ class MergCBUS
         byte sendOnEvent3(bool longEvent,unsigned int event,byte var1,byte var2,byte var3);
         byte sendOffEvent3(bool longEvent,unsigned int event,byte var1,byte var2,byte var3);
 
+        //send DCC Events
+        byte sendGetSession(uint16_t loco);
+        byte sendReleaseSession(uint8_t locsession);
+        byte sendShareSession(uint16_t loco);
+        byte sendStealSession(uint16_t loco);
+        byte sendKeepAliveSession(uint8_t locsession);
+        byte sendSpeedDir(uint8_t speed,bool dforward);
+        byte sendSetFun(uint8_t locsession,uint8_t fn);
+        byte sendUnsetFun(uint8_t locsession, uint8_t fn);
 
+        void doSelfEnnumeration(bool soft); //put the node in the self enummeration mode
+        void doSetup();                     // put the node in the setup mode
+        bool isSelfEnumMode();              //check if the node is in the self enum mode
+        uint16_t getPromNN();
+        uint16_t getNN();
 
     protected:
     private:
@@ -179,13 +200,14 @@ class MergCBUS
         byte bufferIndex;                     //index that indicates the buffer size
         //unsigned int (*userHandler)(message*);  //pointer to function
         userHandlerType userHandler;
+        userHandlerType dccHandler;
         bool messageToHandle;                   //true if the message was not automatically handled
 
         void setBitMessage(byte pos,bool val);  /** set or unset the bit on pos for messageFilter*/
         void getStoredEvents();                 //events that were learned
         void getStoredIDs();                    //node number,canId,device Number
         bool matchEvent();                      //
-        unsigned int runAutomatic();            //process the majority of events automatic
+        uint8_t runAutomatic();            //process the majority of events automatic
         bool setNodeVariableAuto(byte ind, byte val,bool autoErr);
 
         bool readCanBus();
@@ -220,12 +242,11 @@ class MergCBUS
 
         void(* resetFunc) (void);           //declare reset function @ address 0. resets the arduino
         void learnEvent();                  //put the node in the learn event mode
-        unsigned int mainProcess();
-        void doSelfEnnumeration(bool soft); //put the node in the self enummeration mode
-        void doSetup();                     // put the node in the setup mode
+        uint8_t mainProcess();
+
         void doOutOfService();              //put the node in the out of service node
         void initMemory();                  //load the eprom memory
-        bool isSelfEnumMode();              //check if the node is in the self enum mode
+
 
         /**\brief Set the node state to a new state.
         * @param newstate One of states @see state
@@ -236,6 +257,9 @@ class MergCBUS
 
         //timer functions for reading messages
         long timerInterval;
+
+        //DCC functions
+        byte sendShareStealSession(uint16_t loco,uint8_t mode);
 
 };
 

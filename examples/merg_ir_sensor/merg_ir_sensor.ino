@@ -215,7 +215,7 @@ void setupSensors(){
   }
 }
 //read the sensor state
-int getSensorState(int i){
+byte getSensorState(int i){
   //return digitalRead(sensors[i].port);
 
   int j;
@@ -223,9 +223,9 @@ int getSensorState(int i){
   ntimes=30;
   for (j=0;j<ntimes;j++){
     if (digitalRead(sensors[i].port)==0){
-      return 0;
+      return LOW;
     }
   }
-  return 1;
+  return HIGH;
 
 }

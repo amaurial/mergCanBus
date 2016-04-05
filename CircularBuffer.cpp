@@ -61,10 +61,12 @@ bool CircularBuffer::get(byte* buffer){
         op=1;//reading
     }
     else{
+
         return false;
     }
 
     if (entries<1){
+        op=0;
         return false;
     }
 

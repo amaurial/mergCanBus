@@ -55,7 +55,7 @@ class Message
     public:
         Message();
         Message(unsigned int canId,
-                 unsigned int opc,
+                 uint8_t opc,
                  unsigned int nodeNumber,
                  unsigned int eventNumber,
                  byte data [CANDATA_SIZE] ,
@@ -128,11 +128,11 @@ class Message
         /** \brief Get the number of bytes parameter in the message
          * \return The number of bytes
          */
-        unsigned int getNumBytes() { return _numBytes; }
+        uint8_t getNumBytes() { return _numBytes; }
         /** \brief Set the number of bytes parameter in the message
          * \param val is the number of bytes
          */
-        void setNumBytes(unsigned int val) { _numBytes = val; }
+        void setNumBytes(uint8_t val) { _numBytes = val; }
         /** \brief Set the CAN RTR parameter. Set after reading the CAN header.
          */
         void setRTR() {_RTR=true;};
@@ -218,12 +218,8 @@ class Message
         byte _priority;                         /** Message priority*/
         unsigned int _numBytes;                 /** Message size*/
         bool _RTR;                              /** If the message is a RTR message*/
-        message_type messages[MSGSIZE];         /** Holds the message type for each opc. Make an index of message types. Opc is the array index*/
-        unsigned int message_params[MSGSIZE];   /** Use each bit to hold a true false information about the message. Used to make the search faster.*/
-        bool hasThisData(message_config_pos pos);/** Check if a field is present in a message.*/
-        void loadMessageConfig();               /** Load standard message config.*/
-        void loadMessageType();                 /** Load standard message types config.*/
-
+        bool hasThisData(byte opc, message_config_pos pos);/** Check if a field is present in a message.*/
+        message_type findType(byte opc);
         bool debug;
 
 };

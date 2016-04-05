@@ -19,9 +19,9 @@ See MemoryManagement.h for memory configuration
 #include <Message.h>
 #include <EEPROM.h>
 
-#define GREEN_LED      5    //merg green led port
-#define YELLOW_LED     4    //merg yellow led port
-#define PUSH_BUTTON    3    //std merg push button
+#define GREEN_LED      A6    //merg green led port
+#define YELLOW_LED     A7   //merg yellow led port
+#define PUSH_BUTTON    9    //std merg push button
 #define NUM_NODE_VARS  1    //the transition interval
 #define NUM_EVENTS     20   //supported events
 #define NUM_EVENT_VARS 0    //no need for supported event variables
@@ -31,7 +31,7 @@ See MemoryManagement.h for memory configuration
 #define MIN_CODE       0    //min code version
 #define MAX_CODE       1    //max code version
 
-#define CANPORT        53   //attached mcp2551 pin
+#define CANPORT        10   //attached mcp2551 pin. if using mega pin is 53
 
 //semaphore leds
 #define GREEN 10              //green led pin
@@ -50,6 +50,7 @@ unsigned long starttime;
 void setup(){
 
   setLedPorts();     //setup the sensor ports
+  //pinMode(PUSH_BUTTON1,INPUT_PULLUP);//debug push button
   Serial.begin(115200);
 
 
@@ -62,15 +63,13 @@ void setup(){
   cbus.getNodeId()->setProducerNode(false);
   cbus.getNodeId()->setConsumerNode(true);
   cbus.setPushButton(PUSH_BUTTON);//set the push button ports
-  cbus.setStdNN(999); //standard node number
-  
+
   //used to manually reset the node. while turning on keep the button pressed
   //this forces the node for slim mode with an empty memory for learned events and devices
   if (digitalRead(PUSH_BUTTON)==LOW){
     Serial.println("Setup new memory");
     cbus.setUpNewMemory();
-    cbus.setSlimMode();
-    cbus.saveNodeFlags();    
+    cbus.saveNodeFlags();
     //set the default value
     cbus.setNodeVariable(1,NNVar1);
   }

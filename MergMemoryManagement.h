@@ -9,18 +9,20 @@
 #define NNDD_SIZE 2                     /** Size of a node number or device number */
 #define FLAG_SIZE 1
 #define EMPTY_BYTE 0x00
+#define INTERNAL_VARS 16
 
 #define FAILED_INDEX 255                /** Value returned when vars or events vars not found                             */
 
-#define MERG_MEMPOS 0                                                  /** Position in memory. has the value 0xaa to mark it is from this mod       */
-#define MERG_MEMORY_MODEL MERG_MEMPOS+1                                 /**< Mark the current memory model for this node*/
-#define CAN_ID_MEMPOS MERG_MEMORY_MODEL+1                                    /**Position in memory.can id has 1 byte                                    */
-#define NN_MEMPOS CAN_ID_MEMPOS+1                                      /**Position in memory.Node mumber has 2 bytes                               */
-#define FLAGS_MEMPOS NN_MEMPOS+NNDD_SIZE                           /**Position in memory.flags                          */
-#define NUM_VARS_MEMPOS FLAGS_MEMPOS+FLAG_SIZE                          /**Position in memory.amount of variables for this module- 1 byte          */
-#define NUM_EVENTS_MEMPOS NUM_VARS_MEMPOS+1                            /**Position in memory.amount of learned events                             */
-#define NUM_EVENTS_VARS_MEMPOS NUM_EVENTS_MEMPOS+1                     /**Position in memory.amount of learned events variables                   */
-#define VARS_MEMPOS NUM_EVENTS_VARS_MEMPOS+1                           /**Position in memory.start of variables written for this module           */
+#define MERG_MEMPOS               0                                               /** Position in memory. has the value 0xaa to mark it is from this mod       */
+#define MERG_MEMORY_MODEL         MERG_MEMPOS + 1                                 /**< Mark the current memory model for this node*/
+#define NODE_INTERNAL_VAR         MERG_MEMORY_MODEL + 1		  /** Provides space for the node to save internal states*/
+#define CAN_ID_MEMPOS             NODE_INTERNAL_VAR + INTERNAL_VARS                           /**Position in memory.can id has 1 byte                                    */
+#define NN_MEMPOS                 CAN_ID_MEMPOS + 1                               /**Position in memory.Node mumber has 2 bytes                               */
+#define FLAGS_MEMPOS              NN_MEMPOS + NNDD_SIZE                           /**Position in memory.flags                          */
+#define NUM_VARS_MEMPOS           FLAGS_MEMPOS + FLAG_SIZE                        /**Position in memory.amount of variables for this module- 1 byte          */
+#define NUM_EVENTS_MEMPOS         NUM_VARS_MEMPOS + 1                             /**Position in memory.amount of learned events                             */
+#define NUM_EVENTS_VARS_MEMPOS    NUM_EVENTS_MEMPOS + 1                           /**Position in memory.amount of learned events variables                   */
+#define VARS_MEMPOS               NUM_EVENTS_VARS_MEMPOS + 1                      /**Position in memory.start of variables written for this module           */
 //device numbers
 //events with its variables
 //#define EVENTS_MEMPOS VARS_MEMPOS+MAX_AVAIL_VARS                     /**Position in memory.                                                     */
@@ -43,18 +45,21 @@ class MergMemoryManagement
         /** \brief Check if there event vars saved.
         *\return True if the number of events vars is bigger than 0, else false.
         */
-        bool hasEventVars(unsigned int eventIdx);
+        bool hasEventVars(uint8_t eventIdx);
 
-        unsigned int setEvent(byte *event);//return the index
-        unsigned int setEvent(byte *event,unsigned int eventIdx);
-        byte* getEvent(unsigned int index);
+        uint8_t setEvent(byte *event);//return the index
+        uint8_t setEvent(byte *event,uint8_t eventIdx);
+        byte* getEvent(uint8_t index);
 
-        void setVar(unsigned int index,byte val);
-        byte getVar(unsigned int index);
+        void setVar(uint8_t index,byte val);
+        byte getVar(uint8_t index);
 
-        unsigned int setEventVar(unsigned int eventIdx,unsigned int varIdx,byte val);
-        byte getEventVar(unsigned int eventIdx,unsigned int index);
-        byte *getEventVars(unsigned int eventIdx,unsigned int *len);
+	void setInternalVar(uint8_t index,byte val);
+        byte getInternalVar(uint8_t index);
+
+        uint8_t setEventVar(unsigned int eventIdx,uint8_t varIdx,uint8_t val);
+        byte getEventVar(uint8_t eventIdx,uint8_t index);
+        byte *getEventVars(uint8_t eventIdx,uint8_t *len);
 
         /** \brief Return the number of set node variables.*/
         byte getNumVars(){return MAX_AVAIL_VARS;};
@@ -66,9 +71,9 @@ class MergMemoryManagement
         void eraseAllEvents();
         void read();
 
-        unsigned int  eraseEvent(unsigned int eventIdx);
+        uint8_t  eraseEvent(uint8_t eventIdx);
         //unsigned int  eraseEvent(byte event[EVENT_SIZE]);
-        unsigned int  eraseEvent(unsigned int nn,unsigned int ev);
+        uint8_t  eraseEvent(unsigned int nn,unsigned int ev);
 
         void setCanId(byte canId);
         /**\brief Get the can id.
@@ -84,8 +89,8 @@ class MergMemoryManagement
         /** \brief Return the maximum number of supported device numbers.*/
         byte getNumDeviceNumber(){return MAX_NUM_DEVICE_NUMBERS;};                                  //2 bytes representation
 
-        unsigned int getEventIndex(byte ev1,byte ev2,byte ev3,byte ev4);
-        unsigned int getEventIndex(unsigned int nn,unsigned int ev);
+        uint8_t getEventIndex(byte ev1,byte ev2,byte ev3,byte ev4);
+        uint8_t getEventIndex(unsigned int nn,unsigned int ev);
         bool hasEvent(byte ev1,byte ev2,byte ev3,byte ev4);
 
         byte getNodeFlag();
@@ -94,7 +99,6 @@ class MergMemoryManagement
         void setUpNewMemory();
         void dumpMemory();
         byte getMaxNumEvents(){return MAX_NUM_EVENTS;};
-
     protected:
 
     private:
@@ -123,7 +127,7 @@ class MergMemoryManagement
         unsigned int resolveEvVarArrayPos(byte evidx,byte varidx);
         unsigned int incEventPos(unsigned int val);
         unsigned int resolveEventPos(byte evidx);
-        void copyEvent(unsigned int fromIndex,unsigned int toIndex);
+        void copyEvent(uint8_t fromIndex,uint8_t toIndex);
 
         void write();
 };

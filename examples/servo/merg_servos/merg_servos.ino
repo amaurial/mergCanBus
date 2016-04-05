@@ -27,7 +27,7 @@ To clear the memory, press pushbutton1 while reseting the arduino
 
 
 //Module definitions
-#define NUM_SERVOS 16      //number of servos
+#define NUM_SERVOS 6      //number of servos
 //first 2 are to indicate which servo is on. 2 bytes to indicate to togle. 2 for start and end angle
 #define VAR_PER_SERVO 6  //variables per servo
 #define SPEED 50        //servo speed
@@ -36,9 +36,9 @@ To clear the memory, press pushbutton1 while reseting the arduino
 
 
 //CBUS definitions
-#define GREEN_LED 27                  //merg green led port
-#define YELLOW_LED 26                 //merg yellow led port
-#define PUSH_BUTTON 25                //std merg push button
+#define GREEN_LED D8                  //merg green led port
+#define YELLOW_LED D7                 //merg yellow led port
+#define PUSH_BUTTON D9                //std merg push button
 #define PUSH_BUTTON1 28               //debug push button
 #define NODE_VARS 1                  //number o node variables.Servo speed
 #define NODE_EVENTS 30              //max number of events
@@ -56,15 +56,11 @@ MergCBUS cbus=MergCBUS(NODE_VARS,NODE_EVENTS,EVENTS_VARS,DEVICE_NUMBERS);
 VarSpeedServo servos[NUM_SERVOS];
 //pins where the servos are attached
 //pins 9,10 and 15 don't work for many servos. servo library limitation
-byte servopins[]={2,3,4,5,6,7,8,11,12,13,14,16,17,18,19,20};//,19,20,21,22,23,24,25,26,27,28,29,30};
+//byte servopins[]={2,3,4,5,6,7,8,11,12,13,14,16,17,18,19,20};//,19,20,21,22,23,24,25,26,27,28,29,30};
+byte servopins[]={2,3,4,5,6,7};//,19,20,21,22,23,24,25,26,27,28,29,30};
 byte active_servo[2];
 byte togle_servo[2];
 
-//timer function to read the can messages
-void readCanMessages(){
-  //read the can message and put then in a circular buffer
-  cbus.cbusRead();
-}
 
 void setup(){
 
@@ -81,7 +77,7 @@ void setup(){
   cbus.getNodeId()->setConsumerNode(true);
   cbus.setStdNN(999); //standard node number
 
-  if (digitalRead(PUSH_BUTTON1)==LOW){
+  if (digitalRead(PUSH_BUTTON)==LOW){
     Serial.println("Setup new memory");
     cbus.setUpNewMemory();
     cbus.setSlimMode();
@@ -90,16 +86,14 @@ void setup(){
   cbus.setLeds(GREEN_LED,YELLOW_LED);//set the led ports
   cbus.setPushButton(PUSH_BUTTON);//set the push button ports
   cbus.setUserHandlerFunction(&myUserFunc);//function that implements the node logic
-  cbus.initCanBus(53,CAN_125KBPS,10,200);  //initiate the transport layer. pin=53, rate=125Kbps,10 tries,200 millis between each try
+  cbus.initCanBus(10);  //initiate the transport layer. pin=53, rate=125Kbps,10 tries,200 millis between each try
   //create the servos object
-  setUpServos();
-  Timer1.initialize(10000);//microseconds
-  Timer1.attachInterrupt(readCanMessages);
+  setUpServos();  
   Serial.println("Setup finished");
 }
 
 void loop (){
-
+  cbus.cbusRead();
   cbus.run();//do all logic
   //debug memory
   if (digitalRead(PUSH_BUTTON1)==LOW){
@@ -126,7 +120,6 @@ void myUserFunc(Message *msg,MergCBUS *mcbus){
      Serial.println(servo_end);
       //get the events var and control the servos
       for (int i=0;i<NUM_SERVOS;i++){
-
         if (isServoActive(i)){
           moveServo(onEvent,i,servo_start,servo_end);
         }
