@@ -1,5 +1,5 @@
 /*
-This example implements a ir sensor controller to detect block occupancy and servos.
+This example implements a ir sensor controller to detect block occupancy and control servos.
 It drives 8 ir and 8 servos. Can be more in arduino Mega, but it just an example.
 The module produces ON/OFF events and drives the servos based on other events.
 The events can be toogled by the first 2 node variables. 0 means ON when train enters, OFF when trains leaves.
@@ -27,6 +27,8 @@ To clear the memory, press pushbutton while reseting the arduino
 #define NUM_SERVOS 8      //number of servos
 
 #define SPEED 50              //servo speed
+#define ACTIVE_SERVO_VAR 1          //2 bytes for that
+#define TOGLE_SERVO_VAR  3          //2 bytes for that
 
 //first 2 are to indicate which servo is on. 2 bytes to indicate to togle. 2 for start and end angle
 #define VAR_PER_SERVO 6  //variables per servo
@@ -36,7 +38,6 @@ To clear the memory, press pushbutton while reseting the arduino
 
 
 //pins where the servos are attached
-//pins 9,10 and 15 don't work for many servos. servo library limitation
 byte servopins[]={1,2,3,4,5,6,7,8};
 byte servo_vars[5];
 VarSpeedServo servos[NUM_SERVOS];
@@ -45,6 +46,8 @@ int rlimit;
 
 byte active_servo[2];
 byte togle_servo[2];
+boolean attach_servo = false;
+byte start_action = 3; //move to last position
 
 long detachservos_time = 0; //control the time to detach the servo
 
@@ -53,10 +56,10 @@ long detachservos_time = 0; //control the time to detach the servo
 //sensor definitions
 #define NUMSENSORS 8
 #define WAIT 500 //time to reset the counters
-#define D 3   //number of multiple ocurrences of 1s
-#define R 400 //analog level threshold. active when lower this number
-#define C 2 //number of 1s after each other
-#define E 200 //number of 0s ocurrences
+#define D 3      //number of multiple ocurrences of 1s
+#define R 400    //analog level threshold. active when lower this number
+#define C 2      //number of 1s after each other
+#define E 200    //number of 0s ocurrences
 
 long t;
 int r;
@@ -85,16 +88,19 @@ SENSORS sensors[NUMSENSORS];
 #define NODE_VARS 4
 //2 bytes for togle and activate the sensors
 //1 for servo speed
-//1 for servo action on starting
+//1 byte for flags
+//flag1 (2 first bits) action to take on starting. see setupServos
+//flag2 (bit 3), indicate to maintain the servo attached after moving. default is 0 = detached
+
 //[0] = sensor active
 //[1] = togle sensor
 //[2] = servo speed
-//[3] = define where the servo should start
+//[3] = flags
 
 #define ACTIVE_IR_VAR               1
 #define TOGLE_IR_VAR                2
 #define SERVO_SPEED_VAR             3
-#define SERVO_STARTACTION_VAR       4
+#define SERVO_FLAGS_VAR             4
 
 
 //create the merg object
@@ -102,9 +108,10 @@ MergCBUS cbus=MergCBUS(NODE_VARS,NODE_EVENTS,EVENTS_VARS,DEVICE_NUMBERS);
 
 void setup(){
   
+  initializeFlags();
   //create the sensors
   setupSensors();
-  //create the servos object
+  //create the servos object  
   setupServos();  
   
   #ifdef DEBUGNODE
@@ -173,12 +180,13 @@ void loop (){
 
 //user defined function. contains the module logic.called every time run() is called.
 void myUserFunc(Message *msg,MergCBUS *mcbus){
-    boolean onEvent;
+  boolean onEvent;
   unsigned int converted_speed;
   int varidx=0;
 
   byte servo_start,servo_end;
   if (mcbus->eventMatch()){
+     initializeFlags();
      onEvent=mcbus->isAccOn();
      getServosArray(msg,mcbus);
     // Serial.println("event match");
@@ -227,7 +235,10 @@ void moveServo(boolean event,byte servoidx,byte servo_start,byte servo_end){
     //write last pos to eprom
    //variables start with number 1  
     cbus.setInternalNodeVariable(servoidx+1,lastPos);
+    //if (!attach_servo){
+    servos[servoidx].write(lastPos,SPEED);
     servos[servoidx].attach(servopins[servoidx]);
+    //}
     servos[servoidx].write(lastPos,SPEED);
 
    //write last pos to eprom
@@ -296,6 +307,7 @@ void setupServos(){
 }
 
 void detachServos(){
+  if (attach_servo) return; //don't dettach
   for (uint8_t i=0;i<NUM_SERVOS;i++){  
      if (servos[i].attached())  servos[i].detach();
   }
@@ -309,22 +321,29 @@ void moveServoToLastPosition(byte idx){
       Serial.print(idx+1);
       Serial.print("\tlast");
       Serial.println(pos);
-   #endif
-      
+   #endif    
+    
     if (pos < 175){    
       servos[idx].write(pos,SPEED);//avoid the kick when power on
-      delay(300);  //wait the timmer to be ok
+      delay(300);  //wait the timmer to be ok      
       servos[idx].attach(servopins[idx]); 
       servos[idx].write(pos,SPEED);
     }
 }
 
 //get the events vars for activate servos and to togle the servos:invert behaviour on on/off events
-void getServosArray(Message *msg,MergCBUS *mcbus){
-  active_servo[0]=mcbus->getEventVar(msg,1);
-  active_servo[1]=mcbus->getEventVar(msg,2);
-  togle_servo[0]=mcbus->getEventVar(msg,3);
-  togle_servo[1]=mcbus->getEventVar(msg,4);
+void getServosArray(Message *msg,MergCBUS *mcbus){  
+  active_servo[0]=mcbus->getEventVar(msg,ACTIVE_SERVO_VAR);
+  active_servo[1]=mcbus->getEventVar(msg,ACTIVE_SERVO_VAR + 1);
+  togle_servo[0]=mcbus->getEventVar(msg,TOGLE_SERVO_VAR);
+  togle_servo[1]=mcbus->getEventVar(msg,TOGLE_SERVO_VAR + 1);
+}
+
+//the the flags var and initialize them
+void initializeFlags(){
+    byte flag = cbus.getNodeVar(SERVO_FLAGS_VAR);
+    start_action = flag && 0x03; //first 2 bits    
+    attach_servo = flag && 0x04; //bit 3        
 }
 
 //################## END SERVO CODE ##################
