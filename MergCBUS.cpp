@@ -1754,18 +1754,27 @@ byte MergCBUS::sendOffEvent3(bool longEvent,unsigned int event,byte var1,byte va
 
 byte MergCBUS::sendGetSession(uint16_t loco){
     byte H,L;
-
+    //Serial.print("loco:");
+    //Serial.print(loco);
+    //Serial.print("\t");
     if (loco<=127){
         H=0;
-        L=loco<<8;
+        L=loco;
     }
-    else if (loco <= 10239) {
+
+
+    else if (loco > 127 && loco <= 10239) {
         H=(loco>>8) | (0xA0);
         L=loco<<8;
     }
     else {
         return 255;
     }
+
+    //Serial.print(H);
+    //Serial.print("\t");
+    //Serial.println(L);
+
     prepareMessageBuff(OPC_RLOC,H,L);
 
     return sendCanMessage();
@@ -1784,7 +1793,7 @@ byte MergCBUS::sendKeepAliveSession(uint8_t locsession){
     return sendCanMessage();
 }
 
-byte MergCBUS::sendSpeedDir(uint8_t speed,bool dforward){
+byte MergCBUS::sendSpeedDir(uint8_t locsession,uint8_t speed,bool dforward){
 
     byte dspd;
     dspd=speed & 0x7F;
@@ -1792,8 +1801,14 @@ byte MergCBUS::sendSpeedDir(uint8_t speed,bool dforward){
     if (!dforward){
         bitClear(dspd,7);
     }
-    prepareMessageBuff(OPC_DSPD,dspd);
+    prepareMessageBuff(OPC_DSPD,locsession,dspd);
 
+    return sendCanMessage();
+}
+
+byte MergCBUS::sendSpeedMode(uint8_t locsession,uint8_t mode){
+
+    prepareMessageBuff(OPC_STMOD,locsession,mode);
     return sendCanMessage();
 }
 

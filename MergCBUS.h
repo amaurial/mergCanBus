@@ -167,9 +167,10 @@ class MergCBUS
         byte sendShareSession(uint16_t loco);
         byte sendStealSession(uint16_t loco);
         byte sendKeepAliveSession(uint8_t locsession);
-        byte sendSpeedDir(uint8_t speed,bool dforward);
+        byte sendSpeedDir(uint8_t locsession,uint8_t speed,bool dforward);
         byte sendSetFun(uint8_t locsession,uint8_t fn);
         byte sendUnsetFun(uint8_t locsession, uint8_t fn);
+        byte sendSpeedMode(uint8_t locsession, uint8_t mode);
 
         void doSelfEnnumeration(bool soft); //put the node in the self enummeration mode
         void doSetup();                     // put the node in the setup mode
