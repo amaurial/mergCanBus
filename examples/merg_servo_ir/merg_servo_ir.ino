@@ -101,6 +101,7 @@ SENSORS sensors[NUMSENSORS];
 #define TOGLE_IR_VAR                2
 #define SERVO_SPEED_VAR             3
 #define SERVO_FLAGS_VAR             4
+#define SERVO_STARTACTION_VAR       4  
 
 
 //create the merg object

@@ -1756,17 +1756,10 @@ byte MergCBUS::sendGetSession(uint16_t loco){
     //Serial.print("loco:");
     //Serial.print(loco);
     //Serial.print("\t");
+
     if (loco<=127){
         H=0;
         L=loco;
-    }
-
-
-    else if (loco > 127 && loco <= 10239) {
-
-    if (loco<=127){
-        H=0;
-        L=loco<<8;
     }
     else if (loco <= 10239) {
         H=(loco>>8) | (0xA0);
