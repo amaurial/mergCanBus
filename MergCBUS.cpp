@@ -227,7 +227,6 @@ uint8_t MergCBUS::run(){
 
 uint8_t MergCBUS::mainProcess(){
 
-
     if (message.getRTR()){
         //if we are a device with can id
         //we need to answer this message
@@ -1764,6 +1763,12 @@ byte MergCBUS::sendGetSession(uint16_t loco){
 
 
     else if (loco > 127 && loco <= 10239) {
+
+    if (loco<=127){
+        H=0;
+        L=loco<<8;
+    }
+    else if (loco <= 10239) {
         H=(loco>>8) | (0xA0);
         L=loco<<8;
     }
@@ -1807,7 +1812,6 @@ byte MergCBUS::sendSpeedDir(uint8_t locsession,uint8_t speed,bool dforward){
 }
 
 byte MergCBUS::sendSpeedMode(uint8_t locsession,uint8_t mode){
-
     prepareMessageBuff(OPC_STMOD,locsession,mode);
     return sendCanMessage();
 }
