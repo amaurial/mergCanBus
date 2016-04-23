@@ -28,6 +28,7 @@ class MergCBUSThrottle
         void setDirection(bool d_forward);
         bool getDirection();
         bool setSpeedDirection(uint8_t v,bool d_forward);
+        void setSpeedMode(uint8_t session);
         bool stealLoco();
         bool shareLoco();
         void run();

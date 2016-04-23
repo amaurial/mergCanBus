@@ -29,6 +29,7 @@ void MergCBUSThrottle::sendKeepAlive(){
         if (tinfo[i].getLoco() != 0){
             if ((t-tinfo[i].getTime())>keepalive_interval){
                 tinfo[i].setTime(t);
+                Serial.println("keep alive");
                 cbus->sendKeepAliveSession(tinfo[i].getSession());
             }
         }
@@ -44,6 +45,13 @@ bool MergCBUSThrottle::getSession(uint16_t loco){
 
 bool MergCBUSThrottle::releaseSession(uint8_t session){
     if (cbus->sendReleaseSession(session) == 0){
+        for (uint8_t i=0;i<NUM_SESSIONS;i++){
+            if (tinfo[i].getSession() == session){
+                tinfo[i].setLoco(0);
+                tinfo[i].setSession(0);
+                break;
+            }
+        }
         return true;
     }
     return false;
@@ -80,6 +88,10 @@ void MergCBUSThrottle::setFOff(uint8_t f){
 }
 
 void MergCBUSThrottle::setSpeed(uint8_t v){
+}
+
+void MergCBUSThrottle::setSpeedMode(uint8_t session){
+    cbus->sendSpeedMode(session,0);
 }
 
 uint8_t MergCBUSThrottle::getSpeed(){

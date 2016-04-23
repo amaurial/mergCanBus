@@ -108,7 +108,7 @@ void loop (){
   if (i>255){
     i=0;
   }
-  
+  //delay(8);
 }
 
 //user defined function. contains the module logic.called every time run() is called.
