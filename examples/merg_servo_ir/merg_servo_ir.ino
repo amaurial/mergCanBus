@@ -21,6 +21,7 @@ To clear the memory, press pushbutton while reseting the arduino
 #include <EEPROM.h> //required by the library
 #include <VarSpeedServo.h>
 
+//uncoment to see debug info on serial port
 //#define DEBUGNODE
 
 //Module definitions servo
@@ -354,14 +355,11 @@ void initializeFlags(){
 void checkSensors(){ 
 
     for (i=0;i<NUMSENSORS;i++){
-        r=analogRead(sensors[i].port);
-        //Serial.print("S");
-        //Serial.print(i);
-        //Serial.print("\t");
-        //Serial.print(r);
-        //Serial.print("\t");
+        r=analogRead(sensors[i].port);        
+        
         if (r<R) r=1;
         else r=0;
+        
         //read last read
         s = bitRead(sensors[i].state,2);
         
@@ -391,7 +389,7 @@ void checkSensors(){
         //compare last state
         s = bitRead(sensors[i].state,0);
         x = bitRead(sensors[i].state,1);
-        if (s!=x){        
+        if (s!=x){ //change of state       
           bitWrite(sensors[i].state,1,s);
            #ifdef  DEBUGNODE
             Serial.print("s");
@@ -466,6 +464,7 @@ bool togleSensor(uint8_t sensor){
 }
 
 //check if we have the sensor has active
+//this is checked by a node variable
 bool isSensorActive(uint8_t sensor){
   
   bool resp=false;

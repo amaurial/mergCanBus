@@ -1359,6 +1359,9 @@ byte MergCBUS::getAccExtraData(byte idx){
     return message.getAccExtraData(idx);
 }
 
+/**
+* Set the node to Slim mode
+*/
 void MergCBUS::setSlimMode(){
     #ifdef DEBUGDEF
         Serial.println("Setting SLIM mode");
@@ -1368,7 +1371,9 @@ void MergCBUS::setSlimMode(){
     nodeId.setSlimMode();
     saveNodeFlags();
 }
-
+/**
+* Set the node to Flim mode
+*/
 void MergCBUS::setFlimMode(){
     #ifdef DEBUGDEF
         Serial.println("Setting FLIM mode");
@@ -1378,9 +1383,16 @@ void MergCBUS::setFlimMode(){
     saveNodeFlags();
 }
 
+/**
+* Save the node Flags
+*/
 void MergCBUS::saveNodeFlags(){
     memory.setNodeFlag(nodeId.getFlags());
 }
+
+/**
+* Learn the event present in the message and send ACK if all went well or send ERROR if it fails.
+*/
 
 void MergCBUS::learnEvent(){
     unsigned int ev,nn,resp;
@@ -1476,6 +1488,12 @@ void MergCBUS::learnEvent(){
         sendCanMessage();
 }
 
+/**
+* Automatically control the push button default behaviour defined to MERG modules.
+* Between 3 and 8 seconds the node requests another node number.
+* Press the button for more than 8 seconds to change from Slim to Flim and vice-versa
+* The Slim node number is defined by the default node number.
+*/
 void MergCBUS::controlPushButton(){
     if (push_button==255){ return;}
 
@@ -1584,6 +1602,10 @@ void MergCBUS::controlPushButton(){
 
 }
 
+/**
+* Sends a can message
+* \param msg Buffer to message. The size is 8 bytes.
+*/
 void MergCBUS::sendMessage(Message *msg){
     for (uint8_t i=0;i<CANDATA_SIZE;i++){
         mergCanData[i]=msg->getDataBuffer()[i];
@@ -1675,7 +1697,13 @@ unsigned int MergCBUS::getDeviceNumber(byte port){
     return memory.getDeviceNumber(port);
 }
 
-
+/** \brief Send an On event, short or long
+ *
+ * \param longEvent True if it is a long On Event, otherwise sends a short event
+ * \param event The event number
+ * \return The result of the sendCanMessage()
+ *
+ */
 byte MergCBUS::sendOnEvent(bool longEvent,unsigned int event){
     if (longEvent){
         prepareMessageBuff(OPC_ACON,highByte(nodeId.getNodeNumber()),lowByte(nodeId.getNodeNumber()),highByte(event),lowByte(event));
@@ -1685,6 +1713,14 @@ byte MergCBUS::sendOnEvent(bool longEvent,unsigned int event){
     }
     return sendCanMessage();
 }
+
+/** \brief Send an Off event, short or long
+ *
+ * \param longEvent True if it is a long Off Event, otherwise sends a short event
+ * \param event The event number
+ * \return The result of the sendCanMessage()
+ *
+ */
 byte MergCBUS::sendOffEvent(bool longEvent,unsigned int event){
     if (longEvent){
         prepareMessageBuff(OPC_ACOF,highByte(nodeId.getNodeNumber()),lowByte(nodeId.getNodeNumber()),highByte(event),lowByte(event));
@@ -1694,6 +1730,15 @@ byte MergCBUS::sendOffEvent(bool longEvent,unsigned int event){
     }
     return sendCanMessage();
 }
+
+/** \brief Send an On event, short or long with one parameter
+ *
+ * \param longEvent True if it is a long On Event, otherwise sends a short event
+ * \param event The event number
+ * \param var1 The first parameter
+ * \return The result of the sendCanMessage()
+ *
+ */
 byte MergCBUS::sendOnEvent1(bool longEvent,unsigned int event,byte var1){
     if (longEvent){
         prepareMessageBuff(OPC_ACON1,highByte(nodeId.getNodeNumber()),lowByte(nodeId.getNodeNumber()),highByte(event),lowByte(event),var1);
@@ -1703,6 +1748,14 @@ byte MergCBUS::sendOnEvent1(bool longEvent,unsigned int event,byte var1){
     }
     return sendCanMessage();
 }
+/** \brief Send an Off event, short or long with one parameter
+ *
+ * \param longEvent True if it is a long Off Event, otherwise sends a short event
+ * \param event The event number
+ * \param var1 The first parameter
+ * \return The result of the sendCanMessage()
+ *
+ */
 byte MergCBUS::sendOffEvent1(bool longEvent,unsigned int event,byte var1){
     if (longEvent){
         prepareMessageBuff(OPC_ACOF1,highByte(nodeId.getNodeNumber()),lowByte(nodeId.getNodeNumber()),highByte(event),lowByte(event),var1);
@@ -1712,6 +1765,15 @@ byte MergCBUS::sendOffEvent1(bool longEvent,unsigned int event,byte var1){
     }
     return sendCanMessage();
 }
+/** \brief Send an On event, short or long with two parameters
+ *
+ * \param longEvent True if it is a long On Event, otherwise sends a short event
+ * \param event The event number
+ * \param var1 The first parameter
+ * \param var2 The second parameter
+ * \return The result of the sendCanMessage()
+ *
+ */
 byte MergCBUS::sendOnEvent2(bool longEvent,unsigned int event,byte var1,byte var2){
     if (longEvent){
         prepareMessageBuff(OPC_ACON2,highByte(nodeId.getNodeNumber()),lowByte(nodeId.getNodeNumber()),highByte(event),lowByte(event),var1,var2);
@@ -1722,6 +1784,16 @@ byte MergCBUS::sendOnEvent2(bool longEvent,unsigned int event,byte var1,byte var
 
     return sendCanMessage();
 }
+
+/** \brief Send an Off event, short or long with two parameters
+ *
+ * \param longEvent True if it is a long Off Event, otherwise sends a short event
+ * \param event The event number
+ * \param var1 The first parameter
+ * \param var2 The second parameter
+ * \return The result of the sendCanMessage()
+ *
+ */
 byte MergCBUS::sendOffEvent2(bool longEvent,unsigned int event,byte var1,byte var2){
     if (longEvent){
         prepareMessageBuff(OPC_ACOF2,highByte(nodeId.getNodeNumber()),lowByte(nodeId.getNodeNumber()),highByte(event),lowByte(event),var1,var2);
@@ -1731,6 +1803,17 @@ byte MergCBUS::sendOffEvent2(bool longEvent,unsigned int event,byte var1,byte va
     }
     return sendCanMessage();
 }
+
+/** \brief Send an On event, short or long with three parameters
+ *
+ * \param longEvent True if it is a long On Event, otherwise sends a short event
+ * \param event The event number
+ * \param var1 The first parameter
+ * \param var2 The second parameter
+ * \param var3 The third parameter
+ * \return The result of the sendCanMessage()
+ *
+ */
 byte MergCBUS::sendOnEvent3(bool longEvent,unsigned int event,byte var1,byte var2,byte var3){
     if (longEvent){
         prepareMessageBuff(OPC_ACON3,highByte(nodeId.getNodeNumber()),lowByte(nodeId.getNodeNumber()),highByte(event),lowByte(event),var1,var2,var3);
@@ -1741,6 +1824,17 @@ byte MergCBUS::sendOnEvent3(bool longEvent,unsigned int event,byte var1,byte var
 
     return sendCanMessage();
 }
+
+/** \brief Send an Off event, short or long with three parameters
+ *
+ * \param longEvent True if it is a long Off Event, otherwise sends a short event
+ * \param event The event number
+ * \param var1 The first parameter
+ * \param var2 The second parameter
+ * \param var3 The third parameter
+ * \return The result of the sendCanMessage()
+ *
+ */
 byte MergCBUS::sendOffEvent3(bool longEvent,unsigned int event,byte var1,byte var2,byte var3){
     if (longEvent){
         prepareMessageBuff(OPC_ACOF3,highByte(nodeId.getNodeNumber()),lowByte(nodeId.getNodeNumber()),highByte(event),lowByte(event),var1,var2,var3);
@@ -1751,6 +1845,12 @@ byte MergCBUS::sendOffEvent3(bool longEvent,unsigned int event,byte var1,byte va
     return sendCanMessage();
 }
 
+/** \brief Sends a request session
+ *
+ * \param loco The DCC long or short address of a decoder
+ * \return The result of the sendCanMessage()
+ *
+ */
 byte MergCBUS::sendGetSession(uint16_t loco){
     byte H,L;
     //Serial.print("loco:");
@@ -1778,12 +1878,27 @@ byte MergCBUS::sendGetSession(uint16_t loco){
     return sendCanMessage();
 }
 
+/** \brief Sends a release session
+ *
+ * Used to dispatch or terminate a session in the DCC station.
+ * \param locsession The session number alocated previously
+ * \return The result of the sendCanMessage()
+ *
+ */
 byte MergCBUS::sendReleaseSession(uint8_t locsession){
 
     prepareMessageBuff(OPC_KLOC,locsession);
 
     return sendCanMessage();
 }
+
+/** \brief Sends a keep alive message
+ *
+ * Once a session is allocated, the DCC station requires a keep alive each 2 seconds.
+ * \param locsession The session number alocated previously
+ * \return The result of the sendCanMessage()
+ *
+ */
 byte MergCBUS::sendKeepAliveSession(uint8_t locsession){
 
     prepareMessageBuff(OPC_DKEEP,locsession);
@@ -1791,6 +1906,16 @@ byte MergCBUS::sendKeepAliveSession(uint8_t locsession){
     return sendCanMessage();
 }
 
+/** \brief Set a speed and/or direction of a session
+ *
+ * Once a session is allocated, one can control the speed and the direction of
+ * a locomotive by sending this message
+ * \param locsession The session number alocated previously
+ * \param speed The speed to set
+ * \param dforward True if forward
+ * \return The result of the sendCanMessage()
+ *
+ */
 byte MergCBUS::sendSpeedDir(uint8_t locsession,uint8_t speed,bool dforward){
 
     byte dspd;
@@ -1803,7 +1928,14 @@ byte MergCBUS::sendSpeedDir(uint8_t locsession,uint8_t speed,bool dforward){
 
     return sendCanMessage();
 }
-
+/** \brief Set a speed step mode
+ *
+ * Once a session is allocated, one can set the steps of how the speed will be set. The default is normally 128
+ * \param locsession The session number alocated previously
+ * \param mode The speed mode. See the developer guide for the possible values
+ * \return The result of the sendCanMessage()
+ *
+ */
 byte MergCBUS::sendSpeedMode(uint8_t locsession,uint8_t mode){
     prepareMessageBuff(OPC_STMOD,locsession,mode);
     return sendCanMessage();
@@ -1835,6 +1967,14 @@ byte MergCBUS::sendShareStealSession(uint16_t loco,uint8_t mode){
 
 }
 
+/** \brief Set a Fn function to On
+ *
+ * Once a session is allocated, one can turn on and turn off the decoder functions (up to 28)
+ * \param locsession The session number alocated previously
+ * \param fn The function number
+ * \return The result of the sendCanMessage()
+ *
+ */
 byte MergCBUS::sendSetFun(uint8_t locsession,uint8_t fn){
 
     if (fn>28){
@@ -1844,6 +1984,14 @@ byte MergCBUS::sendSetFun(uint8_t locsession,uint8_t fn){
     return sendCanMessage();
 }
 
+/** \brief Set a Fn function to Off
+ *
+ * Once a session is allocated, one can turn on and turn off the decoder functions (up to 28)
+ * \param locsession The session number alocated previously
+ * \param fn The function number
+ * \return The result of the sendCanMessage()
+ *
+ */
 byte MergCBUS::sendUnsetFun(uint8_t locsession,uint8_t fn){
 
     if (fn>28){

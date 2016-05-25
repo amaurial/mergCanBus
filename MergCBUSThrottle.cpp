@@ -81,13 +81,12 @@ uint16_t MergCBUSThrottle::getKeepAliveInterval(){
     return this->keepalive_interval;
 }
 
-void MergCBUSThrottle::setFOn(uint8_t f){
+void MergCBUSThrottle::setFOn(uint8_t session,uint8_t f){
+    cbus->sendSetFun(session,f);
 }
 
-void MergCBUSThrottle::setFOff(uint8_t f){
-}
-
-void MergCBUSThrottle::setSpeed(uint8_t v){
+void MergCBUSThrottle::setFOff(uint8_t session, uint8_t f){
+    cbus->sendUnsetFun(session,f);
 }
 
 void MergCBUSThrottle::setSpeedMode(uint8_t session){
@@ -103,7 +102,8 @@ void MergCBUSThrottle::setDirection(bool d_forward){
 bool MergCBUSThrottle::getDirection(){
 }
 
-bool MergCBUSThrottle::setSpeedDirection(uint8_t v,bool d_forward){
+bool MergCBUSThrottle::setSpeedDirection(uint8_t session, uint8_t v,bool d_forward){
+    cbus->sendSpeedDir(session,v,d_forward);
 }
 
 bool MergCBUSThrottle::stealLoco(){

@@ -21,13 +21,12 @@ class MergCBUSThrottle
         bool consist(uint16_t loco1,uint16_t loco2);
         void setKeepAliveInterval(uint16_t interval_milli);
         uint16_t getKeepAliveInterval();
-        void setFOn(uint8_t f);
-        void setFOff(uint8_t f);
-        void setSpeed(uint8_t v);
+        void setFOn(uint8_t session, uint8_t f);
+        void setFOff(uint8_t session, uint8_t f);
         uint8_t getSpeed();
         void setDirection(bool d_forward);
         bool getDirection();
-        bool setSpeedDirection(uint8_t v,bool d_forward);
+        bool setSpeedDirection(uint8_t session, uint8_t v,bool d_forward);
         void setSpeedMode(uint8_t session);
         bool stealLoco();
         bool shareLoco();
