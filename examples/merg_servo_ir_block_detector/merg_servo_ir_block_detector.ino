@@ -66,9 +66,6 @@ long detachservos_time = 0; //control the time to detach the servo
 #define TOGGLE_STATE_BIT 3
 
 
-
-
-
 long t;
 int r;
 byte i,s,x,l;
@@ -199,59 +196,57 @@ void loop (){
     checkSensors();
     
     for (i=0;i<NUMSENSORS;i++){
-        switch (blocks[i].state){LAST_STATE_BIT
+        switch (blocks[i].state){
         case START:
             //check if any of the sensors are on
             if (bitRead(sensors[blocks[i].sensor1].state, LAST_STATE_BIT)){
-		blocks[i].state = MIDDLE;
+		            blocks[i].state = MIDDLE;
                 blocks[i].enter_sensor=blocks[i].sensor1;
-		sendMessage(true,i);
+		            sendMessage(true,i);
             }
-	    else if (bitRead(sensors[blocks[i].sensor2].state, LAST_STATE_BIT)){
-		blocks[i].state = MIDDLE;
+	          else if (bitRead(sensors[blocks[i].sensor2].state, LAST_STATE_BIT)){
+		            blocks[i].state = MIDDLE;
                 blocks[i].enter_sensor=blocks[i].sensor2;
-		sendMessage(true,i);
+		            sendMessage(true,i);
             }
         break;
         case MIDDLE:
 	   //check for transition states. both sensors have to togle
            //check if any of the sensors toggled
             if (bitRead(sensors[blocks[i].sensor1].state, TOGGLE_STATE_BIT)){
-		if (blocks[i].enter_sensor == blocks[i].sensor1){
-		    blocks[i].enter_sensor_toggled = true;	
-		}
-		else{
-		    if (blocks[i].enter_sensor_toggled){
-			blocks[i].state = END;
-		    }
-		}
+          		if (blocks[i].enter_sensor == blocks[i].sensor1){
+          		    blocks[i].enter_sensor_toggled = true;	
+          		}
+          		else{
+          		    if (blocks[i].enter_sensor_toggled){
+          			      blocks[i].state = END;
+          		    }
+          		}
             }
-	    else if (bitRead(sensors[blocks[i].sensor2].state, TOGGLE_STATE_BIT)){
-		if (blocks[i].enter_sensor == blocks[i].sensor2){
-		    blocks[i].enter_sensor_toggled = true;	
-		}
-                else{
-		    if (blocks[i].enter_sensor_toggled){
-			blocks[i].state = END;
-		    }
-		}		
-            }           		
+	         else if (bitRead(sensors[blocks[i].sensor2].state, TOGGLE_STATE_BIT)){
+          		if (blocks[i].enter_sensor == blocks[i].sensor2){
+          		    blocks[i].enter_sensor_toggled = true;	
+          		}
+              else{
+          		    if (blocks[i].enter_sensor_toggled){
+          			    blocks[i].state = END;
+          		    }
+          		}		
+           }           		
         break;
         case END:
              //both sensor have to be unset
              //check if any of the sensors are on
             byte s1,s2;
             s1 = bitRead(sensors[blocks[i].sensor1].state, LAST_STATE_BIT) ;
-	    s2 = bitRead(sensors[blocks[i].sensor2].state, LAST_STATE_BIT) ;
+	          s2 = bitRead(sensors[blocks[i].sensor2].state, LAST_STATE_BIT) ;
             if (s1 == s2 == 0){
-		blocks[i].state = START;                
-		sendMessage(false,i);
+		          blocks[i].state = START;                
+		          sendMessage(false,i);
             }
         break;
-	}     
+	      }     
     }
-
-
   }
 
   //debug memory
