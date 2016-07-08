@@ -54,7 +54,7 @@ class MergMemoryManagement
         void setVar(uint8_t index,byte val);
         byte getVar(uint8_t index);
 
-	void setInternalVar(uint8_t index,byte val);
+	    void setInternalVar(uint8_t index,byte val);
         byte getInternalVar(uint8_t index);
 
         uint8_t setEventVar(unsigned int eventIdx,uint8_t varIdx,uint8_t val);

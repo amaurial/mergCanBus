@@ -85,9 +85,7 @@ byte * MergMemoryManagement::getEvent(uint8_t index){
     event[2]=EEPROM.read(i+2);
     event[3]=EEPROM.read(i+3);
     return event;
-
 }
-
 
 /**\brief
 * Put a new event in the memory and return the index
@@ -95,26 +93,25 @@ byte * MergMemoryManagement::getEvent(uint8_t index){
 */
 uint8_t MergMemoryManagement::setEvent(byte *event){
     //Serial.println("MEM: Setting event");
-    if (numEvents>=MAX_NUM_EVENTS){
-        return (MAX_NUM_EVENTS+1) ;
+    if (numEvents >= MAX_NUM_EVENTS){
+        return (MAX_NUM_EVENTS + 1) ;
     }
 
     //check if the event exists
     uint8_t evidx;
-    evidx=getEventIndex(event[0],event[1],event[2],event[3]);
+    evidx = getEventIndex(event[0],event[1],event[2],event[3]);
     //Serial.println("MEM: Getting event idx");
-    if (evidx>MAX_NUM_EVENTS){
+    if (evidx > MAX_NUM_EVENTS){
         //event does not exist
         //get the next index
         //Serial.println("MEM: Saving new event");
-        evidx=numEvents;
+        evidx = numEvents;
         //save the event
         return setEvent(event,evidx);
     }
     //Serial.print("MEM: event idx:");
     //Serial.println(evidx);
    return evidx;
-
 }
 /**\brief
 * Put a new event in the memory and return its index.
@@ -123,8 +120,8 @@ uint8_t MergMemoryManagement::setEvent(byte *event){
 */
 uint8_t MergMemoryManagement::setEvent(byte *event,uint8_t index){
 
-    if (index>=MAX_NUM_EVENTS){
-        return (MAX_NUM_EVENTS+1) ;
+    if (index >= MAX_NUM_EVENTS){
+        return (MAX_NUM_EVENTS + 1) ;
     }
     int j;
 
@@ -133,8 +130,8 @@ uint8_t MergMemoryManagement::setEvent(byte *event,uint8_t index){
     EEPROM.write(NUM_EVENTS_MEMPOS,numEvents);
      //write event
 
-     j=resolveEventPos(index);
-     for (int i=0;i<EVENT_SIZE;i++){
+     j = resolveEventPos(index);
+     for (int i = 0;i < EVENT_SIZE;i++){
         EEPROM.write(j,event[i]);
         j++;
      }
@@ -159,26 +156,26 @@ uint8_t MergMemoryManagement::getEventIndex(unsigned int nn,unsigned int ev){
 * @return event index starting on 0.
 */
 uint8_t MergMemoryManagement::getEventIndex(byte ev1,byte ev2,byte ev3,byte ev4){
-   unsigned int n=EVENTS_MEMPOS;
-    for (uint8_t i=0;i<numEvents;i++){
-        if (ev1!=0 || ev2!=0){
-            if (ev1==EEPROM.read(n) &&
-                ev2==EEPROM.read(n+1) &&
-                ev3==EEPROM.read(n+2) &&
-                ev4==EEPROM.read(n+3)){
+   unsigned int n = EVENTS_MEMPOS;
+    for (uint8_t i = 0; i < numEvents; i++){
+        if (ev1 != 0 || ev2 != 0){
+            if (ev1 == EEPROM.read(n) &&
+                ev2 == EEPROM.read(n+1) &&
+                ev3 == EEPROM.read(n+2) &&
+                ev4 == EEPROM.read(n+3)){
                 return i;
             }
         }
+        //check for short events
         else{
-            if (ev3==EEPROM.read(n+2) &&
-                ev4==EEPROM.read(n+3)){
+            if (ev3 == EEPROM.read(n+2) &&
+                ev4 == EEPROM.read(n+3)){
                 return i;
             }
         }
-        n=incEventPos(n);
+        n = incEventPos(n);
     }
-
-    return MAX_NUM_EVENTS+1;
+    return MAX_NUM_EVENTS + 1;
 }
 
 /**\brief
@@ -225,16 +222,16 @@ byte MergMemoryManagement::getInternalVar(uint8_t index){
 */
 byte MergMemoryManagement::getEventVar(uint8_t eventIdx,uint8_t index){
 
-    if (eventIdx>numEvents){
+    if (eventIdx > numEvents){
         return FAILED_INDEX;
     }
 
-    if (index>MAX_VAR_PER_EVENT){
+    if (index > MAX_VAR_PER_EVENT){
         return FAILED_INDEX;
     }
 
     //position in the array
-    int i=resolveEvVarArrayPos(eventIdx,index);
+    int i = resolveEvVarArrayPos(eventIdx,index);
     return EEPROM.read(i);
     //return FAILED_INDEX;
 }
@@ -247,12 +244,12 @@ byte MergMemoryManagement::getEventVar(uint8_t eventIdx,uint8_t index){
 byte* MergMemoryManagement::getEventVars(uint8_t eventIdx,uint8_t *len){
     //populate the array to return
     *len=0;
-    int j=resolveEvVarArrayPos(eventIdx,0);
-    for (uint8_t i=0;i<MAX_VAR_PER_EVENT;i++){
-        return_eventVars[i]=EEPROM.read(j);
+    int j = resolveEvVarArrayPos(eventIdx,0);
+    for (uint8_t i = 0; i< MAX_VAR_PER_EVENT; i++){
+        return_eventVars[i] = EEPROM.read(j);
         j++;
     }
-    *len=MAX_VAR_PER_EVENT;
+    *len = MAX_VAR_PER_EVENT;
     return return_eventVars;
 }
 
@@ -349,15 +346,15 @@ void MergMemoryManagement::eraseAllEvents(){
 */
 uint8_t MergMemoryManagement::eraseEvent(uint8_t eventIdx){
 
-    if (eventIdx>numEvents||numEvents<1){
+    if (eventIdx > numEvents || numEvents < 1){
         return (MAX_NUM_EVENTS +1);
     }
     numEvents--;
      //write number of events
     EEPROM.write(NUM_EVENTS_MEMPOS,numEvents);
     //copy the events and vars to one position less
-    for (int i=eventIdx;i<numEvents;i++){
-        copyEvent(i+1,i);
+    for (int i = eventIdx; i < numEvents; i++){
+        copyEvent(i + 1,i);
     }
 
     return eventIdx;
@@ -442,15 +439,13 @@ void MergMemoryManagement::setInternalVar(uint8_t index,byte val){
 */
 uint8_t MergMemoryManagement::setEventVar(unsigned int eventIdx,uint8_t varIdx,uint8_t val){
 
-
-    if (eventIdx>numEvents){
-        return (varIdx+1);
+    if (eventIdx > numEvents){
+        return (varIdx + 1);
     }
 
-    if (varIdx>MAX_VAR_PER_EVENT){
-        return (varIdx+1);
+    if (varIdx > MAX_VAR_PER_EVENT){
+        return (varIdx + 1);
     }
-
     //look the var in the array vars
     //eventVars[eventIdx*MAX_VAR_PER_EVENT+varIdx]=val;
     EEPROM.write(resolveEvVarArrayPos(eventIdx,varIdx),val);
