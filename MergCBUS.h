@@ -177,6 +177,7 @@ class MergCBUS
         bool isSelfEnumMode();              //check if the node is in the self enum mode
         uint16_t getPromNN();
         uint16_t getNN();
+        MergMemoryManagement memory;            //organize the eeprom memory and maintain a copy in RAM
 
     protected:
     private:
@@ -187,7 +188,7 @@ class MergCBUS
         Message message;                        //canbus message representation
         MergNodeIdentification nodeId;          //node identification:name,manufacuter , ...
         byte messageFilter;                     //bit filter about each message to handle. by default avoid reserved messages
-        MergMemoryManagement memory;            //organize the eeprom memory and maintain a copy in RAM
+
         bool softwareEnum;                      //true if the node is doing self ennumeration
         bool eventmatch;                        //true if the received message is found on learned events
         unsigned long std_nn;                   //standard node number for slim

@@ -4,9 +4,9 @@
 
   Author:Loovee
   2014-1-16
-  
-  Contributor: 
-  
+
+  Contributor:
+
   Cory J. Fowler
   Latonita
   Woodward1
@@ -20,7 +20,7 @@
   Adlerweb
   Btetz
   Hurvajs
-  
+
   The MIT License (MIT)
 
   Copyright (c) 2013 Seeed Technology Inc.
@@ -139,7 +139,7 @@ void MCP_CAN::mcp2515_reset(void)
 ** Function name:           mcp2515_readRegister
 ** Descriptions:            read register
 *********************************************************************************************************/
-INT8U MCP_CAN::mcp2515_readRegister(const INT8U address)                                                                     
+INT8U MCP_CAN::mcp2515_readRegister(const INT8U address)
 {
     INT8U ret;
 
@@ -192,8 +192,8 @@ void MCP_CAN::mcp2515_setRegisterS(const INT8U address, const INT8U values[], co
     MCP2515_SELECT();
     spi_readwrite(MCP_WRITE);
     spi_readwrite(address);
-       
-    for (i=0; i<n; i++) 
+
+    for (i=0; i<n; i++)
     {
         spi_readwrite(values[i]);
     }
@@ -218,14 +218,14 @@ void MCP_CAN::mcp2515_modifyRegister(const INT8U address, const INT8U mask, cons
 ** Function name:           mcp2515_readStatus
 ** Descriptions:            read mcp2515's Status
 *********************************************************************************************************/
-INT8U MCP_CAN::mcp2515_readStatus(void)                             
+INT8U MCP_CAN::mcp2515_readStatus(void)
 {
 	INT8U i;
 	MCP2515_SELECT();
 	spi_readwrite(MCP_READ_STATUS);
 	i = spi_read();
 	MCP2515_UNSELECT();
-	
+
 	return i;
 }
 
@@ -242,7 +242,7 @@ INT8U MCP_CAN::mcp2515_setCANCTRL_Mode(const INT8U newmode)
     i = mcp2515_readRegister(MCP_CANCTRL);
     i &= MODE_MASK;
 
-    if ( i == newmode ) 
+    if ( i == newmode )
     {
         return MCP2515_OK;
     }
@@ -257,8 +257,8 @@ INT8U MCP_CAN::mcp2515_setCANCTRL_Mode(const INT8U newmode)
 *********************************************************************************************************/
 INT8U MCP_CAN::mcp2515_configRate(const INT8U canSpeed){
     return mcp2515_configRate(canSpeed,MCP_16MHz);
-}   
-         
+}
+
 INT8U MCP_CAN::mcp2515_configRate(const INT8U canSpeed, const INT8U clock)
 {
 	INT8U set, cfg1, cfg2, cfg3;
@@ -498,7 +498,7 @@ INT8U MCP_CAN::mcp2515_init(const INT8U canSpeed, const INT8U clock)
     if(res > 0)
     {
 #if DEBUG_MODE
-      Serial.print("Enter setting mode fall\r\n"); 
+      Serial.print("Enter setting mode fall\r\n");
 #else
       delay(10);
 #endif
@@ -556,14 +556,14 @@ INT8U MCP_CAN::mcp2515_init(const INT8U canSpeed, const INT8U clock)
         MCP_RXB_RX_STDEXT);
 #endif
                                                                         /* enter normal mode            */
-        res = mcp2515_setCANCTRL_Mode(MODE_NORMAL);                                                                
+        res = mcp2515_setCANCTRL_Mode(MODE_NORMAL);
         if(res)
         {
-#if DEBUG_MODE        
+#if DEBUG_MODE
           Serial.print("Enter Normal Mode Fall!!\r\n");
 #else
             delay(10);
-#endif           
+#endif
           return res;
         }
 
@@ -590,7 +590,7 @@ void MCP_CAN::mcp2515_write_id( const INT8U mcp_addr, const INT8U ext, const INT
 
     canid = (uint16_t)(id & 0x0FFFF);
 
-    if ( ext == 1) 
+    if ( ext == 1)
     {
         tbufdata[MCP_EID0] = (INT8U) (canid & 0xFF);
         tbufdata[MCP_EID8] = (INT8U) (canid >> 8);
@@ -600,7 +600,7 @@ void MCP_CAN::mcp2515_write_id( const INT8U mcp_addr, const INT8U ext, const INT
         tbufdata[MCP_SIDL] |= MCP_TXB_EXIDE_M;
         tbufdata[MCP_SIDH] = (INT8U) (canid >> 5 );
     }
-    else 
+    else
     {
         tbufdata[MCP_SIDH] = (INT8U) (canid >> 3 );
         tbufdata[MCP_SIDL] = (INT8U) ((canid & 0x07 ) << 5);
@@ -625,7 +625,7 @@ void MCP_CAN::mcp2515_read_id( const INT8U mcp_addr, INT8U* ext, INT32U* id )
 
     *id = (tbufdata[MCP_SIDH]<<3) + (tbufdata[MCP_SIDL]>>5);
 
-    if ( (tbufdata[MCP_SIDL] & MCP_TXB_EXIDE_M) ==  MCP_TXB_EXIDE_M ) 
+    if ( (tbufdata[MCP_SIDL] & MCP_TXB_EXIDE_M) ==  MCP_TXB_EXIDE_M )
     {
                                                                         /* extended id                  */
         *id = (*id<<2) + (tbufdata[MCP_SIDL] & 0x03);
@@ -646,7 +646,7 @@ void MCP_CAN::mcp2515_write_canMsg( const INT8U buffer_sidh_addr)
     mcp2515_setRegisterS(mcp_addr+5, m_nDta, m_nDlc );                  /* write data bytes             */
     if ( m_nRtr == 1)                                                   /* if RTR set bit in byte       */
     {
-        m_nDlc |= MCP_RTR_MASK;  
+        m_nDlc |= MCP_RTR_MASK;
     }
     mcp2515_setRegister((mcp_addr+4), m_nDlc );                        /* write the RTR and DLC        */
     mcp2515_write_id(mcp_addr, m_nExtFlg, m_nID );                     /* write CAN id                 */
@@ -759,13 +759,13 @@ INT8U MCP_CAN::init_Mask(INT8U num, INT8U ext, INT32U ulData)
     res = mcp2515_setCANCTRL_Mode(MODE_CONFIG);
     if(res > 0){
 #if DEBUG_MODE
-    Serial.print("Enter setting mode fall\r\n"); 
+    Serial.print("Enter setting mode fall\r\n");
 #else
     delay(10);
 #endif
     return res;
     }
-    
+
     if (num == 0){
         mcp2515_write_id(MCP_RXM0SIDH, ext, ulData);
 
@@ -774,11 +774,11 @@ INT8U MCP_CAN::init_Mask(INT8U num, INT8U ext, INT32U ulData)
         mcp2515_write_id(MCP_RXM1SIDH, ext, ulData);
     }
     else res =  MCP2515_FAIL;
-    
+
     res = mcp2515_setCANCTRL_Mode(MODE_NORMAL);
     if(res > 0){
 #if DEBUG_MODE
-    Serial.print("Enter normal mode fall\r\n"); 
+    Serial.print("Enter normal mode fall\r\n");
 #else
     delay(10);
 #endif
@@ -808,13 +808,13 @@ INT8U MCP_CAN::init_Filt(INT8U num, INT8U ext, INT32U ulData)
     if(res > 0)
     {
 #if DEBUG_MODE
-      Serial.print("Enter setting mode fall\r\n"); 
+      Serial.print("Enter setting mode fall\r\n");
 #else
       delay(10);
 #endif
       return res;
     }
-    
+
     switch( num )
     {
         case 0:
@@ -844,12 +844,12 @@ INT8U MCP_CAN::init_Filt(INT8U num, INT8U ext, INT32U ulData)
         default:
         res = MCP2515_FAIL;
     }
-    
+
     res = mcp2515_setCANCTRL_Mode(MODE_NORMAL);
     if(res > 0)
     {
 #if DEBUG_MODE
-      Serial.print("Enter normal mode fall\r\nSet filter fail!!\r\n"); 
+      Serial.print("Enter normal mode fall\r\nSet filter fail!!\r\n");
 #else
       delay(10);
 #endif
@@ -860,7 +860,7 @@ INT8U MCP_CAN::init_Filt(INT8U num, INT8U ext, INT32U ulData)
 #else
     delay(10);
 #endif
-    
+
     return res;
 }
 
@@ -922,8 +922,8 @@ INT8U MCP_CAN::sendMsg()
         uiTimeOut++;
     } while (res == MCP_ALLTXBUSY && (uiTimeOut < TIMEOUTVALUE));
 
-    if(uiTimeOut == TIMEOUTVALUE) 
-    {   
+    if(uiTimeOut == TIMEOUTVALUE)
+    {
         return CAN_GETTXBFTIMEOUT;                                      /* get tx buff time out         */
     }
     uiTimeOut = 0;
@@ -931,14 +931,15 @@ INT8U MCP_CAN::sendMsg()
     mcp2515_start_transmit( txbuf_n );
     do
     {
-        uiTimeOut++;        
+        uiTimeOut++;
         res1= mcp2515_readRegister(txbuf_n-1 /* the ctrl reg is located at txbuf_n-1 */);  /* read send buff ctrl reg 	*/
-        res1 = res1 & 0x08;                               		
-    }while(res1 && (uiTimeOut < TIMEOUTVALUE));   
-    if(uiTimeOut == TIMEOUTVALUE)                                       /* send msg timeout             */	
+        res1 = res1 & 0x08;
+    }while(res1 && (uiTimeOut < TIMEOUTVALUE));
+    if(uiTimeOut == TIMEOUTVALUE)                                       /* send msg timeout             */
     {
         return CAN_SENDMSGTIMEOUT;
     }
+    clearMsg();
     return CAN_OK;
 
 }
@@ -1024,7 +1025,7 @@ INT8U MCP_CAN::readMsg()
         mcp2515_modifyRegister(MCP_CANINTF, MCP_RX1IF, 0);
         res = CAN_OK;
     }
-    else 
+    else
     {
         res = CAN_NOMSG;
     }
@@ -1038,14 +1039,14 @@ INT8U MCP_CAN::readMsg()
 INT8U MCP_CAN::readMsgBuf(INT8U *len, INT8U buf[])
 {
     INT8U  rc;
-    
+
     rc = readMsg();
-    
+
     if (rc == CAN_OK) {
        *len = m_nDlc;
        for(int i = 0; i<m_nDlc; i++) {
          buf[i] = m_nDta[i];
-       } 
+       }
     } else {
        	 *len = 0;
     }
@@ -1101,11 +1102,11 @@ INT8U MCP_CAN::checkReceive(void)
 {
     INT8U res;
     res = mcp2515_readStatus();                                         /* RXnIF in Bit 1 and 0         */
-    if ( res & MCP_STAT_RXIF_MASK ) 
+    if ( res & MCP_STAT_RXIF_MASK )
     {
         return CAN_MSGAVAIL;
     }
-    else 
+    else
     {
         return CAN_NOMSG;
     }
@@ -1119,11 +1120,11 @@ INT8U MCP_CAN::checkError(void)
 {
     INT8U eflg = mcp2515_readRegister(MCP_EFLG);
 
-    if ( eflg & MCP_EFLG_ERRORMASK ) 
+    if ( eflg & MCP_EFLG_ERRORMASK )
     {
         return CAN_CTRLERROR;
     }
-    else 
+    else
     {
         return CAN_OK;
     }
@@ -1136,7 +1137,7 @@ INT8U MCP_CAN::checkError(void)
 INT32U MCP_CAN::getCanId(void)
 {
     return m_nID;
-} 
+}
 
 /*********************************************************************************************************
 ** Function name:           isRemoteRequest
@@ -1145,7 +1146,7 @@ INT32U MCP_CAN::getCanId(void)
 INT8U MCP_CAN::isRemoteRequest(void)
 {
     return m_nRtr;
-} 
+}
 
 /*********************************************************************************************************
 ** Function name:           isExtendedFrame
@@ -1154,7 +1155,7 @@ INT8U MCP_CAN::isRemoteRequest(void)
 INT8U MCP_CAN::isExtendedFrame(void)
 {
     return m_nExtFlg;
-} 
+}
 
 /*********************************************************************************************************
   END FILE

@@ -99,6 +99,7 @@ class MergMemoryManagement
         void setUpNewMemory();
         void dumpMemory();
         byte getMaxNumEvents(){return MAX_NUM_EVENTS;};
+        byte getLastError(){return lasterror;};
     protected:
 
     private:
@@ -109,7 +110,7 @@ class MergMemoryManagement
         byte numDeviceNumbers;
         byte MAX_AVAIL_VARS;               /** Number of node variables. Each has 1 byte                           */
         byte MAX_NUM_EVENTS;               /** Number of supported events. Each event has 4 bytes                  */
-        byte MAX_VAR_PER_EVENT;  /** Total amount of events variables per event. Each var has 2 bytes. first is the index, second is the value        */
+        byte MAX_VAR_PER_EVENT;            /** Total amount of events variables per event. */
         //int MAX_EVENTS_VAR_BUFFER;= MAX_NUM_EVENTS*MAX_VAR_PER_EVENT;       /** Total amount of events variables that can be stored. Each var has 2 bytes. first is the index, second is the value        */
         byte MAX_NUM_DEVICE_NUMBERS;       /** The total number of device number if it is a producer node. Each input from the producer can be a device number. So this is the same as the total number of inputs*/
         int EVENTS_MEMPOS;                     /**Position in memory.   */
@@ -128,7 +129,7 @@ class MergMemoryManagement
         unsigned int incEventPos(unsigned int val);
         unsigned int resolveEventPos(byte evidx);
         void copyEvent(uint8_t fromIndex,uint8_t toIndex);
-
+        byte lasterror; //records the last error
         void write();
 };
 

@@ -649,24 +649,36 @@ byte MergCBUS::handleConfigMessages(){
         uint8_t i;
         i = memory.getNumEvents();
         #ifdef DEBUGDEF
-            Serial.println("RECEIVED OPC_NERD sending OPC_ENRSP");
+            Serial.print("RECEIVED OPC_NERD sending OPC_ENRSP ");
             Serial.println(i);
             //printSentMessage();
         #endif // DEBUGDEF
 
         if (i > 0){
             //byte *events=memory.getEvents();
-            uint8_t pos = 0;
             for (uint8_t j = 0;j < i;j++){
                 byte *event = memory.getEvent(j);
+                if (memory.getLastError() != 0){
+                    #ifdef DEBUGDEF
+                        Serial.println("Get event.Index invalid");
+                    #endif // DEBUGDEF
+                    sendERRMessage(CMDERR_INV_NV_IDX);
+                    break;
+                }
                 prepareMessageBuff(OPC_ENRSP,highByte(nn),lowByte(nn),
-                                event[pos],
-                                event[pos+1],
-                                event[pos+2],
-                                event[pos+3],
+                                event[0],
+                                event[1],
+                                event[2],
+                                event[3],
                                 (j+1));
-                pos = 0;
                 ind = sendCanMessage();
+                if (ind != OK){
+                    Serial.println("FAILED to send CAN");
+                }
+                #ifdef DEBUGDEF
+                    Serial.println();
+                    printSentMessage();
+                #endif // DEBUGDEF
             }
         }
         break;
@@ -675,7 +687,8 @@ byte MergCBUS::handleConfigMessages(){
         //request the number of stored events
         prepareMessage(OPC_NUMEV);
         #ifdef DEBUGDEF
-                Serial.println("RECEIVED OPC_RQEVN sending OPC_NUMEV");
+            Serial.print("RECEIVED OPC_RQEVN sending OPC_NUMEV ");
+            Serial.println(memory.getNumEvents());
             printSentMessage();
         #endif // DEBUGDEF
 
@@ -810,19 +823,32 @@ byte MergCBUS::handleConfigMessages(){
         ind=message.getEventVarIndex();
         if (ind>nodeId.getSuportedEventsVariables()){
             //index too big
+            #ifdef DEBUGDEF
+                Serial.println("RECEIVED OPC_REVAL. Index too big");
+                //printSentMessage();
+            #endif // DEBUGDEF
             sendERRMessage(CMDERR_INV_NV_IDX);
             break;
         }
         val=memory.getEventVar(evidx-1,ind-1);//the CBUS index start with 1
+        if (memory.getLastError() != 0){
+            #ifdef DEBUGDEF
+                Serial.println("Get event var.Index invalid");
+            #endif // DEBUGDEF
+            sendERRMessage(CMDERR_INV_NV_IDX);
+            break;
+        }
         nn=nodeId.getNodeNumber();
 
         prepareMessageBuff(OPC_NEVAL,highByte(nn),lowByte(nn),evidx,ind,val);
+        sendCanMessage();
         #ifdef DEBUGDEF
-            Serial.println("RECEIVED OPC_REVAL sending OPC_NEVAL");
+            Serial.print("RECEIVED OPC_REVAL sending OPC_NEVAL ");
+            Serial.print("evindex:");Serial.print(evidx);
+            Serial.print(" varindex:");Serial.print(ind);
+            Serial.print(" value:");Serial.println(val);
             printSentMessage();
         #endif // DEBUGDEF
-
-        sendCanMessage();
         break;
 
     case OPC_REQEV:
@@ -835,10 +861,10 @@ byte MergCBUS::handleConfigMessages(){
 
             prepareMessageBuff(OPC_EVANS,highByte(nn),lowByte(nn),highByte(ev),lowByte(ev),ind,val);
 
-        #ifdef DEBUGDEF
-            Serial.println("RECEIVED OPC_REQEV sending OPC_EVANS");
-            printSentMessage();
-        #endif // DEBUGDEF
+            #ifdef DEBUGDEF
+                Serial.println("RECEIVED OPC_REQEV sending OPC_EVANS");
+                printSentMessage();
+            #endif // DEBUGDEF
 
             sendCanMessage();
         }else{
@@ -862,9 +888,9 @@ byte MergCBUS::handleConfigMessages(){
         if (state_mode==LEARN){
 
             //TODO: suport device number mode
-            #ifdef DEBUGDEF
+            //#ifdef DEBUGDEF
                  Serial.println("Learning event by index.");
-            #endif // DEBUGDEF
+            //#endif // DEBUGDEF
 
             ev=message.getEventNumber();
             nn=message.getNodeNumber();
@@ -1054,11 +1080,15 @@ byte MergCBUS::sendCanMessage(){
     #endif // DEBUGMSG
     byte r=Can.sendMsgBuf(nodeId.getCanID(),0,message_size,mergCanData);
     if (CAN_OK!=r){
-        //TODO
-         Serial.println("N");
+        //retry 3 times
+
+        for (byte a = 0; a < 3; a++){
+            r=Can.sendMsgBuf(nodeId.getCanID(),0,message_size,mergCanData);
+            if (CAN_OK == r) break;
+        }
+
         return r;
     }
-    Serial.println("S");
     return OK;
 }
 
@@ -1369,7 +1399,7 @@ void MergCBUS::learnEvent(){
         #endif // DEBUGDEF
 
         if (message.getType()==CONFIG){
-            if (message.getOpc()!=OPC_EVLRN && message.getOpc()!=OPC_EVLRNI){
+            if (message.getOpc() != OPC_EVLRN && message.getOpc() != OPC_EVLRNI){
                 handleConfigMessages();
                 return;
             }

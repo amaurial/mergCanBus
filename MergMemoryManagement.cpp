@@ -11,16 +11,16 @@ MergMemoryManagement::MergMemoryManagement()
 /**\brief
 * Constructor: clear array and reads the EEPROM
 */
-MergMemoryManagement::MergMemoryManagement(byte num_node_vars,byte num_events,byte num_events_vars,byte max_device_numbers){
-    MAX_AVAIL_VARS=num_node_vars;
-    MAX_NUM_EVENTS=num_events;
-    MAX_VAR_PER_EVENT=num_events_vars;
+MergMemoryManagement::MergMemoryManagement(byte num_node_vars, byte num_events, byte num_events_vars, byte max_device_numbers){
+    MAX_AVAIL_VARS = num_node_vars;
+    MAX_NUM_EVENTS = num_events;
+    MAX_VAR_PER_EVENT = num_events_vars;
     //MAX_EVENTS_VAR_BUFFER= MAX_NUM_EVENTS*MAX_VAR_PER_EVENT;
-    MAX_NUM_DEVICE_NUMBERS=max_device_numbers;
-    DN_MEMPOS=VARS_MEMPOS+MAX_AVAIL_VARS;
-    EVENTS_MEMPOS=DN_MEMPOS+NNDD_SIZE*MAX_NUM_DEVICE_NUMBERS;
+    MAX_NUM_DEVICE_NUMBERS = max_device_numbers;
+    DN_MEMPOS = VARS_MEMPOS + MAX_AVAIL_VARS;
+    EVENTS_MEMPOS = DN_MEMPOS + NNDD_SIZE * MAX_NUM_DEVICE_NUMBERS;
 
-    return_eventVars=new byte[MAX_VAR_PER_EVENT];
+    return_eventVars = new byte[MAX_VAR_PER_EVENT];
     clear();
     read();
 }
@@ -71,14 +71,17 @@ byte * MergMemoryManagement::getEvent(uint8_t index){
     event[1]=EMPTY_BYTE;
     event[2]=EMPTY_BYTE;
     event[3]=EMPTY_BYTE;
+    lasterror = 0;
 
     //Serial.println("MEM: Getting event");
 
-    if (index>(MAX_NUM_EVENTS)||index>numEvents){
+    if (index > (MAX_NUM_EVENTS) || index > numEvents){
         //Serial.println("MEM: Getting event failed");
+        lasterror = 1;
         return event;
     }
-    unsigned int i=resolveEventPos(index);
+    unsigned int i = resolveEventPos(index);
+    //Serial.print("ev ");Serial.print(index);Serial.print(" mem pos:");Serial.println(i);
 
     event[0]=EEPROM.read(i);
     event[1]=EEPROM.read(i+1);
@@ -127,7 +130,7 @@ uint8_t MergMemoryManagement::setEvent(byte *event,uint8_t index){
 
     numEvents++;
     //number of events
-    EEPROM.write(NUM_EVENTS_MEMPOS,numEvents);
+    EEPROM.write(NUM_EVENTS_MEMPOS, numEvents);
      //write event
 
      j = resolveEventPos(index);
@@ -183,10 +186,10 @@ uint8_t MergMemoryManagement::getEventIndex(byte ev1,byte ev2,byte ev3,byte ev4)
 * @return Return true if the event is present in memory, else return false.
 */
 bool MergMemoryManagement::hasEvent(byte ev1,byte ev2,byte ev3,byte ev4){
-    if (numEvents<1){
+    if (numEvents < 1){
         return false;
     }
-    if (getEventIndex(ev1,ev2,ev3,ev4)>MAX_NUM_EVENTS){
+    if (getEventIndex(ev1,ev2,ev3,ev4) > MAX_NUM_EVENTS){
         return false;
     }
     return true;
@@ -221,19 +224,30 @@ byte MergMemoryManagement::getInternalVar(uint8_t index){
 * @return FAILED_INDEX if index out of bounds
 */
 byte MergMemoryManagement::getEventVar(uint8_t eventIdx,uint8_t index){
-
+    byte val;
+    lasterror = 0;
     if (eventIdx > numEvents){
+        lasterror = FAILED_INDEX;
         return FAILED_INDEX;
     }
 
     if (index > MAX_VAR_PER_EVENT){
+        lasterror = FAILED_INDEX;
         return FAILED_INDEX;
     }
 
     //position in the array
     int i = resolveEvVarArrayPos(eventIdx,index);
-    return EEPROM.read(i);
-    //return FAILED_INDEX;
+    val = EEPROM.read(i);
+    /*
+    Serial.print("ev ");
+    Serial.print (eventIdx);
+    Serial.print (" var:");
+    Serial.print (index);
+    Serial.print (" val:");
+    Serial.println(val);
+    */
+    return val;
 }
 
 /**\brief
@@ -276,24 +290,24 @@ byte* MergMemoryManagement::getEventVars(uint8_t eventIdx,uint8_t *len){
 void MergMemoryManagement::read(){
 
     clear();
-    byte mergid=EEPROM.read(MERG_MEMPOS);
+    byte mergid = EEPROM.read(MERG_MEMPOS);
 
-    if (mergid!=0xaa){
+    if (mergid != 0xaa){
         write();
         return;
     }
 
     //read can id
-    can_ID=EEPROM.read(CAN_ID_MEMPOS);
+    can_ID = EEPROM.read(CAN_ID_MEMPOS);
     //node number
-    nn[0]=EEPROM.read(NN_MEMPOS);
-    nn[1]=EEPROM.read(NN_MEMPOS+1);
+    nn[0] = EEPROM.read(NN_MEMPOS);
+    nn[1] = EEPROM.read(NN_MEMPOS+1);
     //node mode
-    flags=EEPROM.read(FLAGS_MEMPOS);
+    flags = EEPROM.read(FLAGS_MEMPOS);
     //number of node variables
     //numVars=EEPROM.read(NUM_VARS_MEMPOS);
     //number of events
-    numEvents=EEPROM.read(NUM_EVENTS_MEMPOS);
+    numEvents = EEPROM.read(NUM_EVENTS_MEMPOS);
     //number of events
     //numEventVars=EEPROM.read(NUM_EVENTS_VARS_MEMPOS);
 
@@ -335,7 +349,7 @@ void MergMemoryManagement::eraseAllEvents(){
     //erase the events var
     //number of events
      EEPROM.write(NUM_EVENTS_MEMPOS,0);
-    numEvents=0;
+    numEvents = 0;
 
 }
 
@@ -601,11 +615,11 @@ unsigned int MergMemoryManagement::resolveEvVarArrayPos(byte evidx,byte varidx){
 * Increment the event position in memory
 */
 unsigned int MergMemoryManagement::incEventPos(unsigned int val){
-    return (val+MAX_VAR_PER_EVENT+EVENT_SIZE);
+    return (val + MAX_VAR_PER_EVENT + EVENT_SIZE);
 }
 /**\brief
 * Find the event position in memory
 */
 unsigned int MergMemoryManagement::resolveEventPos(byte evidx){
-    return (EVENTS_MEMPOS+evidx*(MAX_VAR_PER_EVENT+EVENT_SIZE));
+    return (EVENTS_MEMPOS + evidx * (MAX_VAR_PER_EVENT + EVENT_SIZE));
 }

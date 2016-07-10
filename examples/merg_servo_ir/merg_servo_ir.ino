@@ -70,7 +70,7 @@ typedef struct SENSORS{
   long ones;
   long zeros;
   long seqones;
-  byte state;//bit 1 = estado atual bit2=ultimos estado  
+  byte state;//bit 1 = estado atual bit2=ultimos estado
 };
 
 SENSORS sensors[NUMSENSORS];
@@ -102,25 +102,25 @@ SENSORS sensors[NUMSENSORS];
 #define TOGLE_IR_VAR                2
 #define SERVO_SPEED_VAR             3
 #define SERVO_FLAGS_VAR             4
-#define SERVO_STARTACTION_VAR       4  
+#define SERVO_STARTACTION_VAR       4
 
 
 //create the merg object
 MergCBUS cbus=MergCBUS(NODE_VARS,NODE_EVENTS,EVENTS_VARS,DEVICE_NUMBERS);
 
 void setup(){
-  
+
   initializeFlags();
   //create the sensors
   setupSensors();
-  //create the servos object  
-  setupServos();  
-  
+  //create the servos object
+  setupServos();
+
   #ifdef DEBUGNODE
-  Serial.begin(115200);
-  delay(100);
+    Serial.begin(250000);
+    delay(100);
   #else
-  Serial.end();
+    Serial.end();
   #endif
 
   //Configuration data for the node
@@ -153,11 +153,12 @@ void setup(){
   Serial.println(cbus.getPromNN());
   Serial.print("CANID: ");
   Serial.println(cbus.getNodeId()->getCanID());
-  
   Serial.print("Flim: ");
   Serial.println(cbus.getNodeId()->isFlimMode());
+  Serial.print("Events: ");
+  Serial.println(cbus.memory.getNumEvents());
   #endif
-  
+
 }
 
 void loop (){
@@ -219,23 +220,23 @@ void myUserFunc(Message *msg,MergCBUS *mcbus){
 void moveServo(boolean event,byte servoidx,byte servo_start,byte servo_end){
     byte lastPos;
     if (event){
-      if (isServoToTogle(servoidx)){	
+      if (isServoToTogle(servoidx)){
         lastPos = servo_start;
       }
-      else {	
+      else {
         lastPos = servo_end;
       }
     }
     else{
-      if (isServoToTogle(servoidx)){       
+      if (isServoToTogle(servoidx)){
         lastPos = servo_end;
       }
-      else {        
+      else {
         lastPos = servo_start;
       }
     }
     //write last pos to eprom
-   //variables start with number 1  
+   //variables start with number 1
     cbus.setInternalNodeVariable(servoidx+1,lastPos);
     //if (!attach_servo){
     servos[servoidx].write(lastPos,SPEED);
@@ -244,14 +245,14 @@ void moveServo(boolean event,byte servoidx,byte servo_start,byte servo_end){
     servos[servoidx].write(lastPos,SPEED);
 
    //write last pos to eprom
-   //variables start with number 1  
+   //variables start with number 1
    #ifdef  DEBUGNODE
       Serial.print("saving: ");
       Serial.print(servoidx+1);
       Serial.print("\t");
       Serial.println(lastPos);
    #endif
-   
+
 }
 
 //is the servo to be activated or not
@@ -286,7 +287,7 @@ boolean checkBit(byte *array,uint8_t index){
 //create the objects for each servo
 void setupServos(){
   byte ac = cbus.getNodeVar(SERVO_STARTACTION_VAR);
-  for (uint8_t i=0;i<NUM_SERVOS;i++){     
+  for (uint8_t i=0;i<NUM_SERVOS;i++){
     switch (ac){
       case 0:
         //do nothing
@@ -298,11 +299,11 @@ void setupServos(){
       case 2:
         //mode to end position
         //servos[i].write(170,SPEED);
-      break;      
-      case 3://move to last position          
+      break;
+      case 3://move to last position
           moveServoToLastPosition(i);
       break;
-    }    
+    }
   }
   delay(1000);
   detachServos();
@@ -310,31 +311,31 @@ void setupServos(){
 
 void detachServos(){
   if (attach_servo) return; //don't dettach
-  for (uint8_t i=0;i<NUM_SERVOS;i++){  
+  for (uint8_t i=0;i<NUM_SERVOS;i++){
      if (servos[i].attached())  servos[i].detach();
   }
 }
 
 void moveServoToLastPosition(byte idx){
-    byte pos=cbus.getInternalNodeVar(idx+1);  
+    byte pos=cbus.getInternalNodeVar(idx+1);
 
     #ifdef  DEBUGNODE
       Serial.print("moving: ");
       Serial.print(idx+1);
       Serial.print("\tlast");
       Serial.println(pos);
-   #endif    
-    
-    if (pos < 175){    
+   #endif
+
+    if (pos < 175){
       servos[idx].write(pos,SPEED);//avoid the kick when power on
-      delay(300);  //wait the timmer to be ok      
-      servos[idx].attach(servopins[idx]); 
+      delay(300);  //wait the timmer to be ok
+      servos[idx].attach(servopins[idx]);
       servos[idx].write(pos,SPEED);
     }
 }
 
 //get the events vars for activate servos and to togle the servos:invert behaviour on on/off events
-void getServosArray(Message *msg,MergCBUS *mcbus){  
+void getServosArray(Message *msg,MergCBUS *mcbus){
   active_servo[0]=mcbus->getEventVar(msg,ACTIVE_SERVO_VAR);
   active_servo[1]=mcbus->getEventVar(msg,ACTIVE_SERVO_VAR + 1);
   togle_servo[0]=mcbus->getEventVar(msg,TOGLE_SERVO_VAR);
@@ -344,31 +345,31 @@ void getServosArray(Message *msg,MergCBUS *mcbus){
 //the the flags var and initialize them
 void initializeFlags(){
     byte flag = cbus.getNodeVar(SERVO_FLAGS_VAR);
-    start_action = flag && 0x03; //first 2 bits    
-    attach_servo = flag && 0x04; //bit 3        
+    start_action = flag && 0x03; //first 2 bits
+    attach_servo = flag && 0x04; //bit 3
 }
 
 //################## END SERVO CODE ##################
 
 //########## START SENSOR CODE ##############
 
-void checkSensors(){ 
+void checkSensors(){
 
     for (i=0;i<NUMSENSORS;i++){
-        r=analogRead(sensors[i].port);        
-        
+        r=analogRead(sensors[i].port);
+
         if (r<R) r=1;
         else r=0;
-        
+
         //read last read
         s = bitRead(sensors[i].state,2);
-        
+
         if ((r == s) && (s == 1)){
           sensors[i].seqones++;
           if (sensors[i].seqones>C){
-            sensors[i].ones++;  
-            //Serial.println("d");     
-            sensors[i].zeros=0;     
+            sensors[i].ones++;
+            //Serial.println("d");
+            sensors[i].zeros=0;
           }
         }
         else{
@@ -377,30 +378,30 @@ void checkSensors(){
         }
         //save last read
         bitWrite(sensors[i].state,2,r);
-  
+
         //set the actual state
         if (sensors[i].ones>D){
-          bitWrite(sensors[i].state,0,1);      
+          bitWrite(sensors[i].state,0,1);
         }
-      
-        if (sensors[i].zeros>E){        
-          bitWrite(sensors[i].state,0,0);         
+
+        if (sensors[i].zeros>E){
+          bitWrite(sensors[i].state,0,0);
         }
         //compare last state
         s = bitRead(sensors[i].state,0);
         x = bitRead(sensors[i].state,1);
-        if (s!=x){ //change of state       
+        if (s!=x){ //change of state
           bitWrite(sensors[i].state,1,s);
            #ifdef  DEBUGNODE
-            Serial.print("s");
-            Serial.print(i);
-            Serial.print(": ");
-            Serial.println(s);
+            //Serial.print("s");
+            //Serial.print(i);
+            //Serial.print(": ");
+            //Serial.println(s);
            #endif
 
             if (isSensorActive(i)){
-               sendMessage(s,i);          
-            }      
+               sendMessage(s,i);
+            }
         }
     }
     //Serial.println();
@@ -424,18 +425,18 @@ void checkSensors(){
         sensors[i].ones=0;
         sensors[i].zeros=0;
         sensors[i].seqones=0;
-      }       
+      }
     }
 
-    
-  
+
+
 }
 
 //send the can message
 void sendMessage(bool state,uint8_t sensor){
    unsigned int event;
-   bool onEvent=state;    
-   
+   bool onEvent=state;
+
    event=sensor+1;
    if (togleSensor(sensor)){
      onEvent=!onEvent;
@@ -450,32 +451,32 @@ void sendMessage(bool state,uint8_t sensor){
 
 //check if we have to togle the event
 bool togleSensor(uint8_t sensor){
-  
+
   bool resp=false;
-  byte togle_ir=cbus.getNodeVar(TOGLE_IR_VAR); 
-    
+  byte togle_ir=cbus.getNodeVar(TOGLE_IR_VAR);
+
   //check if the bit is set
   if (sensor>0 && sensor<9){
     if (bitRead(togle_ir,sensor)==1){
       resp=true;
     }
-  }  
+  }
   return resp;
 }
 
 //check if we have the sensor has active
 //this is checked by a node variable
 bool isSensorActive(uint8_t sensor){
-  
+
   bool resp=false;
-  byte active_ir=cbus.getNodeVar(ACTIVE_IR_VAR); 
-    
+  byte active_ir=cbus.getNodeVar(ACTIVE_IR_VAR);
+
   //check if the bit is set
   if (sensor<NUMSENSORS){
     if (bitRead(active_ir,sensor)==1){
       resp=true;
     }
-  }  
+  }
   return resp;
 }
 
@@ -490,4 +491,3 @@ void setupSensors(){
    sensors[6].port=A6;
    sensors[7].port=A7;
 }
-
