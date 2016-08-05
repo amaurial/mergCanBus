@@ -734,12 +734,12 @@ void MCP_CAN::set_cs(INT8U _CS){
 ** Function name:           init
 ** Descriptions:            init can and set speed
 *********************************************************************************************************/
-INT8U MCP_CAN::begin(INT8U speedset)
+INT8U MCP_CAN::begin(INT8U speedset, const INT8U clock)
 {
     INT8U res;
 
     SPI.begin();
-    res = mcp2515_init(speedset);
+    res = mcp2515_init(speedset, clock);
     if (res == MCP2515_OK) return CAN_OK;
     else return CAN_FAILINIT;
 }

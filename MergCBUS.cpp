@@ -94,6 +94,7 @@ MergCBUS::~MergCBUS()
 {
     //dtor
 }
+
 /** \brief
 * Initiate the CanBus layer.
 * Set the port number for SPI communication.
@@ -113,16 +114,17 @@ MergCBUS::~MergCBUS()
 * CAN_250KBPS  11
 * CAN_500KBPS  12
 * CAN_1000KBPS 13
+* @param clock MCP_16MHz or MCP_8MHz
 * @param retries is the number of retries to configure the can bus
 * @param retryIntervalMilliseconds is the delay in milliseconds between each retry.
 */
-bool MergCBUS::initCanBus(uint8_t port,unsigned int rate,unsigned int retries,unsigned int retryIntervalMilliseconds){
+bool MergCBUS::initCanBus(uint8_t port,unsigned int rate, const uint8_t clock, unsigned int retries,unsigned int retryIntervalMilliseconds){
 
     unsigned int r = 0;
     Can.set_cs(port);
 
     do {
-        if (CAN_OK == Can.begin(rate)){
+        if (CAN_OK == Can.begin(rate, clock)){
 
             #ifdef DEBUGMSG
                 Serial.println("Can rate set");
@@ -143,9 +145,48 @@ bool MergCBUS::initCanBus(uint8_t port,unsigned int rate,unsigned int retries,un
 * Initiate the CanBus layer with rate 125kps.
 * Set the port number for SPI communication.
 * @param port is the the SPI port number.
+* @param clock MCP_16MHz or MCP_8MHz
+*/
+bool MergCBUS::initCanBus(uint8_t port, const uint8_t clock){
+    return initCanBus(port, CAN_125KBPS, clock, 20, 30);
+}
+
+/** \brief
+* Initiate the CanBus layer.
+* Set the port number for SPI communication.
+* Set the CBUS rate and initiate the transport layer.
+* The can shield clock is set default to 16Mhz
+* @param port is the the SPI port number.
+* @param rate is the can bus rate. The values defined in the can transport layer are
+* CAN_5KBPS    1
+* CAN_10KBPS   2
+* CAN_20KBPS   3
+* CAN_31K25BPS 4
+* CAN_40KBPS   5
+* CAN_50KBPS   6
+* CAN_80KBPS   7
+* CAN_100KBPS  8
+* CAN_125KBPS  9
+* CAN_200KBPS  10
+* CAN_250KBPS  11
+* CAN_500KBPS  12
+* CAN_1000KBPS 13
+* @param retries is the number of retries to configure the can bus
+* @param retryIntervalMilliseconds is the delay in milliseconds between each retry.
+*/
+bool MergCBUS::initCanBus(uint8_t port,unsigned int rate,unsigned int retries,unsigned int retryIntervalMilliseconds){
+
+    return initCanBus(port, rate, MCP_16MHz, retries, retryIntervalMilliseconds );
+
+}
+/** \brief
+* Initiate the CanBus layer with rate 125kps.
+* The can shield clock is set default to 16Mhz
+* Set the port number for SPI communication.
+* @param port is the the SPI port number.
 */
 bool MergCBUS::initCanBus(uint8_t port){
-    return initCanBus(port,CAN_125KBPS,20,30);
+    return initCanBus(port, CAN_125KBPS, MCP_16MHz, 20, 30);
 }
 
 /** \brief

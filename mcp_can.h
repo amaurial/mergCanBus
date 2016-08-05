@@ -4,9 +4,9 @@
 
   Author:Loovee
   2014-1-16
-  
-  Contributor: 
-  
+
+  Contributor:
+
   Cory J. Fowler
   Latonita
   Woodward1
@@ -20,7 +20,7 @@
   Adlerweb
   Btetz
   Hurvajs
-  
+
   The MIT License (MIT)
 
   Copyright (c) 2013 Seeed Technology Inc.
@@ -54,7 +54,7 @@
 class MCP_CAN
 {
     private:
-    
+
     INT8U   m_nExtFlg;                                                  /* identifier xxxID             */
                                                                         /* either extended (the 29 LSB) */
                                                                         /* or standard (the 11 LSB)     */
@@ -68,7 +68,7 @@ class MCP_CAN
     INT8U _prio;//priority
     INT8U _minprio;//min priority
 /*
-*  mcp2515 driver function 
+*  mcp2515 driver function
 */
    // private:
 private:
@@ -76,9 +76,9 @@ private:
     void mcp2515_reset(void);                                           /* reset mcp2515                */
 
     INT8U mcp2515_readRegister(const INT8U address);                    /* read mcp2515's register      */
-    
-    void mcp2515_readRegisterS(const INT8U address, 
-	                       INT8U values[], 
+
+    void mcp2515_readRegisterS(const INT8U address,
+	                       INT8U values[],
                                const INT8U n);
     void mcp2515_setRegister(const INT8U address,                       /* set mcp2515's register       */
                              const INT8U value);
@@ -86,9 +86,9 @@ private:
     void mcp2515_setRegisterS(const INT8U address,                      /* set mcp2515's registers      */
                               const INT8U values[],
                               const INT8U n);
-    
+
     void mcp2515_initCANBuffers(void);
-    
+
     void mcp2515_modifyRegister(const INT8U address,                    /* set bit of one register      */
                                 const INT8U mask,
                                 const INT8U data);
@@ -116,10 +116,10 @@ private:
     void unsetRTMBit();	/*set the bit in case need to send a Request Transfer Message	*/
 /*
 *  can operator function
-*/    
+*/
 
-    INT8U setMsg(INT32U id, INT8U ext, INT8U len, INT8U rtr, INT8U *pData); /* set message                  */  
-    INT8U setMsg(INT32U id, INT8U ext, INT8U len, INT8U *pData); /* set message                  */  
+    INT8U setMsg(INT32U id, INT8U ext, INT8U len, INT8U rtr, INT8U *pData); /* set message                  */
+    INT8U setMsg(INT32U id, INT8U ext, INT8U len, INT8U *pData); /* set message                  */
     INT8U clearMsg();                                               /* clear all message to zero    */
     INT8U readMsg();                                                /* read message                 */
     INT8U readMsg(INT8U buf_num);                                   /* read message from a specific buffer */
@@ -129,7 +129,7 @@ public:
     MCP_CAN(INT8U _CS);
     MCP_CAN();/*simple constructor that don't initiate the spi*/
     void set_cs(INT8U _CS);/*initiate the spi*/
-    INT8U begin(INT8U speedset);                                    /* init can                     */
+    INT8U begin(INT8U speedset, const INT8U clock);                                    /* init can                     */
     INT8U init_Mask(INT8U num, INT8U ext, INT32U ulData);           /* init Masks                   */
     INT8U init_Filt(INT8U num, INT8U ext, INT32U ulData);           /* init filters                 */
     INT8U sendMsgBuf(INT32U id, INT8U ext, INT8U rtr, INT8U len, INT8U *buf);   /* send buf                     */
