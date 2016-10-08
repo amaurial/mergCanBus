@@ -94,6 +94,7 @@ MergCBUS::~MergCBUS()
 {
     //dtor
 }
+
 /** \brief
 * Initiate the CanBus layer.
 * Set the port number for SPI communication.
@@ -113,16 +114,17 @@ MergCBUS::~MergCBUS()
 * CAN_250KBPS  11
 * CAN_500KBPS  12
 * CAN_1000KBPS 13
+* @param clock MCP_16MHz or MCP_8MHz
 * @param retries is the number of retries to configure the can bus
 * @param retryIntervalMilliseconds is the delay in milliseconds between each retry.
 */
-bool MergCBUS::initCanBus(uint8_t port,unsigned int rate,unsigned int retries,unsigned int retryIntervalMilliseconds){
+bool MergCBUS::initCanBus(uint8_t port,unsigned int rate, const uint8_t clock, unsigned int retries,unsigned int retryIntervalMilliseconds){
 
     unsigned int r = 0;
     Can.set_cs(port);
 
     do {
-        if (CAN_OK == Can.begin(rate)){
+        if (CAN_OK == Can.begin(rate, clock)){
 
             #ifdef DEBUGMSG
                 Serial.println("Can rate set");
@@ -143,9 +145,48 @@ bool MergCBUS::initCanBus(uint8_t port,unsigned int rate,unsigned int retries,un
 * Initiate the CanBus layer with rate 125kps.
 * Set the port number for SPI communication.
 * @param port is the the SPI port number.
+* @param clock MCP_16MHz or MCP_8MHz
+*/
+bool MergCBUS::initCanBus(uint8_t port, const uint8_t clock){
+    return initCanBus(port, CAN_125KBPS, clock, 20, 30);
+}
+
+/** \brief
+* Initiate the CanBus layer.
+* Set the port number for SPI communication.
+* Set the CBUS rate and initiate the transport layer.
+* The can shield clock is set default to 16Mhz
+* @param port is the the SPI port number.
+* @param rate is the can bus rate. The values defined in the can transport layer are
+* CAN_5KBPS    1
+* CAN_10KBPS   2
+* CAN_20KBPS   3
+* CAN_31K25BPS 4
+* CAN_40KBPS   5
+* CAN_50KBPS   6
+* CAN_80KBPS   7
+* CAN_100KBPS  8
+* CAN_125KBPS  9
+* CAN_200KBPS  10
+* CAN_250KBPS  11
+* CAN_500KBPS  12
+* CAN_1000KBPS 13
+* @param retries is the number of retries to configure the can bus
+* @param retryIntervalMilliseconds is the delay in milliseconds between each retry.
+*/
+bool MergCBUS::initCanBus(uint8_t port,unsigned int rate,unsigned int retries,unsigned int retryIntervalMilliseconds){
+
+    return initCanBus(port, rate, MCP_16MHz, retries, retryIntervalMilliseconds );
+
+}
+/** \brief
+* Initiate the CanBus layer with rate 125kps.
+* The can shield clock is set default to 16Mhz
+* Set the port number for SPI communication.
+* @param port is the the SPI port number.
 */
 bool MergCBUS::initCanBus(uint8_t port){
-    return initCanBus(port,CAN_125KBPS,20,30);
+    return initCanBus(port, CAN_125KBPS, MCP_16MHz, 20, 30);
 }
 
 /** \brief
@@ -649,24 +690,36 @@ byte MergCBUS::handleConfigMessages(){
         uint8_t i;
         i = memory.getNumEvents();
         #ifdef DEBUGDEF
-            Serial.println("RECEIVED OPC_NERD sending OPC_ENRSP");
+            Serial.print("RECEIVED OPC_NERD sending OPC_ENRSP ");
             Serial.println(i);
             //printSentMessage();
         #endif // DEBUGDEF
 
         if (i > 0){
             //byte *events=memory.getEvents();
-            uint8_t pos = 0;
             for (uint8_t j = 0;j < i;j++){
                 byte *event = memory.getEvent(j);
+                if (memory.getLastError() != 0){
+                    #ifdef DEBUGDEF
+                        Serial.println("Get event.Index invalid");
+                    #endif // DEBUGDEF
+                    sendERRMessage(CMDERR_INV_NV_IDX);
+                    break;
+                }
                 prepareMessageBuff(OPC_ENRSP,highByte(nn),lowByte(nn),
-                                event[pos],
-                                event[pos+1],
-                                event[pos+2],
-                                event[pos+3],
+                                event[0],
+                                event[1],
+                                event[2],
+                                event[3],
                                 (j+1));
-                pos = 0;
                 ind = sendCanMessage();
+                if (ind != OK){
+                    Serial.println("FAILED to send CAN");
+                }
+                #ifdef DEBUGDEF
+                    Serial.println();
+                    printSentMessage();
+                #endif // DEBUGDEF
             }
         }
         break;
@@ -675,7 +728,8 @@ byte MergCBUS::handleConfigMessages(){
         //request the number of stored events
         prepareMessage(OPC_NUMEV);
         #ifdef DEBUGDEF
-                Serial.println("RECEIVED OPC_RQEVN sending OPC_NUMEV");
+            Serial.print("RECEIVED OPC_RQEVN sending OPC_NUMEV ");
+            Serial.println(memory.getNumEvents());
             printSentMessage();
         #endif // DEBUGDEF
 
@@ -810,19 +864,32 @@ byte MergCBUS::handleConfigMessages(){
         ind=message.getEventVarIndex();
         if (ind>nodeId.getSuportedEventsVariables()){
             //index too big
+            #ifdef DEBUGDEF
+                Serial.println("RECEIVED OPC_REVAL. Index too big");
+                //printSentMessage();
+            #endif // DEBUGDEF
             sendERRMessage(CMDERR_INV_NV_IDX);
             break;
         }
         val=memory.getEventVar(evidx-1,ind-1);//the CBUS index start with 1
+        if (memory.getLastError() != 0){
+            #ifdef DEBUGDEF
+                Serial.println("Get event var.Index invalid");
+            #endif // DEBUGDEF
+            sendERRMessage(CMDERR_INV_NV_IDX);
+            break;
+        }
         nn=nodeId.getNodeNumber();
 
         prepareMessageBuff(OPC_NEVAL,highByte(nn),lowByte(nn),evidx,ind,val);
+        sendCanMessage();
         #ifdef DEBUGDEF
-            Serial.println("RECEIVED OPC_REVAL sending OPC_NEVAL");
+            Serial.print("RECEIVED OPC_REVAL sending OPC_NEVAL ");
+            Serial.print("evindex:");Serial.print(evidx);
+            Serial.print(" varindex:");Serial.print(ind);
+            Serial.print(" value:");Serial.println(val);
             printSentMessage();
         #endif // DEBUGDEF
-
-        sendCanMessage();
         break;
 
     case OPC_REQEV:
@@ -835,10 +902,10 @@ byte MergCBUS::handleConfigMessages(){
 
             prepareMessageBuff(OPC_EVANS,highByte(nn),lowByte(nn),highByte(ev),lowByte(ev),ind,val);
 
-        #ifdef DEBUGDEF
-            Serial.println("RECEIVED OPC_REQEV sending OPC_EVANS");
-            printSentMessage();
-        #endif // DEBUGDEF
+            #ifdef DEBUGDEF
+                Serial.println("RECEIVED OPC_REQEV sending OPC_EVANS");
+                printSentMessage();
+            #endif // DEBUGDEF
 
             sendCanMessage();
         }else{
@@ -862,9 +929,9 @@ byte MergCBUS::handleConfigMessages(){
         if (state_mode==LEARN){
 
             //TODO: suport device number mode
-            #ifdef DEBUGDEF
+            //#ifdef DEBUGDEF
                  Serial.println("Learning event by index.");
-            #endif // DEBUGDEF
+            //#endif // DEBUGDEF
 
             ev=message.getEventNumber();
             nn=message.getNodeNumber();
@@ -1054,11 +1121,15 @@ byte MergCBUS::sendCanMessage(){
     #endif // DEBUGMSG
     byte r=Can.sendMsgBuf(nodeId.getCanID(),0,message_size,mergCanData);
     if (CAN_OK!=r){
-        //TODO
-         Serial.println("N");
+        //retry 3 times
+
+        for (byte a = 0; a < 3; a++){
+            r=Can.sendMsgBuf(nodeId.getCanID(),0,message_size,mergCanData);
+            if (CAN_OK == r) break;
+        }
+
         return r;
     }
-    Serial.println("S");
     return OK;
 }
 
@@ -1369,7 +1440,7 @@ void MergCBUS::learnEvent(){
         #endif // DEBUGDEF
 
         if (message.getType()==CONFIG){
-            if (message.getOpc()!=OPC_EVLRN && message.getOpc()!=OPC_EVLRNI){
+            if (message.getOpc() != OPC_EVLRN && message.getOpc() != OPC_EVLRNI){
                 handleConfigMessages();
                 return;
             }
