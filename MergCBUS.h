@@ -100,7 +100,7 @@ class MergCBUS
         bool initCanBus(uint8_t port,unsigned int rate, unsigned int retries,unsigned int retryIntervalMilliseconds);
         bool initCanBus(uint8_t port);
         bool initCanBus(uint8_t port,unsigned int rate, const uint8_t clock, unsigned int retries,unsigned int retryIntervalMilliseconds);
-        bool initCanBus(uint8_t port, const uint8_t clock,);
+        bool initCanBus(uint8_t port, const uint8_t clock);
         /**\brief Set the user function to handle other messages.*/
         void setUserHandlerFunction(userHandlerType f) {userHandler=f;};
         void setDCCHandlerFunction(userHandlerType f) {dccHandler=f;};
