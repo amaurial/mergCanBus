@@ -25,7 +25,7 @@ To clear the memory, press pushbutton1 while reseting the arduino
 #include <VarSpeedServo.h>
 
 /* uncomment this line to see debug messages */
-//#define DEBUGNODE
+//#define DEBUGNODE 1
 
 /* Module definitions */
 
@@ -86,6 +86,12 @@ VarSpeedServo servos[NUM_SERVOS];
  * pins 9,10 and 15 don't work for many servos. servo library limitation 
  */
 byte servopins[]={2,3,4,5,6,7,8,1,A1,A2,A3,A4,A5};//,19,20,21,22,23,24,25,26,27,28,29,30};
+/*
+* Store the active servo var
+* example: 3 1 means pin D2, D3 and A1 active
+* example: 16 2 meand pin D6 and A2
+* the same logic for toggle servo
+*/
 byte active_servo[2]; //store the active servo event var
 byte togle_servo[2]; //store the togle servo event var
 boolean attach_servo = false;
@@ -101,7 +107,9 @@ void setup(){
   pinMode(PUSH_BUTTON,INPUT);//debug push button
   #ifdef DEBUGNODE
   Serial.begin(115200);
-  #elseif
+  delay(300);
+  Serial.println("start");
+  #else
   Serial.end();
   #endif
 
@@ -150,6 +158,11 @@ void myUserFunc(Message *msg,MergCBUS *mcbus){
   uint8_t varidx=0;  
 
   byte servo_start,servo_end;
+
+  #ifdef DEBUGNODE
+  Serial.println("got a message");  
+  #endif
+  
   if (mcbus->eventMatch()){
      initializeFlags();
      onEvent=mcbus->isAccOn();
