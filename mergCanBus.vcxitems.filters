@@ -1,0 +1,1091 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;s</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx</Extensions>
+    </Filter>
+    <Filter Include="examples">
+      <UniqueIdentifier>{c5465848-114e-429a-beca-6bcbe506d254}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="examples\can_messages_generator">
+      <UniqueIdentifier>{daee0bcf-9641-46f4-8fe8-6ed5a23d5a40}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="examples\merg_ir_sensor">
+      <UniqueIdentifier>{d167b981-328e-4d68-b5fc-58c0ab8f3e84}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="doxygen">
+      <UniqueIdentifier>{2a7fa8bc-2cae-4cc2-ab0b-fa2ffe6a4bd4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="doxygen\html">
+      <UniqueIdentifier>{6d089b62-3501-4e6d-b923-eb63c31888c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="doxygen\html\search">
+      <UniqueIdentifier>{8e0354bf-3ce0-430c-9aba-cbdace9d4825}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="oldx">
+      <UniqueIdentifier>{53182848-9586-4533-83d7-4a107d5f7030}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="oldx\html">
+      <UniqueIdentifier>{31d78468-e34f-438b-a784-e37a741e89e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="oldx\html\search">
+      <UniqueIdentifier>{e43df859-c8d5-4cd6-a096-e0b498d218d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="docs">
+      <UniqueIdentifier>{fa0ef976-9362-4a24-96da-7128c0b5cc75}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="examples\merg_servo_ir_block_detector">
+      <UniqueIdentifier>{f0621800-c371-4ebc-af7a-a5a6b1676904}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="examples\merg_servo_ir">
+      <UniqueIdentifier>{7310982c-bfce-4cfd-b022-68944592d932}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="examples\semaphore">
+      <UniqueIdentifier>{0327f473-1d16-4739-8b21-5afad3f94772}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="examples\servo">
+      <UniqueIdentifier>{2bcf7c3d-0be6-4e0d-9086-25b90f27c749}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="examples\servo\merg_servos">
+      <UniqueIdentifier>{61550c46-916e-4814-a2d0-0d307eb22f2b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="examples\servo_point_controler">
+      <UniqueIdentifier>{c4139581-2050-44da-8a24-e9818fd122be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="examples\teste">
+      <UniqueIdentifier>{967f379d-f846-40dd-b549-6b7ae36ddd41}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="examples\throttle">
+      <UniqueIdentifier>{ec047ee3-0861-4264-95bb-77b29ab2e3ab}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="$(MSBuildThisFileDirectory)library.properties" />
+    <Text Include="$(MSBuildThisFileDirectory)keywords.txt" />
+    <Text Include="$(MSBuildThisFileDirectory)doxygen\doxygen.log">
+      <Filter>doxygen</Filter>
+    </Text>
+    <Text Include="$(MSBuildThisFileDirectory)oldx\doxygen.log">
+      <Filter>oldx</Filter>
+    </Text>
+    <Text Include="$(MSBuildThisFileDirectory)memory_organization.TXT" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)CircularBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)mcp_can.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)mcp_can_dfs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)MergCBUS.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)MergCBUSThrottle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)MergMemoryManagement.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)MergNodeIdentification.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Message.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)opcodes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)ThrottleInfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)ThrottleInfo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Message.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)MergNodeIdentification.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)MergMemoryManagement.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)MergCBUSThrottle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)MergCBUS.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)mcp_can.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)CircularBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)examples\can_messages_generator\can_messages_generator.ino">
+      <Filter>examples\can_messages_generator</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)examples\merg_ir_sensor\merg_ir_sensor.ino">
+      <Filter>examples\merg_ir_sensor</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\all_0.html">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\all_1.html">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\all_2.html">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\all_4.html">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\all_5.html">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\all_7.html">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\all_9.html">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\all_a.html">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\all_b.html">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\all_d.html">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\_circular_buffer_8h_source.html">
+      <Filter>doxygen\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)docs\cbus_cbus-modules-guide__MERG_Wiki_.pdf">
+      <Filter>docs</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)docs\Developer_6a.pdf">
+      <Filter>docs</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)LICENSE" />
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\_merg_c_b_u_s_8h_source.html">
+      <Filter>doxygen\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\_merg_memory_management_8h_source.html">
+      <Filter>doxygen\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\_merg_node_identification_8h_source.html">
+      <Filter>doxygen\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\_message_8h_source.html">
+      <Filter>doxygen\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\_message_buffer_8h_source.html">
+      <Filter>doxygen\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\all_0.js">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\all_1.js">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\all_2.js">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\all_3.js">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\all_4.js">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\all_5.js">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\all_6.js">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\all_7.js">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\all_8.js">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\all_9.js">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\all_a.js">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\all_b.js">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\all_c.js">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\all_d.js">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\annotated.html">
+      <Filter>doxygen\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\annotated.js">
+      <Filter>doxygen\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\class_circular_buffer.html">
+      <Filter>doxygen\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\class_circular_buffer.js">
+      <Filter>doxygen\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\class_circular_buffer-members.html">
+      <Filter>doxygen\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\class_m_c_p___c_a_n.html">
+      <Filter>doxygen\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\class_m_c_p___c_a_n.js">
+      <Filter>doxygen\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\class_m_c_p___c_a_n-members.html">
+      <Filter>doxygen\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\class_merg_c_b_u_s.html">
+      <Filter>doxygen\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\class_merg_c_b_u_s.js">
+      <Filter>doxygen\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\class_merg_c_b_u_s-members.html">
+      <Filter>doxygen\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\class_merg_memory_management.html">
+      <Filter>doxygen\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\class_merg_memory_management.js">
+      <Filter>doxygen\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\class_merg_memory_management-members.html">
+      <Filter>doxygen\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\class_merg_node_identification.html">
+      <Filter>doxygen\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\class_merg_node_identification.js">
+      <Filter>doxygen\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\class_merg_node_identification-members.html">
+      <Filter>doxygen\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\class_message.html">
+      <Filter>doxygen\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\class_message.js">
+      <Filter>doxygen\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\class_message_buffer.html">
+      <Filter>doxygen\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\class_message_buffer.js">
+      <Filter>doxygen\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\class_message_buffer-members.html">
+      <Filter>doxygen\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\class_message-members.html">
+      <Filter>doxygen\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\classes.html">
+      <Filter>doxygen\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\classes_0.html">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\classes_0.js">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\classes_1.html">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\classes_1.js">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\doxyfile">
+      <Filter>doxygen</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\doxygen.css">
+      <Filter>doxygen\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\dynsections.js">
+      <Filter>doxygen\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\files.html">
+      <Filter>doxygen\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\functions_0.html">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\functions_0.js">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\functions_1.html">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\functions_1.js">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\functions_2.html">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\functions_2.js">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\functions_3.html">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\functions_3.js">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\functions_4.html">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\functions_4.js">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\functions_5.html">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\functions_5.js">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\functions_6.html">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\functions_6.js">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\functions_7.html">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\functions_7.js">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\functions_8.html">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\functions_8.js">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\functions_9.html">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\functions_9.js">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\functions_a.html">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\functions_a.js">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\functions_b.html">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\functions_b.js">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\functions_c.html">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\functions_c.js">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\functions_d.html">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\functions_d.js">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\nomatches.html">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\search.css">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\search.js">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\typedefs_0.html">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\typedefs_0.js">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\files.js">
+      <Filter>doxygen\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\functions.html">
+      <Filter>doxygen\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\functions_func.html">
+      <Filter>doxygen\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\functions_type.html">
+      <Filter>doxygen\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\index.html">
+      <Filter>doxygen\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\jquery.js">
+      <Filter>doxygen\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\mcp__can__dfs_8h_source.html">
+      <Filter>doxygen\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\mcp__can_8h_source.html">
+      <Filter>doxygen\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\navtree.css">
+      <Filter>doxygen\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\navtree.js">
+      <Filter>doxygen\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\navtreeindex0.js">
+      <Filter>doxygen\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\opcodes_8h_source.html">
+      <Filter>doxygen\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\resize.js">
+      <Filter>doxygen\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\tabs.css">
+      <Filter>doxygen\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)examples\merg_servo_ir_block_detector\merg_servo_ir_block_detector.ino">
+      <Filter>examples\merg_servo_ir_block_detector</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)examples\merg_servo_ir\merg_servo_ir.ino">
+      <Filter>examples\merg_servo_ir</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)examples\semaphore\semaphore.ino">
+      <Filter>examples\semaphore</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)examples\servo\merg_servos\merg_servos.ino">
+      <Filter>examples\servo\merg_servos</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)examples\servo_point_controler\servo_point_controler.ino">
+      <Filter>examples\servo_point_controler</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)examples\teste\teste.ino">
+      <Filter>examples\teste</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)examples\throttle\throttle.ino">
+      <Filter>examples\throttle</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\doxyfile">
+      <Filter>oldx</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\_c_a_n_message_8h_source.html">
+      <Filter>oldx\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\_merg_c_b_u_s_8h_source.html">
+      <Filter>oldx\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\_merg_memory_management_8h_source.html">
+      <Filter>oldx\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\_merg_node_identification_8h_source.html">
+      <Filter>oldx\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\_message_8h_source.html">
+      <Filter>oldx\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\annotated.html">
+      <Filter>oldx\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\annotated.js">
+      <Filter>oldx\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\class_c_a_n_message.html">
+      <Filter>oldx\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\class_c_a_n_message.js">
+      <Filter>oldx\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\class_c_a_n_message-members.html">
+      <Filter>oldx\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\class_m_c_p___c_a_n.html">
+      <Filter>oldx\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\class_m_c_p___c_a_n.js">
+      <Filter>oldx\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\class_m_c_p___c_a_n-members.html">
+      <Filter>oldx\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\class_merg_c_b_u_s.html">
+      <Filter>oldx\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\class_merg_c_b_u_s.js">
+      <Filter>oldx\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\class_merg_c_b_u_s-members.html">
+      <Filter>oldx\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\class_merg_memory_management.html">
+      <Filter>oldx\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\class_merg_memory_management.js">
+      <Filter>oldx\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\class_merg_memory_management-members.html">
+      <Filter>oldx\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\class_merg_node_identification.html">
+      <Filter>oldx\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\class_merg_node_identification.js">
+      <Filter>oldx\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\class_merg_node_identification-members.html">
+      <Filter>oldx\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\class_message.html">
+      <Filter>oldx\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\class_message.js">
+      <Filter>oldx\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\class_message-members.html">
+      <Filter>oldx\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\classes.html">
+      <Filter>oldx\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\doxygen.css">
+      <Filter>oldx\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\dynsections.js">
+      <Filter>oldx\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\files.html">
+      <Filter>oldx\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\files.js">
+      <Filter>oldx\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\functions.html">
+      <Filter>oldx\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\functions_func.html">
+      <Filter>oldx\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\functions_type.html">
+      <Filter>oldx\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\functions_vars.html">
+      <Filter>oldx\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\index.html">
+      <Filter>oldx\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\jquery.js">
+      <Filter>oldx\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\mcp__can__dfs_8h_source.html">
+      <Filter>oldx\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\mcp__can_8h_source.html">
+      <Filter>oldx\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\navtree.css">
+      <Filter>oldx\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\navtree.js">
+      <Filter>oldx\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\navtreeindex0.js">
+      <Filter>oldx\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\opcodes_8h_source.html">
+      <Filter>oldx\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\resize.js">
+      <Filter>oldx\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\structmerg__event__vars.html">
+      <Filter>oldx\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\structmerg__event__vars.js">
+      <Filter>oldx\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\structmerg__event__vars-members.html">
+      <Filter>oldx\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\tabs.css">
+      <Filter>oldx\html</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\all_0.html">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\all_0.js">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\all_1.html">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\all_1.js">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\all_2.html">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\all_2.js">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\all_3.html">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\all_3.js">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\all_4.html">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\all_4.js">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\all_5.html">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\all_5.js">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\all_6.html">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\all_6.js">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\all_7.html">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\all_7.js">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\all_8.html">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\all_8.js">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\all_9.html">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\all_9.js">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\all_a.html">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\all_a.js">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\all_b.html">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\all_b.js">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\all_c.html">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\all_c.js">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\all_d.html">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\all_d.js">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\all_e.html">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\all_e.js">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\classes_0.html">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\classes_0.js">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\classes_1.html">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\classes_1.js">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\functions_0.html">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\functions_0.js">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\functions_1.html">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\functions_1.js">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\functions_2.html">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\functions_2.js">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\functions_3.html">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\functions_3.js">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\functions_4.html">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\functions_4.js">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\functions_5.html">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\functions_5.js">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\functions_6.html">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\functions_6.js">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\functions_7.html">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\functions_7.js">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\functions_8.html">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\functions_8.js">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\functions_9.html">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\functions_9.js">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\functions_a.html">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\functions_a.js">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\functions_b.html">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\functions_b.js">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\functions_c.html">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\functions_c.js">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\all_3.html">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\all_6.html">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\all_8.html">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)doxygen\html\search\all_c.html">
+      <Filter>doxygen\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\nomatches.html">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\search.css">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\search.js">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\typedefs_0.html">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\typedefs_0.js">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\variables_0.html">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\variables_0.js">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\variables_1.html">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\variables_1.js">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\variables_2.html">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\variables_2.js">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\variables_3.html">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)oldx\html\search\variables_3.js">
+      <Filter>oldx\html\search</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)mergCanBus.cbp" />
+    <None Include="$(MSBuildThisFileDirectory)mergcanbus.depend" />
+    <None Include="$(MSBuildThisFileDirectory)mergCanBus.layout" />
+    <None Include="$(MSBuildThisFileDirectory)mergCanBus.layout.orig" />
+    <None Include="$(MSBuildThisFileDirectory)README.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="$(MSBuildThisFileDirectory)doxygen\html\bc_s.png">
+      <Filter>doxygen\html</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)doxygen\html\bdwn.png">
+      <Filter>doxygen\html</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)doxygen\html\search\close.png">
+      <Filter>doxygen\html\search</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)doxygen\html\closed.png">
+      <Filter>doxygen\html</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)doxygen\html\doxygen.png">
+      <Filter>doxygen\html</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)doxygen\html\search\mag_sel.png">
+      <Filter>doxygen\html\search</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)doxygen\html\search\search_r.png">
+      <Filter>doxygen\html\search</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)doxygen\html\search\search_m.png">
+      <Filter>doxygen\html\search</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)doxygen\html\search\search_l.png">
+      <Filter>doxygen\html\search</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)doxygen\html\ftv2blank.png">
+      <Filter>doxygen\html</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)doxygen\html\ftv2cl.png">
+      <Filter>doxygen\html</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)doxygen\html\ftv2doc.png">
+      <Filter>doxygen\html</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)doxygen\html\ftv2folderclosed.png">
+      <Filter>doxygen\html</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)doxygen\html\ftv2folderopen.png">
+      <Filter>doxygen\html</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)doxygen\html\ftv2lastnode.png">
+      <Filter>doxygen\html</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)doxygen\html\ftv2link.png">
+      <Filter>doxygen\html</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)doxygen\html\ftv2mlastnode.png">
+      <Filter>doxygen\html</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)doxygen\html\ftv2mnode.png">
+      <Filter>doxygen\html</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)doxygen\html\ftv2mo.png">
+      <Filter>doxygen\html</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)doxygen\html\ftv2node.png">
+      <Filter>doxygen\html</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)doxygen\html\ftv2ns.png">
+      <Filter>doxygen\html</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)doxygen\html\ftv2plastnode.png">
+      <Filter>doxygen\html</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)doxygen\html\ftv2pnode.png">
+      <Filter>doxygen\html</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)doxygen\html\ftv2splitbar.png">
+      <Filter>doxygen\html</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)doxygen\html\ftv2vertline.png">
+      <Filter>doxygen\html</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)doxygen\html\nav_f.png">
+      <Filter>doxygen\html</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)doxygen\html\nav_g.png">
+      <Filter>doxygen\html</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)doxygen\html\nav_h.png">
+      <Filter>doxygen\html</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)doxygen\html\open.png">
+      <Filter>doxygen\html</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)doxygen\html\sync_off.png">
+      <Filter>doxygen\html</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)doxygen\html\sync_on.png">
+      <Filter>doxygen\html</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)doxygen\html\tab_a.png">
+      <Filter>doxygen\html</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)doxygen\html\tab_b.png">
+      <Filter>doxygen\html</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)doxygen\html\tab_h.png">
+      <Filter>doxygen\html</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)doxygen\html\tab_s.png">
+      <Filter>doxygen\html</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)oldx\html\bc_s.png">
+      <Filter>oldx\html</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)oldx\html\bdwn.png">
+      <Filter>oldx\html</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)oldx\html\closed.png">
+      <Filter>oldx\html</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)oldx\html\doxygen.png">
+      <Filter>oldx\html</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)oldx\html\ftv2blank.png">
+      <Filter>oldx\html</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)oldx\html\ftv2cl.png">
+      <Filter>oldx\html</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)oldx\html\ftv2doc.png">
+      <Filter>oldx\html</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)oldx\html\ftv2folderclosed.png">
+      <Filter>oldx\html</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)oldx\html\ftv2folderopen.png">
+      <Filter>oldx\html</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)oldx\html\ftv2lastnode.png">
+      <Filter>oldx\html</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)oldx\html\ftv2link.png">
+      <Filter>oldx\html</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)oldx\html\ftv2mlastnode.png">
+      <Filter>oldx\html</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)oldx\html\ftv2mnode.png">
+      <Filter>oldx\html</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)oldx\html\ftv2mo.png">
+      <Filter>oldx\html</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)oldx\html\ftv2node.png">
+      <Filter>oldx\html</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)oldx\html\ftv2ns.png">
+      <Filter>oldx\html</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)oldx\html\ftv2plastnode.png">
+      <Filter>oldx\html</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)oldx\html\ftv2pnode.png">
+      <Filter>oldx\html</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)oldx\html\ftv2splitbar.png">
+      <Filter>oldx\html</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)oldx\html\ftv2vertline.png">
+      <Filter>oldx\html</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)oldx\html\nav_f.png">
+      <Filter>oldx\html</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)oldx\html\nav_g.png">
+      <Filter>oldx\html</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)oldx\html\nav_h.png">
+      <Filter>oldx\html</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)oldx\html\open.png">
+      <Filter>oldx\html</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)oldx\html\sync_off.png">
+      <Filter>oldx\html</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)oldx\html\sync_on.png">
+      <Filter>oldx\html</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)oldx\html\tab_a.png">
+      <Filter>oldx\html</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)oldx\html\tab_b.png">
+      <Filter>oldx\html</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)oldx\html\tab_h.png">
+      <Filter>oldx\html</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)oldx\html\tab_s.png">
+      <Filter>oldx\html</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)oldx\html\search\close.png">
+      <Filter>oldx\html\search</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)oldx\html\search\mag_sel.png">
+      <Filter>oldx\html\search</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)oldx\html\search\search_l.png">
+      <Filter>oldx\html\search</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)oldx\html\search\search_m.png">
+      <Filter>oldx\html\search</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)oldx\html\search\search_r.png">
+      <Filter>oldx\html\search</Filter>
+    </Image>
+  </ItemGroup>
+</Project>
