@@ -134,7 +134,7 @@ void setup(){
   cbus.setStdNN(999); //standard node number
 
   if (digitalRead(PUSH_BUTTON)==LOW){
-    //Serial.println("Setup new memory");
+    //Serial.println(F("Setup new memory"));
     cbus.setUpNewMemory();
     cbus.setSlimMode();
     cbus.saveNodeFlags();
@@ -146,16 +146,16 @@ void setup(){
   cbus.initCanBus(10);  //initiate the transport layer. pin=53, rate=125Kbps,10 tries,200 millis between each try
 
   #ifdef DEBUGNODE
-  Serial.println("Setup finished");
-  Serial.print("NNN: ");
+  Serial.println(F("Setup finished"));
+  Serial.print(F("NNN: "));
   Serial.print(cbus.getNN());
-  Serial.print("\t");
+  Serial.print(F("\t"));
   Serial.println(cbus.getPromNN());
-  Serial.print("CANID: ");
+  Serial.print(F("CANID: "));
   Serial.println(cbus.getNodeId()->getCanID());
-  Serial.print("Flim: ");
+  Serial.print(F("Flim: "));
   Serial.println(cbus.getNodeId()->isFlimMode());
-  Serial.print("Events: ");
+  Serial.print(F("Events: "));
   Serial.println(cbus.memory.getNumEvents());
   #endif
 
@@ -192,7 +192,7 @@ void myUserFunc(Message *msg,MergCBUS *mcbus){
      initializeFlags();
      onEvent=mcbus->isAccOn();
      getServosArray(msg,mcbus);
-    // Serial.println("event match");
+    // Serial.println(F("event match"));
      servo_start=mcbus->getEventVar(msg,START_ANGLE_VAR);
      servo_end=mcbus->getEventVar(msg,END_ANGLE_VAR);
      //Serial.println(servo_start);
@@ -200,7 +200,7 @@ void myUserFunc(Message *msg,MergCBUS *mcbus){
       //get the events var and control the servos
       for (int i=0;i<NUM_SERVOS;i++){
         if (isServoActive(i)){
-          //Serial.print("S ");
+          //Serial.print(F("S "));
           //Serial.println(i);
           moveServo(onEvent,i,servo_start,servo_end);
         }
@@ -247,9 +247,9 @@ void moveServo(boolean event,byte servoidx,byte servo_start,byte servo_end){
    //write last pos to eprom
    //variables start with number 1
    #ifdef  DEBUGNODE
-      Serial.print("saving: ");
+      Serial.print(F("saving: "));
       Serial.print(servoidx+1);
-      Serial.print("\t");
+      Serial.print(F("\t"));
       Serial.println(lastPos);
    #endif
 
@@ -320,9 +320,9 @@ void moveServoToLastPosition(byte idx){
     byte pos=cbus.getInternalNodeVar(idx+1);
 
     #ifdef  DEBUGNODE
-      Serial.print("moving: ");
+      Serial.print(F("moving: "));
       Serial.print(idx+1);
-      Serial.print("\tlast");
+      Serial.print(F("\tlast"));
       Serial.println(pos);
    #endif
 
@@ -368,7 +368,7 @@ void checkSensors(){
           sensors[i].seqones++;
           if (sensors[i].seqones>C){
             sensors[i].ones++;
-            //Serial.println("d");
+            //Serial.println(F("d"));
             sensors[i].zeros=0;
           }
         }
@@ -393,9 +393,9 @@ void checkSensors(){
         if (s!=x){ //change of state
           bitWrite(sensors[i].state,1,s);
            #ifdef  DEBUGNODE
-            //Serial.print("s");
+            //Serial.print(F("s"));
             //Serial.print(i);
-            //Serial.print(": ");
+            //Serial.print(F(": "));
             //Serial.println(s);
            #endif
 
@@ -407,13 +407,13 @@ void checkSensors(){
     //Serial.println();
     /*
     for (i=0;i<NUMSENSORS;i++){
-      Serial.print("S");
+      Serial.print(F("S"));
       Serial.print(i);
-      Serial.print("\t");
+      Serial.print(F("\t"));
       Serial.print(sensors[i].ones);
-      Serial.print("\t");
+      Serial.print(F("\t"));
       Serial.print(sensors[i].seqones);
-      Serial.print("\t");
+      Serial.print(F("\t"));
       Serial.print(sensors[i].zeros);
       Serial.println();
     }

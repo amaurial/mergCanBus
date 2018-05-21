@@ -108,7 +108,7 @@ void setup(){
   #ifdef DEBUGNODE
   Serial.begin(115200);
   delay(300);
-  Serial.println("start");
+  Serial.println(F("start"));
   #else
   Serial.end();
   #endif
@@ -124,7 +124,7 @@ void setup(){
   cbus.setStdNN(999); //standard node number
 
   if (digitalRead(PUSH_BUTTON)==LOW){
-    //Serial.println("Setup new memory");
+    //Serial.println(F("Setup new memory"));
     cbus.setUpNewMemory();
     cbus.setSlimMode();
     cbus.saveNodeFlags();
@@ -160,7 +160,7 @@ void myUserFunc(Message *msg,MergCBUS *mcbus){
   byte servo_start,servo_end;
 
   #ifdef DEBUGNODE
-  Serial.println("got a message");  
+  Serial.println(F("got a message"));  
   #endif
   
   if (mcbus->eventMatch()){

@@ -36,7 +36,7 @@ MergMemoryManagement::~MergMemoryManagement(){
 * Should be called just in the first setup of the node and never inside a loop. May damage the EEPROM.
 */
 void MergMemoryManagement::setUpNewMemory(){
-    //Serial.println("Clear memory called");
+    //Serial.println(F("Clear memory called"));
     clear();
     write();
 }
@@ -73,15 +73,15 @@ byte * MergMemoryManagement::getEvent(uint8_t index){
     event[3]=EMPTY_BYTE;
     lasterror = 0;
 
-    //Serial.println("MEM: Getting event");
+    //Serial.println(F("MEM: Getting event"));
 
     if (index > (MAX_NUM_EVENTS) || index > numEvents){
-        //Serial.println("MEM: Getting event failed");
+        //Serial.println(F("MEM: Getting event failed"));
         lasterror = 1;
         return event;
     }
     unsigned int i = resolveEventPos(index);
-    //Serial.print("ev ");Serial.print(index);Serial.print(" mem pos:");Serial.println(i);
+    //Serial.print(F("ev "));Serial.print(index);Serial.print(F(" mem pos:"));Serial.println(i);
 
     event[0]=EEPROM.read(i);
     event[1]=EEPROM.read(i+1);
@@ -95,7 +95,7 @@ byte * MergMemoryManagement::getEvent(uint8_t index){
 * @return event index starting with 0.
 */
 uint8_t MergMemoryManagement::setEvent(byte *event){
-    //Serial.println("MEM: Setting event");
+    //Serial.println(F("MEM: Setting event"));
     if (numEvents >= MAX_NUM_EVENTS){
         return (MAX_NUM_EVENTS + 1) ;
     }
@@ -103,16 +103,16 @@ uint8_t MergMemoryManagement::setEvent(byte *event){
     //check if the event exists
     uint8_t evidx;
     evidx = getEventIndex(event[0],event[1],event[2],event[3]);
-    //Serial.println("MEM: Getting event idx");
+    //Serial.println(F("MEM: Getting event idx"));
     if (evidx > MAX_NUM_EVENTS){
         //event does not exist
         //get the next index
-        //Serial.println("MEM: Saving new event");
+        //Serial.println(F("MEM: Saving new event"));
         evidx = numEvents;
         //save the event
         return setEvent(event,evidx);
     }
-    //Serial.print("MEM: event idx:");
+    //Serial.print(F("MEM: event idx:"));
     //Serial.println(evidx);
    return evidx;
 }
@@ -240,11 +240,11 @@ byte MergMemoryManagement::getEventVar(uint8_t eventIdx,uint8_t index){
     int i = resolveEvVarArrayPos(eventIdx,index);
     val = EEPROM.read(i);
     /*
-    Serial.print("ev ");
+    Serial.print(F("ev "));
     Serial.print (eventIdx);
-    Serial.print (" var:");
+    Serial.print (" var:"));
     Serial.print (index);
-    Serial.print (" val:");
+    Serial.print (" val:"));
     Serial.println(val);
     */
     return val;
@@ -319,7 +319,7 @@ void MergMemoryManagement::read(){
 */
 void MergMemoryManagement::write(){
 
-    //Serial.println("write function called");
+    //Serial.println(F("write function called"));
 
     //merg id
     EEPROM.write(MERG_MEMPOS,0xaa);
@@ -425,7 +425,7 @@ void MergMemoryManagement::setVar(uint8_t index,byte val){
         return;
     }
 
-    //Serial.println("write var to eeprom");
+    //Serial.println(F("write var to eeprom"));
     EEPROM.write(VARS_MEMPOS+index,val);
     return;
 }
@@ -472,7 +472,7 @@ uint8_t MergMemoryManagement::setEventVar(unsigned int eventIdx,uint8_t varIdx,u
 * @param canId The can id
 */
 void MergMemoryManagement::setCanId(byte canId){
-    //Serial.println("MEM: Writing can id");
+    //Serial.println(F("MEM: Writing can id"));
     can_ID=canId;
     EEPROM.write(CAN_ID_MEMPOS,can_ID);
 }
@@ -482,7 +482,7 @@ void MergMemoryManagement::setCanId(byte canId){
 * @param val The node number (16 bit integer).
 */
 void MergMemoryManagement::setNodeNumber(unsigned int val){
-    //Serial.println("MEM: Writing NN");
+    //Serial.println(F("MEM: Writing NN"));
     nn[0]=highByte(val);
     nn[1]=lowByte(val);
     EEPROM.write(NN_MEMPOS,nn[0]);
@@ -554,54 +554,54 @@ void MergMemoryManagement::dumpMemory(){
 //#ifdef DEBUGDEF
     read();
     byte a;
-    Serial.println("MEMORY DUMP");
-    Serial.print("IDENT:");
+    Serial.println(F("MEMORY DUMP"));
+    Serial.print(F("IDENT:"));
     a=EEPROM.read(MERG_MEMPOS);
     Serial.print(a,HEX);
-    Serial.print("\nCAN_ID:");
+    Serial.print(F("\nCAN_ID:"));
     Serial.print(can_ID,HEX);
-    Serial.print("\nNN:");
+    Serial.print(F("\nNN:"));
     Serial.print(getNodeNumber());
-    Serial.print("\nFlags:");
+    Serial.print(F("\nFlags:"));
     Serial.print(flags,HEX);
-    Serial.print("\nNUM EVENTS:");
+    Serial.print(F("\nNUM EVENTS:"));
     Serial.print(numEvents,HEX);
-    Serial.print("\nNUM EVENTS VARS:");
+    Serial.print(F("\nNUM EVENTS VARS:"));
     Serial.print(MAX_VAR_PER_EVENT,HEX);
-    Serial.print("\nNUM VARS:");
+    Serial.print(F("\nNUM VARS:"));
     Serial.print(MAX_AVAIL_VARS,HEX);
-    Serial.print("\nNODE VARS:");
+    Serial.print(F("\nNODE VARS:"));
     for (uint8_t i=0;i<MAX_AVAIL_VARS;i++){
         Serial.print(EEPROM.read(VARS_MEMPOS+i),HEX);
-        Serial.print(" ");
+        Serial.print(F(" "));
     }
-    Serial.print("\nINTERNAL VARS:");
+    Serial.print(F("\nINTERNAL VARS:"));
     for (uint8_t i=0;i<INTERNAL_VARS;i++){
         Serial.print(EEPROM.read(NODE_INTERNAL_VAR+i),HEX);
-        Serial.print(" ");
+        Serial.print(F(" "));
     }
 
-    Serial.print("\nDEVICE NUMBERS:");
+    Serial.print(F("\nDEVICE NUMBERS:"));
     for (uint8_t i=0;i<MAX_NUM_DEVICE_NUMBERS;i++){
         Serial.print(EEPROM.read(DN_MEMPOS+i*NNDD_SIZE),HEX);
         Serial.print(EEPROM.read(DN_MEMPOS+i*NNDD_SIZE+1),HEX);
-        Serial.print(" ");
+        Serial.print(F(" "));
     }
 
-    Serial.println("\nEVENTS:");
+    Serial.println(F("\nEVENTS:"));
     int n=resolveEventPos(0);
 
     for (uint8_t i=0;i<MAX_NUM_EVENTS;i++){
         for (uint8_t j=0;j<EVENT_SIZE;j++){
             Serial.print(EEPROM.read(n),HEX);
             n++;
-            Serial.print(" ");
+            Serial.print(F(" "));
         }
-        Serial.print("VARS ");
+        Serial.print(F("VARS "));
         for (uint8_t j=0;j<MAX_VAR_PER_EVENT;j++){
             Serial.print(EEPROM.read(n),HEX);
             n++;
-            Serial.print(" ");
+            Serial.print(F(" "));
         }
         Serial.println();
     }

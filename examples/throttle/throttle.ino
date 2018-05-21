@@ -76,7 +76,7 @@ void setup(){
   //used to manually reset the node. while turning on keep the button pressed
   //this forces the node for slim mode with an empty memory for learned events and devices
   if (digitalRead(PUSH_BUTTON)==LOW){
-    Serial.println("Setup new memory");
+    Serial.println(F("Setup new memory"));
     cbus.setUpNewMemory();
     cbus.saveNodeFlags();
   }
@@ -91,7 +91,7 @@ void setup(){
   previous_state = START;
   cbus.doSelfEnnumeration(true);
   throttle.setKeepAliveInterval(KEEP_ALIVE_TIMEOUT);
-  Serial.println("Setup finished");
+  Serial.println(F("Setup finished"));
 }
 
 void loop (){
@@ -103,12 +103,12 @@ void loop (){
 }
 
 void myUserFunc(Message *msg,MergCBUS *mcbus){
-  Serial.print("MSG Code: ");
+  Serial.print(F("MSG Code: "));
   Serial.println(msg->getOpc());
 }
 
 void myUserFuncDCC(Message *msg,MergCBUS *mcbus){
-  Serial.print("DCC Code: ");
+  Serial.print(F("DCC Code: "));
   Serial.println(msg->getOpc());
   main_throttle(msg);
 }
@@ -116,25 +116,25 @@ void myUserFuncDCC(Message *msg,MergCBUS *mcbus){
 void main_throttle(Message *msg){
 
   if (cbus.isSelfEnumMode()){
-    Serial.println("Node in self enum");
+    Serial.println(F("Node in self enum"));
     return;
   }
   switch (state){
    //acquire on loco
     case START:
-      Serial.println("Request session");
+      Serial.println(F("Request session"));
       throttle.getSession(2);
       state = WAITING;
     break;
     case WAITING:
-      //Serial.println("Process waiting");
+      //Serial.println(F("Process waiting"));
       switch (previous_state){
         case START:
           //check if we get a session
-          //Serial.println("check if we get a session");
+          //Serial.println(F("check if we get a session"));
           if (msg != NULL){            
             if (msg->getSession() > 0){
-              Serial.println("got session");
+              Serial.println(F("got session"));
               Serial.println(msg->getSession());
               previous_state = WAITING;
               sessions[0] = msg->getSession();
@@ -147,7 +147,7 @@ void main_throttle(Message *msg){
           }
         break;
         case SENT_SPEED:
-          Serial.println("stopping");
+          Serial.println(F("stopping"));
           stoptime = millis();
           state = RUNNING;
         break;
@@ -156,14 +156,14 @@ void main_throttle(Message *msg){
     break;
 
     case ACQUIRED:
-      Serial.println("Setting speed");
+      Serial.println(F("Setting speed"));
       cbus.sendSpeedDir(sessions[0],100,true);
       previous_state = SENT_SPEED;
       state = WAITING;
     break;
 
     case RUNNING:
-      Serial.println("Running");
+      Serial.println(F("Running"));
       if ((millis() - stoptime)  > LOCO_RUN_TIME*1000) {
         cbus.sendSpeedDir(sessions[0],0,true);
         state = STOPPED;
@@ -173,7 +173,7 @@ void main_throttle(Message *msg){
     break;
     case STOPPED:
       //release
-      Serial.println("Releasing");
+      Serial.println(F("Releasing"));
       cbus.sendReleaseSession(sessions[0]);
       delay(5000);
       state = START;
@@ -199,7 +199,7 @@ void main_throttle(Message *msg){
 void sendKeepAlive(){
   if (millis() - last_time >= KEEP_ALIVE_TIMEOUT){
     if (sessions[0] > 0){
-        Serial.println("sending keep alive");
+        Serial.println(F("sending keep alive"));
         cbus.sendKeepAliveSession(sessions[0]);
     }
     last_time = millis();

@@ -78,7 +78,7 @@ void setup(){
   cbus.setStdNN(999); //standard node number
 
   if (digitalRead(PUSH_BUTTON)==LOW){
-    Serial.println("Setup new memory");
+    Serial.println(F("Setup new memory"));
     cbus.setUpNewMemory();
     cbus.setSlimMode();
     cbus.saveNodeFlags();
@@ -89,7 +89,7 @@ void setup(){
   cbus.initCanBus(10);  //initiate the transport layer. pin=53, rate=125Kbps,10 tries,200 millis between each try
   //create the servos object
   setUpServos();  
-  Serial.println("Setup finished");
+  Serial.println(F("Setup finished"));
 }
 
 void loop (){
@@ -113,7 +113,7 @@ void myUserFunc(Message *msg,MergCBUS *mcbus){
   if (mcbus->eventMatch()){
      onEvent=mcbus->isAccOn();
      getServosArray(msg,mcbus);
-     Serial.println("event match");
+     Serial.println(F("event match"));
      servo_start=mcbus->getEventVar(msg,START_ANGLE_VAR);
      servo_end=mcbus->getEventVar(msg,END_ANGLE_VAR);
      Serial.println(servo_start);
@@ -138,7 +138,7 @@ void moveServo(boolean event,byte servoidx,byte servo_start,byte servo_end){
         servos[servoidx].write(servo_start,SPEED);
       }
       else {
-        Serial.println("moving servo");
+        Serial.println(F("moving servo"));
         servos[servoidx].write(servo_end,SPEED);
       }
     }
