@@ -498,14 +498,14 @@ INT8U MCP_CAN::mcp2515_init(const INT8U canSpeed, const INT8U clock)
     if(res > 0)
     {
 #if DEBUG_MODE
-      Serial.print("Enter setting mode fall\r\n");
+      Serial.print(F("Enter setting mode fall\r\n"));
 #else
       delay(10);
 #endif
       return res;
     }
 #if DEBUG_MODE
-    Serial.print("Enter setting mode success \r\n");
+    Serial.print(F("Enter setting mode success \r\n"));
 #else
     delay(10);
 #endif
@@ -514,14 +514,14 @@ INT8U MCP_CAN::mcp2515_init(const INT8U canSpeed, const INT8U clock)
     if(mcp2515_configRate(canSpeed,clock))
     {
 #if DEBUG_MODE
-      Serial.print("set rate fall!!\r\n");
+      Serial.print(F("set rate fall!!\r\n"));
 #else
       delay(10);
 #endif
       return res;
     }
 #if DEBUG_MODE
-    Serial.print("set rate success!!\r\n");
+    Serial.print(F("set rate success!!\r\n"));
 #else
     delay(10);
 #endif
@@ -560,7 +560,7 @@ INT8U MCP_CAN::mcp2515_init(const INT8U canSpeed, const INT8U clock)
         if(res)
         {
 #if DEBUG_MODE
-          Serial.print("Enter Normal Mode Fall!!\r\n");
+          Serial.print(F("Enter Normal Mode Fall!!\r\n"));
 #else
             delay(10);
 #endif
@@ -569,7 +569,7 @@ INT8U MCP_CAN::mcp2515_init(const INT8U canSpeed, const INT8U clock)
 
 
 #if DEBUG_MODE
-          Serial.print("Enter Normal Mode Success!!\r\n");
+          Serial.print(F("Enter Normal Mode Success!!\r\n"));
 #else
             delay(10);
 #endif
@@ -752,14 +752,14 @@ INT8U MCP_CAN::init_Mask(INT8U num, INT8U ext, INT32U ulData)
 {
     INT8U res = MCP2515_OK;
 #if DEBUG_MODE
-    Serial.print("Begin to set Mask!!\r\n");
+    Serial.print(F("Begin to set Mask!!\r\n"));
 #else
     delay(10);
 #endif
     res = mcp2515_setCANCTRL_Mode(MODE_CONFIG);
     if(res > 0){
 #if DEBUG_MODE
-    Serial.print("Enter setting mode fall\r\n");
+    Serial.print(F("Enter setting mode fall\r\n"));
 #else
     delay(10);
 #endif
@@ -778,14 +778,14 @@ INT8U MCP_CAN::init_Mask(INT8U num, INT8U ext, INT32U ulData)
     res = mcp2515_setCANCTRL_Mode(MODE_NORMAL);
     if(res > 0){
 #if DEBUG_MODE
-    Serial.print("Enter normal mode fall\r\n");
+    Serial.print(F("Enter normal mode fall\r\n"));
 #else
     delay(10);
 #endif
     return res;
   }
 #if DEBUG_MODE
-    Serial.print("set Mask success!!\r\n");
+    Serial.print(F("set Mask success!!\r\n"));
 #else
     delay(10);
 #endif
@@ -800,7 +800,7 @@ INT8U MCP_CAN::init_Filt(INT8U num, INT8U ext, INT32U ulData)
 {
     INT8U res = MCP2515_OK;
 #if DEBUG_MODE
-    Serial.print("Begin to set Filter!!\r\n");
+    Serial.print(F("Begin to set Filter!!\r\n"));
 #else
     delay(10);
 #endif
@@ -808,7 +808,7 @@ INT8U MCP_CAN::init_Filt(INT8U num, INT8U ext, INT32U ulData)
     if(res > 0)
     {
 #if DEBUG_MODE
-      Serial.print("Enter setting mode fall\r\n");
+      Serial.print(F("Enter setting mode fall\r\n"));
 #else
       delay(10);
 #endif
@@ -849,14 +849,14 @@ INT8U MCP_CAN::init_Filt(INT8U num, INT8U ext, INT32U ulData)
     if(res > 0)
     {
 #if DEBUG_MODE
-      Serial.print("Enter normal mode fall\r\nSet filter fail!!\r\n");
+      Serial.print(F("Enter normal mode fall\r\nSet filter fail!!\r\n"));
 #else
       delay(10);
 #endif
       return res;
     }
 #if DEBUG_MODE
-    Serial.print("set Filter success!!\r\n");
+    Serial.print(F("set Filter success!!\r\n"));
 #else
     delay(10);
 #endif
@@ -982,7 +982,7 @@ INT8U MCP_CAN::readMsg(INT8U buf_num)
             mcp2515_modifyRegister(MCP_CANINTF, MCP_RX0IF, 0);
             //res = CAN_OK;
             msgfound=true;
-            //Serial.println("buffer 0");
+            //Serial.println(F("buffer 0"));
         }
     }
     else{
@@ -992,7 +992,7 @@ INT8U MCP_CAN::readMsg(INT8U buf_num)
             mcp2515_modifyRegister(MCP_CANINTF, MCP_RX1IF, 0);
             res = CAN_OK;
             msgfound=true;
-            //Serial.println("buffer 1");
+            //Serial.println(F("buffer 1"));
         }
     }
 
@@ -1000,7 +1000,7 @@ INT8U MCP_CAN::readMsg(INT8U buf_num)
     {
         res = CAN_NOMSG;
     }
-    //Serial.println("leaving");
+    //Serial.println(F("leaving"));
     return res;
 }
 /*********************************************************************************************************

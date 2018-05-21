@@ -67,7 +67,7 @@ void setup(){
   //used to manually reset the node. while turning on keep the button pressed
   //this forces the node for slim mode with an empty memory for learned events and devices
   if (digitalRead(PUSH_BUTTON)==LOW){
-    Serial.println("Setup new memory");
+    Serial.println(F("Setup new memory"));
     cbus.setUpNewMemory();
     cbus.saveNodeFlags();
     //set the default value
@@ -79,7 +79,7 @@ void setup(){
   cbus.setUserHandlerFunction(&myUserFunc);//function that implements the node logic
   cbus.initCanBus(CANPORT);  //initiate the transport layer
 
-  Serial.println("Setup finished");
+  Serial.println(F("Setup finished"));
 }
 
 void loop (){

@@ -61,7 +61,7 @@ void setup(){
   cbus.setStdNN(999); //standard node number
 
   if (digitalRead(PUSH_BUTTON)==LOW){
-    Serial.println("Setup new memory");
+    Serial.println(F("Setup new memory"));
     cbus.setUpNewMemory();
     cbus.setSlimMode();
     cbus.saveNodeFlags();
@@ -74,7 +74,7 @@ void setup(){
   //using timer
   //Timer1.initialize(10000);//microseconds
   //Timer1.attachInterrupt(readCanMessages);
-  Serial.println("START");
+  Serial.println(F("START"));
   t=millis();
 }
 
@@ -89,12 +89,12 @@ void loop (){
   //debug memory
   if (digitalRead(PUSH_BUTTON)==LOW){
     /*
-      Serial.println("Sending messages");
+      Serial.println(F("Sending messages"));
       for (int i=0;i<10;i++){
          sendMessage(i);
          //delay(1);
       } 
-      Serial.println("Sent"); 
+      Serial.println(F("Sent")); 
       */     
   }
 

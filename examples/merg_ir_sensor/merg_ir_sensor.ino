@@ -80,7 +80,7 @@ void setup(){
   cbus.setStdNN(999); //standard node number
 
   if (digitalRead(PUSH_BUTTON1)==LOW){
-    //Serial.println("Setup new memory");
+    //Serial.println(F("Setup new memory"));
     cbus.setUpNewMemory();
     cbus.setSlimMode();
     cbus.saveNodeFlags();
@@ -95,7 +95,7 @@ void setup(){
   //using timer
   Timer1.initialize(10000);//microseconds
   Timer1.attachInterrupt(readCanMessages);
-  //Serial.println("Setup finished");
+  //Serial.println(F("Setup finished"));
 }
 
 void loop (){
@@ -131,9 +131,9 @@ void checkSensors(){
       if (sensors[i].state==HIGH){
         //if (i==s){
         /*
-        Serial.print("Sensor ");
+        Serial.print(F("Sensor "));
         Serial.print(i);
-        Serial.println(" ON");
+        Serial.println(F(" ON"));
         */
         //}
         sendMessage(true,i);
@@ -153,11 +153,11 @@ void checkSensors(){
           if (sensors[i].state==LOW){
           //    if (i==s){
           /*
-              Serial.print("Sensor ");
+              Serial.print(F("Sensor "));
               Serial.print(i);
-              Serial.print(" OFF time: ");
+              Serial.print(F(" OFF time: "));
               Serial.print(actime-sensors[i].time);
-              Serial.print(" resets:");
+              Serial.print(F(" resets:"));
               Serial.println(sensors[i].resets);
             */
               sendMessage(false,i) ;

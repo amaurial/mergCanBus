@@ -29,7 +29,7 @@ void MergCBUSThrottle::sendKeepAlive(){
         if (tinfo[i].getLoco() != 0){
             if ((t-tinfo[i].getTime())>keepalive_interval){
                 tinfo[i].setTime(t);
-                Serial.println("keep alive");
+                Serial.println(F("keep alive"));
                 cbus->sendKeepAliveSession(tinfo[i].getSession());
             }
         }

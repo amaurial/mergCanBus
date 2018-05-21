@@ -118,7 +118,7 @@ void Message::clear(){
     //setType(RESERVED);
     //setEventNumber(0);
     //setNodeNumber(0);
-    //setData((byte*)"00000000");
+    //setData((byte*)"00000000"));
     for (uint8_t i=0;i<CANDATA_SIZE;i++){
         data[i]=0;
     }
@@ -159,14 +159,14 @@ unsigned int Message::getNodeNumber(){
     //byte* data=_canMessage->getData();
     unsigned int r=0;
     #ifdef DEBUGDEF
-        Serial.println("Message::getNodeNumber - Getting NN");
-        Serial.print("OPC:");
+        Serial.println(F("Message::getNodeNumber - Getting NN"));
+        Serial.print(F("OPC:"));
         Serial.println(data[0],HEX);
     #endif // DEBUGDEF
 
     if (hasThisData(data[0],NODE_NUMBER)){
             #ifdef DEBUGDEF
-                Serial.println("NN OK");
+                Serial.println(F("NN OK"));
             #endif // DEBUGDEF
             r=data[1];
             r=r<<8;
@@ -421,8 +421,8 @@ byte Message::getStatus(){
 byte Message::getParaIndex(){
     //byte* data=_canMessage->getData();
 
-    //Serial.print("OPC:");Serial.print(opc,HEX);
-    //Serial.print("\tPara index byte: ");
+    //Serial.print(F("OPC:"));Serial.print(opc,HEX);
+    //Serial.print(F("\tPara index byte: "));
 
     byte r=0;
     if (opc==OPC_RQNPN){

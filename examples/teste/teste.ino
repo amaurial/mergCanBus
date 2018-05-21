@@ -57,7 +57,7 @@ void setup(){
   cbus.setStdNN(999); //standard node number
 
   if (digitalRead(PUSH_BUTTON1)==LOW){
-    Serial.println("Setup new memory");
+    Serial.println(F("Setup new memory"));
     cbus.setUpNewMemory();
     cbus.setSlimMode();
     cbus.saveNodeFlags();
@@ -69,7 +69,7 @@ void setup(){
   cbus.setUserHandlerFunction(&myUserFunc);//function that implements the node logic
   cbus.initCanBus(53,CAN_125KBPS,10,200);  //initiate the transport layer
 
-  Serial.println("Setup finished");
+  Serial.println(F("Setup finished"));
 }
 
 void loop (){
@@ -81,7 +81,7 @@ void loop (){
 }
 
 void myUserFunc(Message *msg,MergCBUS *mcbus){
-  //Serial.println("My function");
+  //Serial.println(F("My function"));
   //check if there is something on some port and send and event
   for (int i=0;i<SENSORS;i++){
       if (digitalRead(sensors[i])==HIGH){
