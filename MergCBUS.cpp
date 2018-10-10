@@ -13,7 +13,13 @@ MergCBUS::MergCBUS(byte num_node_vars,byte num_events,byte num_events_var,byte m
     //ctor
     messageFilter = 0;
     bufferIndex = 0;
+    
+#ifdef USE_FLEXCAN
+    CANbus=FlexCAN(CAN_125KBPS);
+#else
     Can=MCP_CAN();
+#endif
+    
     msgBuffer=CircularBuffer();
     memory=MergMemoryManagement(num_node_vars,num_events,num_events_var,max_device_numbers);
     nodeId=MergNodeIdentification();
@@ -120,7 +126,12 @@ MergCBUS::~MergCBUS()
 */
 bool MergCBUS::initCanBus(uint8_t port,unsigned int rate, const uint8_t clock, unsigned int retries,unsigned int retryIntervalMilliseconds){
 
-    unsigned int r = 0;
+unsigned int r = 0;
+
+#ifdef USE_FLEXCAN
+    CANbus.begin();
+#else
+    
     Can.set_cs(port);
 
     do {
@@ -138,6 +149,10 @@ bool MergCBUS::initCanBus(uint8_t port,unsigned int rate, const uint8_t clock, u
     #ifdef DEBUGMSG
        Serial.println(F("Failed to set Can rate"));
     #endif // DEBUGDEF
+    
+#endif
+    
+
 
    return false;
 }
@@ -234,7 +249,11 @@ uint8_t MergCBUS::run(){
         }
     }
 
-    while (readCanBus()){
+#ifdef USE_FLEXCAN
+   while (readCanBus(0)){
+#else
+   while (readCanBus()){
+#endif
 
         resp = mainProcess();
         if (resp != OK ){
@@ -277,7 +296,24 @@ uint8_t MergCBUS::mainProcess(){
                 Serial.println(nodeId.getCanID(),HEX);
             #endif // DEBUGDEF
 
+#ifdef USE_FLEXCAN
+            int i = 0;
+            CAN_message_t txmsg;
+            txmsg.id = nodeId.getCanID();
+            txmsg.len = 0;
+            txmsg.rtr = 0;
+            txmsg.ext = 0;
+            for(i = 0; i<8; i++)
+            {
+                txmsg.buf[i] = 0;
+            }
+
+
+            CANbus.write(txmsg);
+#else
             Can.sendMsgBuf(nodeId.getCanID(),0,0,mergCanData);
+#endif
+
             return OK;
         }
     }
@@ -326,7 +362,7 @@ uint8_t MergCBUS::mainProcess(){
         #ifdef DEBUGDEF
             Serial.print(F("Message type:"));
             Serial.print(message.getType());
-            Serial.print ("\t OPC:"));
+            Serial.print (F("\t OPC:"));
             Serial.print(message.getOpc(),HEX);
             Serial.print(F("\t STATE:"));
             Serial.println(state_mode);
@@ -335,16 +371,17 @@ uint8_t MergCBUS::mainProcess(){
         case (DCC):
             if (dccHandler != 0){
                 dccHandler(&message,this);
+		return OK;
             }
         break;
         case (ACCESSORY):
              if (nodeId.isConsumerNode()){
-                handleACCMessages();
+                return handleACCMessages();
             }
         break;
         case (GENERAL):
              if (nodeId.isConsumerNode()){
-                handleGeneralMessages();
+                return handleGeneralMessages();
             }
         break;
         case (CONFIG):
@@ -362,10 +399,95 @@ uint8_t MergCBUS::mainProcess(){
 */
 bool MergCBUS::readCanBus(byte buf_num){
     byte len = 0;//number of bytes read.
-    bool resp;
+    bool resp=false;
     byte bufIdxdata = 115;//position in the general buffer. data need 8 bytes
     byte bufIdxhead = 110;//position in the general buffer. header need 4 bytes
     eventmatch = false;
+
+#ifdef USE_FLEXCAN
+    int i;
+    CAN_message_t rxmsg;
+    if(CANbus.available())
+    {
+        resp=CANbus.read(rxmsg);
+        if (resp)
+        {
+            message.clear();
+            message.setCanMessageSize(rxmsg.len);
+            for (i=0;i<rxmsg.len;i++)
+            {
+                buffer[bufIdxdata+i]=rxmsg.buf[i];
+            }
+            message.setDataBuffer(&buffer[bufIdxdata]);
+            if (rxmsg.rtr==0)
+            {
+                message.unsetRTR();
+            }
+            else
+            {
+                message.setRTR();
+            }
+            if (rxmsg.ext)
+            {
+                buffer[bufIdxhead+3] = (byte) (rxmsg.id & 0xFF);
+                buffer[bufIdxhead+2] = (byte) (rxmsg.id >> 8);
+                buffer[bufIdxhead+1] = (byte) ((rxmsg.id>>16) & 0x03);
+                buffer[bufIdxhead+1] += (byte) (((rxmsg.id>>16) & 0x1C) << 3);
+                buffer[bufIdxhead+1] |= 0x08 ;
+                buffer[bufIdxhead+0] = (byte) ((rxmsg.id>>16) >> 5 );
+            }
+            else
+            {
+                buffer[bufIdxhead+0] = (byte) ((rxmsg.id & 0x7F ) >> 3 );
+                buffer[bufIdxhead+1] = (byte) ((rxmsg.id & 0x07 ) << 5);
+                buffer[bufIdxhead+2] = 0;
+                buffer[bufIdxhead+3] = 0;
+            }
+            message.setHeaderBuffer(&buffer[bufIdxhead]);
+            message.setPriority((rxmsg.id & 0x600)>>9);
+            eventmatch=hasThisEvent();
+#ifdef DEBUGDEF
+            // print message
+            int j=0;
+            
+            Serial.print("Message: ");
+            for (j=0;j<rxmsg.len;j++){
+                Serial.print (rxmsg.buf[j], HEX);
+                Serial.print("\t");
+            }
+            for (j=rxmsg.len;j<8;j++){
+                Serial.print("-\t");
+            }
+            Serial.print("Header: ");
+            for (j=0;j<4;j++){
+                Serial.print (buffer[bufIdxhead+j], HEX);
+                Serial.print("\t");
+            }
+            Serial.print("CANid: ");
+            Serial.print (rxmsg.id & 0x7F);
+            Serial.print("\t");
+            
+            Serial.print("D Pri: ");
+            Serial.print ((rxmsg.id & 0x600)>>9);
+            Serial.print("\t");
+            
+            Serial.print("M Pri: ");
+            Serial.print ((rxmsg.id & 0x180)>>7);
+            Serial.print("\t");
+            
+            Serial.print("rtr: ");
+            Serial.print (rxmsg.rtr);
+            Serial.print("\t");
+            
+            
+            Serial.println();
+#endif // DEBUGDEF
+
+        }
+    }
+#else
+    
+
     resp = readCanBus(&buffer[bufIdxdata],&buffer[bufIdxhead],&len,buf_num);
     if (resp){
         message.clear();
@@ -387,6 +509,7 @@ bool MergCBUS::readCanBus(byte buf_num){
         //eventmatch=memory.hasEvent(buffer[bufIdxdata],buffer[bufIdxdata+1],buffer[bufIdxdata+2],buffer[bufIdxdata+3]);
         eventmatch = hasThisEvent();
      }
+#endif
     return resp;
 }
 
@@ -428,6 +551,76 @@ bool MergCBUS::readCanBus(){
 * @return number of bytes read;
 */
 bool MergCBUS::readCanBus(byte *data,byte *header,byte *length,byte buf_num){
+
+#ifdef USE_FLEXCAN
+    int i;
+    CAN_message_t rxmsg;
+    if(CANbus.available())
+    {
+        if (CANbus.read(rxmsg))
+        {
+            *length=rxmsg.len;
+            for (i=0;i<rxmsg.len;i++)
+            {
+                data[i]=rxmsg.buf[i];
+            }
+            if (rxmsg.ext)
+            {
+                header[3] = (byte) (rxmsg.id & 0xFF);
+                header[2] = (byte) (rxmsg.id >> 8);
+                header[1] = (byte) ((rxmsg.id>>16) & 0x03);
+                header[1] += (byte) (((rxmsg.id>>16) & 0x1C) << 3);
+                header[1] |= 0x08 ;
+                header[0] = (byte) ((rxmsg.id>>16) >> 5 );
+            }
+            else
+            {
+                header[0] = (byte) (rxmsg.id >> 3 );
+                header[1] = (byte) ((rxmsg.id & 0x07 ) << 5);
+                header[2] = 0;
+                header[3] = 0;
+            }
+#ifdef DEBUGDEF
+            // print message
+            int j=0;
+            
+            Serial.print("Message: ");
+            for (j=0;j<rxmsg.len;j++){
+                Serial.print (rxmsg.buf[j], HEX);
+                Serial.print("\t");
+            }
+            for (j=rxmsg.len;j<8;j++){
+                Serial.print("-\t");
+            }
+            Serial.print("Header: ");
+            for (j=0;j<4;j++){
+                Serial.print (header[j], HEX);
+                Serial.print("\t");
+            }
+            Serial.print("CANid: ");
+            Serial.print (rxmsg.id & 0x7F);
+            Serial.print("\t");
+            
+            Serial.print("D Pri: ");
+            Serial.print ((rxmsg.id & 0x600)>>9);
+            Serial.print("\t");
+            
+            Serial.print("M Pri: ");
+            Serial.print ((rxmsg.id & 0x180)>>7);
+            Serial.print("\t");
+            
+            Serial.print("rtr: ");
+            Serial.print (rxmsg.rtr);
+            Serial.print("\t");
+            
+            
+            Serial.println();
+#endif // DEBUGDEF
+            return true;
+        }
+        return false;
+    }
+#else
     byte resp;
     if(CAN_MSGAVAIL == Can.checkReceive()) // check if data coming
     {
@@ -438,6 +631,8 @@ bool MergCBUS::readCanBus(byte *data,byte *header,byte *length,byte buf_num){
         }
         return false;
     }
+#endif
+    
     return false;
 }
 
@@ -473,8 +668,23 @@ void MergCBUS::doSelfEnnumeration(bool softEnum){
     bufferIndex = 0;
     softwareEnum = softEnum;
     state_mode = SELF_ENUMERATION;
+#ifdef USE_FLEXCAN
+    int i = 0;
+    CAN_message_t txmsg;
+    txmsg.id = nodeId.getCanID();
+    txmsg.len = 0;
+    txmsg.rtr = 1;
+    txmsg.ext = 0;
+    for(i = 0; i<8; i++)
+    {
+        txmsg.buf[i] = 0;
+    }
+    
+    CANbus.write(txmsg);
+#else
     Can.setPriority(PRIO_LOW,PRIO_MIN_LOWEST);
     Can.sendRTMMessage(nodeId.getCanID());
+#endif
     startTime = millis();
 }
 
@@ -517,7 +727,23 @@ void MergCBUS::finishSelfEnumeration(){
         prepareMessageBuff(OPC_NNACK,
                        highByte(nodeId.getNodeNumber()),
                        lowByte(nodeId.getNodeNumber())  );
+#ifdef USE_FLEXCAN
+        int i = 0;
+        CAN_message_t txmsg;
+        txmsg.id = nodeId.getCanID();
+        txmsg.len = 3;
+        txmsg.rtr = 0;
+        txmsg.ext = 0;
+        for(i = 0; i<txmsg.len; i++)
+        {
+            txmsg.buf[i] = mergCanData[i];
+        }
+        
+        
+        CANbus.write(txmsg);
+#else
         Can.sendMsgBuf(nodeId.getCanID(),0,3,mergCanData);
+#endif
     }
 
     return;
@@ -1109,6 +1335,24 @@ void MergCBUS::clearMsgToSend(){
 byte MergCBUS::sendCanMessage(){
     byte message_size;
     message_size=getMessageSize(mergCanData[0]);
+#ifdef USE_FLEXCAN
+    ///need to implement priority in FlexCAN
+    CAN_message_t txmsg;
+    txmsg.id = nodeId.getCanID();
+    txmsg.len = message_size;
+    txmsg.rtr = 0;
+    txmsg.ext = 0;
+    int i = 0;
+    for(i = 0; i<txmsg.len; i++)
+    {
+        txmsg.buf[i] = mergCanData[i];
+    }
+    
+    if (CANbus.write(txmsg)!=1)
+    {
+        return 0xff;
+    }
+#else
     Can.setPriority(PRIO_NEXT,PRIO_MIN_NORMAL);
 
     #ifdef DEBUGMSG
@@ -1130,6 +1374,8 @@ byte MergCBUS::sendCanMessage(){
 
         return r;
     }
+#endif
+    
     return OK;
 }
 
@@ -1491,7 +1737,7 @@ void MergCBUS::learnEvent(){
                     Serial.print(ind);
                     Serial.print(F(" value "));
                     Serial.print(val);
-                    Serial. print(" of event "));
+                    Serial.print(F(" of event "));
                     Serial.println(evidx);
                     Serial.print(F("max events: "));
                     Serial.println(memory.getNumEvents());
@@ -2040,6 +2286,82 @@ void MergCBUS::cbusRead(){
     byte bufIdx = 110;//1 byte for the message size.1 byte for RTR, 4 bytes for header. 8 bytes to max message
 
     bool resp;
+
+#ifdef USE_FLEXCAN
+    int i;
+    byte bufIdxhead = bufIdx+2;
+    byte bufIdxdata = bufIdx+6;
+    CAN_message_t rxmsg;
+    if(CANbus.available())
+    {
+        if (CANbus.read(rxmsg))
+        {
+            buffer[bufIdx]=rxmsg.len;
+            buffer[bufIdx+1]=rxmsg.rtr;
+            for (i=0;i<rxmsg.len;i++)
+            {
+                buffer[bufIdxdata+i]=rxmsg.buf[i];
+            }
+            if (rxmsg.ext)
+            {
+                buffer[bufIdxhead+3] = (byte) (rxmsg.id & 0xFF);
+                buffer[bufIdxhead+2] = (byte) (rxmsg.id >> 8);
+                buffer[bufIdxhead+1] = (byte) ((rxmsg.id>>16) & 0x03);
+                buffer[bufIdxhead+1] += (byte) (((rxmsg.id>>16) & 0x1C) << 3);
+                buffer[bufIdxhead+1] |= 0x08 ;
+                buffer[bufIdxhead+0] = (byte) ((rxmsg.id>>16) >> 5 );
+            }
+            else
+            {
+                //*((uint32_t*)(&buffer[bufIdxhead]))=(((rxmsg.id)&0x000007FF)<<18);
+                
+                buffer[bufIdxhead+0] = (byte) (rxmsg.id >> 3 );
+                buffer[bufIdxhead+1] = (byte) ((rxmsg.id & 0x07 ) << 5);
+                buffer[bufIdxhead+2] = 0;
+                buffer[bufIdxhead+3] = 0;
+            }
+            msgBuffer.put(&buffer[bufIdx]);
+#ifdef DEBUGDEF
+            // print message
+            int j=0;
+            
+            Serial.print("Message: ");
+            for (j=0;j<rxmsg.len;j++){
+                Serial.print (buffer[bufIdx+6+j], HEX);
+                Serial.print("\t");
+            }
+            for (j=rxmsg.len;j<8;j++){
+                Serial.print("-\t");
+            }
+            Serial.print("Header: ");
+            for (j=0;j<4;j++){
+                Serial.print (buffer[bufIdx+2+j], HEX);
+                Serial.print("\t");
+            }
+            Serial.print("CANid: ");
+            Serial.print (rxmsg.id & 0x7F);
+            Serial.print("\t");
+            
+            Serial.print("D Pri: ");
+            Serial.print ((rxmsg.id & 0x600)>>9);
+            Serial.print("\t");
+            
+            Serial.print("M Pri: ");
+            Serial.print ((rxmsg.id & 0x180)>>7);
+            Serial.print("\t");
+            
+            Serial.print("rtr: ");
+            Serial.print (rxmsg.rtr);
+            Serial.print("\t");
+            
+            
+            Serial.println();
+#endif // DEBUGDEF
+        }
+       
+    }
+#else
+    
     //read buffer 0 and buffer 1
     for (uint8_t i = 0;i < 2;i++){
         resp=readCanBus(&buffer[bufIdx+6],&buffer[bufIdx+2],&len,i);
@@ -2079,4 +2401,5 @@ void MergCBUS::cbusRead(){
             msgBuffer.put(&buffer[bufIdx]);
           }
     }
+#endif
 }
