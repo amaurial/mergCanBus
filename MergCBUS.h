@@ -3,6 +3,31 @@
 //typedef char byte;
 #endif // BYTE_TYPE
 
+// define USE_FLEX_CAN to use the internal can h/w on the Teensy3.1/3.2 boards.
+
+#if defined(TEENSYDUINO) 
+
+    //  --------------- Teensy -----------------
+
+    #if defined(__MK20DX128__)       
+        #define BOARD "Teensy 3.0"
+	#define USE_FLEXCAN	1
+    #elif defined(__MK20DX256__)       
+        #define BOARD "Teensy 3.2" 
+	#define USE_FLEXCAN	1
+    #elif defined(__MK64FX512__)
+        #define BOARD "Teensy 3.5"
+	#define USE_FLEXCAN	1
+    #elif defined(__MK66FX1M0__)
+        #define BOARD "Teensy 3.6"
+	#define USE_FLEXCAN	1
+    #else
+       #error "Unknown board"
+    #endif
+#endif
+
+
+
 #ifndef MESSAGEPARSER_H
 #define MESSAGEPARSER_H
 
@@ -15,11 +40,19 @@
 #include <avr/wdt.h>
 #include "Message.h"
 #include "MergNodeIdentification.h"
-#include "mcp_can.h"
 #include "MergMemoryManagement.h"
 #include "CircularBuffer.h"
 
-#define Reset_AVR() asm volatile ("  jmp 0");
+
+#ifdef USE_FLEXCAN
+	#define Reset_AVR() ;
+	#include <FlexCAN.h>
+	#define CAN_125KBPS 125000
+	#define MCP_16MHz 1
+#else
+	#define Reset_AVR() asm volatile ("  jmp 0");
+	#include "mcp_can.h"
+#endif
 
 #define SELF_ENUM_TIME 1000      /** Defines the timeout used for self ennumeration mode.Milliseconds*/
 #define TEMP_BUFFER_SIZE 128    /** Size of a internal buffer for general usage.*/
@@ -56,6 +89,9 @@ enum can_error {OK=0,                   /**< Message sent.*/
 *   A general class that support the MergCBUS protocol.
 *   The class is used to all operations regarding the protocol, but is flexible enough to allow you to use general can messages.
 *   It uses a modified version of mcp_can.h, that included the CAN header manipulation and RTR messages.
+*
+*   The Teensy version uses a modified FlexCAN library updated to include reading and writing of RTR bit in CAN message which is available here: https://github.com/H4nky84/FlexCAN_Library.git
+*
 *   When using the CBUS the user has to set the node information:
 *   -The manufacturer ID as a HEX numeric (If the manufacturer has a NMRA number this can be used)
 *   -Minor code version as an alphabetic character (ASCII)
@@ -184,7 +220,11 @@ class MergCBUS
     protected:
     private:
         //let the bus level lib private
-        MCP_CAN Can;                            /** The CAN object. Deal with the transport layer.*/
+#ifdef USE_FLEXCAN
+    	FlexCAN CANbus;
+#else
+    	MCP_CAN Can;                            /** The CAN object. Deal with the transport layer.*/
+#endif
         byte node_mode;                         /** Slim or Flim*/
         byte mergCanData[CANDATA_SIZE];         //can data . CANDATA_SIZE defined in message.h
         Message message;                        //canbus message representation
