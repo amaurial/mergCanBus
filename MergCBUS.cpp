@@ -362,7 +362,7 @@ uint8_t MergCBUS::mainProcess(){
         #ifdef DEBUGDEF
             Serial.print(F("Message type:"));
             Serial.print(message.getType());
-            Serial.print (F("\t OPC:"));
+            Serial.print(F("\t OPC:"));
             Serial.print(message.getOpc(),HEX);
             Serial.print(F("\t STATE:"));
             Serial.println(state_mode);
@@ -2150,6 +2150,19 @@ byte MergCBUS::sendGetSession(uint16_t loco){
 
     prepareMessageBuff(OPC_RLOC,H,L);
 
+    return sendCanMessage();
+}
+
+/** \brief Sends a all stop
+*
+* Used to stop all locos.
+* \No param
+* \return The result of the sendCanMessage()
+*
+*/
+
+byte MergCBUS::sendAllStop(){
+    prepareMessageBuff(OPC_RESTP);
     return sendCanMessage();
 }
 

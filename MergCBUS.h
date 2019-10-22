@@ -201,6 +201,7 @@ class MergCBUS
 
         //send DCC Events
         byte sendGetSession(uint16_t loco);
+        byte sendAllStop();
         byte sendReleaseSession(uint8_t locsession);
         byte sendShareSession(uint16_t loco);
         byte sendStealSession(uint16_t loco);
