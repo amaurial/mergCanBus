@@ -64,8 +64,7 @@ void setup(){
   }
 
   cbus.setLeds(GREEN_LED,YELLOW_LED);//set the led ports
-  cbus.setPushButton(PUSH_BUTTON);//set the push button ports
-  cbus.setDebug(true);//print some messages on the serial port
+  cbus.setPushButton(PUSH_BUTTON);//set the push button ports  
   cbus.setUserHandlerFunction(&myUserFunc);//function that implements the node logic
   cbus.initCanBus(53,CAN_125KBPS,10,200);  //initiate the transport layer
 

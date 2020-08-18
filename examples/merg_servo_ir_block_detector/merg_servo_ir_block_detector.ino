@@ -271,7 +271,7 @@ void loop (){
             s1 = bitRead(sensors[blocks[i].sensor1].state, LAST_STATE_BIT) ;
 	          s3 = bitRead(sensors[blocks[i].sensor3].state, LAST_STATE_BIT) ;
             if (s1 == s3 == 0){
-		          blocks[i].state = START;
+		          blocks[i].state = S0;
 		          sendMessage(false,i);
             }
         break;

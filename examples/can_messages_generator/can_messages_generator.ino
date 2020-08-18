@@ -18,7 +18,6 @@ To clear the memory, press pushbutton1 while reseting the arduino
 
 #include <Arduino.h>
 #include <SPI.h> //required by the library
-#include <TimerOne.h>
 #include <MergCBUS.h>
 #include <Message.h>
 #include <EEPROM.h> //required by the library

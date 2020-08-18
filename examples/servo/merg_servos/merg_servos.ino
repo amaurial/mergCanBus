@@ -36,9 +36,9 @@ To clear the memory, press pushbutton1 while reseting the arduino
 
 
 //CBUS definitions
-#define GREEN_LED D8                  //merg green led port
-#define YELLOW_LED D7                 //merg yellow led port
-#define PUSH_BUTTON D9                //std merg push button
+#define GREEN_LED 8                  //merg green led port
+#define YELLOW_LED 7                 //merg yellow led port
+#define PUSH_BUTTON 9                //std merg push button
 #define PUSH_BUTTON1 28               //debug push button
 #define NODE_VARS 1                  //number o node variables.Servo speed
 #define NODE_EVENTS 30              //max number of events
