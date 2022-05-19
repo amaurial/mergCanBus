@@ -132,23 +132,49 @@ class MergNodeIdentification
         byte getSuportedNodeVariables(){return suportedNodeVariables;};
 		
 		
-		void setTransportType(byte val){transportType=val;}; // added by phil
-		byte getTransportType(){return transportType;};
+		void setTransportType(byte val){transportType=val;}; 
+		/** \brief  Set the transport type.
+         *
+         * \param val The transport type.
+         * added by phil
+         */
+        byte getTransportType(){return transportType;};
 		
-		void setCpuType(byte val){cpuType=val;}; // added by phil
-		byte getCpuType(){return cpuType;};
+		void setCpuType(byte val){cpuType=val;}; 
+		/** \brief  Set the CPU type.
+         *
+         * \param val The CPU type.
+         * added by phil
+         */
+        byte getCpuType(){return cpuType;};
 		
 		
-		void setCpuManufacturer(byte val){cpuManufacturer=val;};		// added by phil
-		byte getCpuManufacturer(){return cpuManufacturer;};
+		void setCpuManufacturer(byte val){cpuManufacturer=val;};
+		/** \brief  Set the CPU Manufacturer.
+         *
+         * \param val The CPU Manufacturer.
+         * added by phil
+         */
+        byte getCpuManufacturer(){return cpuManufacturer;};
 		
 
-        void setBetaRelease(byte val){betaRelease=val;}; // added by phil
-		byte getBetaRelease(){return betaRelease;};
+        void setBetaRelease(byte val){betaRelease=val;}; 
+		/** \brief  Set the Beta Release.
+         *
+         * \param val Beta Release.
+         * added by phil
+         */
+        byte getBetaRelease(){return betaRelease;};
 		
 		
-		void setCodeLoad(byte val =0){codeLoad =val;}; // added by phil params 11 to 14 value 0x00 does not support boot loading
-		byte getCodeLoad(){return codeLoad;};
+		void setCodeLoad(byte val =0){codeLoad =val;}; 
+		/** \brief  Set the Code Load.
+         *
+         * \param val Code Load.
+         * added by phil params 11 to 14 value 0x00 does not support boot loading
+         */
+        byte getCodeLoad(){return codeLoad;};
+
 		
 		void setManufacturerCpuCodeA(byte val){ManufacturerCpuCodeA=val;};		// added by phil actual proccessor param 15
 		byte getManufacturerCpuCodeA(){return ManufacturerCpuCodeA;};
@@ -165,9 +191,9 @@ class MergNodeIdentification
 
 	   byte getParameter(byte inx);
         /** \brief  Get the number of node parameters.
-         * \return Currently 21 changed by phil
+         * \return Currently 20 changed by phil
          */
-        byte getNumberOfParameters(){return 20;}; //  20 added by phil
+        byte getNumberOfParameters(){return 20;}; 
 
         void setProducerNode(bool val);
         bool isProducerNode();
