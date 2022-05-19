@@ -67,6 +67,12 @@ const char* MergNodeIdentification::getNodeName()
  * + Number of Supported Event Variables
  * + Number of Supported Node Variables
  * + Node Flags
+ * + CPU Type
+ * + Transport Type
+ * + Code load params 11 to 14
+ * + Actual CPU params 15 to 18
+ * + CPU Manufacturer
+ * + Beta Release
  * + 0 by default
  */
 
