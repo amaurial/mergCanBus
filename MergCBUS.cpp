@@ -353,7 +353,7 @@ uint8_t MergCBUS::mainProcess(){
         return OK;
     }
 
-    if (state_mode == LEARN && node_mode == MTYP_SLIM){
+    if (state_mode == LEARN && node_mode == MTYP_SLIM){  
         learnEvent();
         return OK;
     }
@@ -832,13 +832,13 @@ byte MergCBUS::handleConfigMessages(){
         if (state_mode == SETUP){
             prepareMessage(OPC_NAME);
             #ifdef DEBUGDEF
-                Serial.println(F("RECEIVED OPC_RQNN sending OPC_NAME"));
+                Serial.println(F("RECEIVED OPC_RQMN sending OPC_NAME"));
                 printSentMessage();
             #endif // DEBUGDEF
             return sendCanMessage();
         }else{
             #ifdef DEBUGDEF
-                Serial.println(F("RECEIVED OPC_RQNN and not in setup mode."));
+                Serial.println(F("RECEIVED OPC_RQMN and not in setup mode."));
             #endif // DEBUGDEF
             sendERRMessage(CMDERR_NOT_SETUP);
         }
@@ -870,7 +870,11 @@ byte MergCBUS::handleConfigMessages(){
 
     case OPC_NNLRN:
         //put the node in the lear mode
-        state_mode = LEARN;
+		state_mode = LEARN;
+		
+		nodeId.setLearnMode(true); // added by phil  new flag bit 5 parameter 5 feature in FCU to be implemented
+		
+			
         #ifdef DEBUGDEF
             Serial.println(F("going to LEARN MODE."));
             //printSentMessage();
@@ -880,6 +884,8 @@ byte MergCBUS::handleConfigMessages(){
     case OPC_NNULN:
         //leaving the learn mode
         state_mode = NORMAL;
+		nodeId.setLearnMode(false); // added by phil  new feature in FCU to be implemented
+		
         #ifdef DEBUGDEF
             Serial.println(F("going to NORMAL MODE."));
             //printSentMessage();
@@ -888,7 +894,8 @@ byte MergCBUS::handleConfigMessages(){
         break;
 
     case OPC_NNCLR:
-        //clear all events from the node
+	//clear all events from the node
+             state_mode = LEARN;    // added by phil
         if (state_mode == LEARN){
             #ifdef DEBUGDEF
                 Serial.println(F("Clear all events."));
@@ -1007,16 +1014,74 @@ byte MergCBUS::handleConfigMessages(){
 
         break;
 
+
     case OPC_RQNPN:
-        //Request node parameter. Answer with PARAN
+       //Request node parameter. Answer with PARAN 
         ind=message.getParaIndex();
 
-        if (ind==0){
-            prepareMessageBuff(OPC_PARAN,highByte(nn),lowByte(nn),ind,nodeId.getNumberOfParameters());//the CBUS index start with 1
+       if (ind==0){
+           prepareMessageBuff(OPC_PARAN,highByte(nn),lowByte(nn),ind,nodeId.getNumberOfParameters());//the CBUS index start with 1
         }
-        else{
-            prepareMessageBuff(OPC_PARAN,highByte(nn),lowByte(nn),ind,nodeId.getParameter(ind));
+		if  (ind==1){
+            prepareMessageBuff(OPC_PARAN,highByte(nn),lowByte(nn),ind,nodeId.getManufacturerId());
         }
+		 if  (ind==2){
+            prepareMessageBuff(OPC_PARAN,highByte(nn),lowByte(nn),ind,nodeId.getMinCodeVersion());
+        }
+		if  (ind==3){
+            prepareMessageBuff(OPC_PARAN,highByte(nn),lowByte(nn),ind,nodeId.getModuleId());
+        }
+		if  (ind==4){
+            prepareMessageBuff(OPC_PARAN,highByte(nn),lowByte(nn),ind,nodeId.getSuportedEvents());
+        }
+		if  (ind==5){
+            prepareMessageBuff(OPC_PARAN,highByte(nn),lowByte(nn),ind,nodeId.getSuportedEventsVariables());
+        }
+		if  (ind==6){
+            prepareMessageBuff(OPC_PARAN,highByte(nn),lowByte(nn),ind,nodeId.getSuportedNodeVariables());
+        }
+		if  (ind==7){
+            prepareMessageBuff(OPC_PARAN,highByte(nn),lowByte(nn),ind,nodeId.getMaxCodeVersion());
+        }
+		if  (ind==8){
+            prepareMessageBuff(OPC_PARAN,highByte(nn),lowByte(nn),ind,nodeId.getFlags()); // added by phil
+        }
+		if  (ind==9){
+            prepareMessageBuff(OPC_PARAN,highByte(nn),lowByte(nn),ind,nodeId.getCpuType()); // added by phil
+        }
+		if (ind == 10){
+			prepareMessageBuff(OPC_PARAN,highByte(nn),lowByte(nn),ind,nodeId.getTransportType()); // added by phil
+		}
+		if (ind == 11){
+			prepareMessageBuff(OPC_PARAN,highByte(nn),lowByte(nn),ind,nodeId.getCodeLoad()); // added by phil
+		}
+		if (ind == 12){
+			prepareMessageBuff(OPC_PARAN,highByte(nn),lowByte(nn),ind,nodeId.getCodeLoad()); // added by phil
+		}
+		if (ind == 13){
+			prepareMessageBuff(OPC_PARAN,highByte(nn),lowByte(nn),ind,nodeId.getCodeLoad()); // added by phil
+		}
+		if (ind == 14){
+			prepareMessageBuff(OPC_PARAN,highByte(nn),lowByte(nn),ind,nodeId.getCodeLoad()); // added by phil
+		}
+		if (ind == 15){
+			prepareMessageBuff(OPC_PARAN,highByte(nn),lowByte(nn),ind,nodeId.getManufacturerCpuCodeA()); // added by phil 
+		}
+		if (ind == 16){
+			prepareMessageBuff(OPC_PARAN,highByte(nn),lowByte(nn),ind,nodeId.getManufacturerCpuCodeB()); // added by phil 
+		}
+		if (ind == 17){
+			prepareMessageBuff(OPC_PARAN,highByte(nn),lowByte(nn),ind,nodeId.getManufacturerCpuCodeC()); // added by phil 
+		}
+		if (ind == 18){
+			prepareMessageBuff(OPC_PARAN,highByte(nn),lowByte(nn),ind,nodeId.getManufacturerCpuCodeD()); // added by phil 
+		}
+		if (ind == 19){
+			prepareMessageBuff(OPC_PARAN,highByte(nn),lowByte(nn),ind,nodeId.getCpuManufacturer()); // added by phil
+		}
+		if (ind == 20){
+			prepareMessageBuff(OPC_PARAN,highByte(nn),lowByte(nn),ind,nodeId.getBetaRelease()); // added by phil
+		}
         #ifdef DEBUGDEF
             Serial.println(F("RECEIVED OPC_RQNPN sending OPC_PARAN"));
             printSentMessage();
@@ -1024,6 +1089,8 @@ byte MergCBUS::handleConfigMessages(){
 
         sendCanMessage();
         break;
+		
+		
 
     case OPC_CANID:
         //force a new can id
@@ -1040,22 +1107,21 @@ byte MergCBUS::handleConfigMessages(){
         break;
 
     case OPC_EVULN:
-        //Unlearn event
         #ifdef DEBUGDEF
             Serial.println(F("Unlearn event"));
             //printSentMessage();
         #endif // DEBUGDEF
-
+			state_mode = LEARN; // added by phil
         if (state_mode==LEARN){
             ev=message.getEventNumber();
             nn=message.getNodeNumber();
             evidx=memory.getEventIndex(nn,ev);
 
-            if (evidx>nodeId.getSuportedEvents()){
+           // if (evidx>nodeId.getSuportedEvents()){
                 //Serial.println(F("Error unlearn event"));
-                sendERRMessage(CMDERR_INVALID_EVENT);
-                break;
-            }
+               // sendERRMessage(CMDERR_INVALID_EVENT);
+              //  break;
+           // }
 
             if (memory.eraseEvent(evidx)!=ev){
                 //send ack
@@ -1120,6 +1186,7 @@ byte MergCBUS::handleConfigMessages(){
 
     case OPC_REQEV:
         //Read event variable in learn mode
+		state_mode = LEARN;  // added by phil
         if (state_mode==LEARN){
             ev=message.getEventNumber();
             evidx=memory.getEventIndex(nn,ev);
@@ -1141,6 +1208,7 @@ byte MergCBUS::handleConfigMessages(){
         break;
 
     case OPC_EVLRN:
+		state_mode = LEARN;  // added by phil
         //learn event
         if (state_mode==LEARN){
             learnEvent();
@@ -1151,7 +1219,7 @@ byte MergCBUS::handleConfigMessages(){
 
     case OPC_EVLRNI:
         //learn event by index. like an update
-
+		state_mode = LEARN;  // added by phil
         if (state_mode==LEARN){
 
             //TODO: suport device number mode
@@ -1160,7 +1228,7 @@ byte MergCBUS::handleConfigMessages(){
             //#endif // DEBUGDEF
 
             ev=message.getEventNumber();
-            nn=message.getNodeNumber();
+            nn=message.getNodeNumber(); 
             ind=message.getEventVarIndex();
             val=message.getEventVar();
             evidx=message.getEventIndex();
@@ -1204,7 +1272,7 @@ byte MergCBUS::handleConfigMessages(){
 	else{
             sendERRMessage(CMDERR_NOT_LRN);
         }
-
+		
         break;
    }
 
@@ -1389,7 +1457,7 @@ byte MergCBUS::getMessageSize(byte opc){
 }
 
 /**\brief
-* Save the parameters to the message buffer.
+* Save the parameters to the message buffer. 
 */
 void MergCBUS::prepareMessageBuff(byte data0,byte data1,byte data2,byte data3,byte data4,byte data5,byte data6,byte data7){
     //clearMsgToSend();
@@ -1403,6 +1471,13 @@ void MergCBUS::prepareMessageBuff(byte data0,byte data1,byte data2,byte data3,by
     mergCanData[7]=data7;
 }
 
+
+
+/*-----------------------------------------------------------------------------------------------------------------------------------*/
+
+
+
+
 /**\brief
 * Prepare the general messages by opc. If the opc is unknow it does nothing.
 */
@@ -1415,20 +1490,21 @@ void MergCBUS::prepareMessage(byte opc){
                             nodeId.getManufacturerId(),nodeId.getModuleId(),nodeId.getFlags());
 
         break;
-    case OPC_NAME:
+    case OPC_NAME: 
         prepareMessageBuff(OPC_NAME,nodeId.getNodeName()[0],nodeId.getNodeName()[1],
                             nodeId.getNodeName()[2],nodeId.getNodeName()[3],
                             nodeId.getNodeName()[4],nodeId.getNodeName()[5],
-                            nodeId.getNodeName()[6]);
-
+                            nodeId.getNodeName()[6]); 
         break;
-    case OPC_PARAMS:
+    case OPC_PARAMS:      
         prepareMessageBuff(OPC_PARAMS,nodeId.getManufacturerId(),
                            nodeId.getMinCodeVersion(),nodeId.getModuleId(),
                            nodeId.getSuportedEvents(),nodeId.getSuportedEventsVariables(),
                            nodeId.getSuportedNodeVariables(),nodeId.getMaxCodeVersion());
 
         break;
+		
+	
     case OPC_RQNN:
         prepareMessageBuff(OPC_RQNN,highByte(nodeId.getNodeNumber()),lowByte(nodeId.getNodeNumber()));
 
@@ -1678,6 +1754,7 @@ void MergCBUS::saveNodeFlags(){
 */
 
 void MergCBUS::learnEvent(){
+	//state_mode = LEARN  added by phil
     unsigned int ev,nn,resp;
     byte ind,val,evidx;
          #ifdef DEBUGDEF
@@ -1685,14 +1762,14 @@ void MergCBUS::learnEvent(){
             //printSentMessage();
         #endif // DEBUGDEF
 
-        if (message.getType()==CONFIG){
+        if (message.getType()==CONFIG){  
             if (message.getOpc() != OPC_EVLRN && message.getOpc() != OPC_EVLRNI){
                 handleConfigMessages();
                 return;
             }
         }
         ev = message.getEventNumber();
-        nn = message.getNodeNumber();
+        nn = message.getNodeNumber(); 
 
         //get the device number in case of short event
         //TODO:for producers. Test
@@ -1766,6 +1843,9 @@ void MergCBUS::learnEvent(){
         prepareMessage(OPC_WRACK);
         sendCanMessage();
 }
+
+
+
 
 /**
 * Automatically control the push button default behaviour defined to MERG modules.
@@ -1981,7 +2061,7 @@ unsigned int MergCBUS::getDeviceNumber(byte port){
  */
 byte MergCBUS::sendOnEvent(bool longEvent,unsigned int event){
     if (longEvent){
-        prepareMessageBuff(OPC_ACON,highByte(nodeId.getNodeNumber()),lowByte(nodeId.getNodeNumber()),highByte(event),lowByte(event));
+        prepareMessageBuff(OPC_ACON,highByte(nodeId.getNodeNumber()),lowByte(nodeId.getNodeNumber()),highByte(event),lowByte(event));  //virtual node
     }
     else{
         prepareMessageBuff(OPC_ASON,highByte(nodeId.getNodeNumber()),lowByte(nodeId.getNodeNumber()),highByte(event),lowByte(event));
