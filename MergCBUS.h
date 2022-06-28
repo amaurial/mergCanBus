@@ -35,7 +35,7 @@
 //#define DEBUGMSG 1
 
 #include <Arduino.h>
-#include <EEPROM.h>
+//#include <EEPROM.h>
 #include <SPI.h>
 #include <avr/wdt.h>
 #include "Message.h"
@@ -217,6 +217,8 @@ class MergCBUS
         uint16_t getPromNN();
         uint16_t getNN();
         MergMemoryManagement memory;            //organize the eeprom memory and maintain a copy in RAM
+		
+	
 
     protected:
     private:
@@ -284,7 +286,8 @@ class MergCBUS
         void controlPushButton();
         byte push_button;
         byte pb_state;
-
+		
+		
         void(* resetFunc) (void);           //declare reset function @ address 0. resets the arduino
         void learnEvent();                  //put the node in the learn event mode
         uint8_t mainProcess();

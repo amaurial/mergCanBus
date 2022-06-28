@@ -3,7 +3,7 @@
 
 #include <Arduino.h>
 
-#define NAME_SIZE 8 /**< Maximum node name size.*/
+#define NAME_SIZE 7 /**< Maximum node name size.*/
 
 /**
 * Class that saves the node parameters.
@@ -38,6 +38,8 @@ class MergNodeIdentification
 
         //void setDeviceNumber(unsigned int val){deviceNumber=val;};
         //unsigned int getDeviceNumber(){return deviceNumber;};
+		
+		
         /** \brief  Set the manufacturer ID.
          *
          * \param val The manufacuter id.
@@ -74,6 +76,8 @@ class MergNodeIdentification
          *
          */
         byte getFlags(){return flags;};
+		
+		
         /** \brief  Set the min Code Version.
          *
          * \param val The min code version.
@@ -126,18 +130,82 @@ class MergNodeIdentification
          * \return The number of events variables.
          */
         byte getSuportedNodeVariables(){return suportedNodeVariables;};
-
-        byte getParameter(byte inx);
-        /** \brief  Get the number of node parameters.
-         * \return Currently 8.
+		
+		
+		void setTransportType(byte val){transportType=val;}; 
+		/** \brief  Set the transport type.
+         *
+         * \param val The transport type.
+         * added by phil
          */
-        byte getNumberOfParameters(){return 8;};
+        byte getTransportType(){return transportType;};
+		
+		void setCpuType(byte val){cpuType=val;}; 
+		/** \brief  Set the CPU type.
+         *
+         * \param val The CPU type.
+         * added by phil
+         */
+        byte getCpuType(){return cpuType;};
+		
+		
+		void setCpuManufacturer(byte val){cpuManufacturer=val;};
+		/** \brief  Set the CPU Manufacturer.
+         *
+         * \param val The CPU Manufacturer.
+         * added by phil
+         */
+        byte getCpuManufacturer(){return cpuManufacturer;};
+		
+
+        void setBetaRelease(byte val){betaRelease=val;}; 
+		/** \brief  Set the Beta Release.
+         *
+         * \param val Beta Release.
+         * added by phil
+         */
+        byte getBetaRelease(){return betaRelease;};
+		
+		
+		void setCodeLoad(byte val =0){codeLoad =val;}; 
+		/** \brief  Set the Code Load.
+         *
+         * \param val Code Load.
+         * added by phil params 11 to 14 value 0x00 does not support boot loading
+         */
+        byte getCodeLoad(){return codeLoad;};
+
+		
+		void setManufacturerCpuCodeA(byte val){ManufacturerCpuCodeA=val;};		// added by phil actual proccessor param 15
+		byte getManufacturerCpuCodeA(){return ManufacturerCpuCodeA;};
+		
+		void setManufacturerCpuCodeB(byte val){ManufacturerCpuCodeB=val;};		// added by phil actual proccessor param 16
+		byte getManufacturerCpuCodeB(){return ManufacturerCpuCodeB;};
+		
+		void setManufacturerCpuCodeC(byte val){ManufacturerCpuCodeC=val;};		// added by phil actual proccessor param 17
+		byte getManufacturerCpuCodeC(){return ManufacturerCpuCodeC;};
+		
+		void setManufacturerCpuCodeD(byte val){ManufacturerCpuCodeD=val;};		// added by phil actual proccessor param 18
+		byte getManufacturerCpuCodeD(){return ManufacturerCpuCodeD;};
+		
+
+	   byte getParameter(byte inx);
+        /** \brief  Get the number of node parameters.
+         * \return Currently 20 changed by phil
+         */
+        byte getNumberOfParameters(){return 20;}; 
 
         void setProducerNode(bool val);
         bool isProducerNode();
 
         void setConsumerNode(bool val);
         bool isConsumerNode();
+		
+		void setConsumeEvents(bool val); // added by phil
+        bool isConsumeEvents();
+		
+		void setLearnMode(bool val); // added by phil
+        bool isLearnMode();
 
         void setSlimMode();
         void setFlimMode();
@@ -145,7 +213,7 @@ class MergNodeIdentification
         bool isFlimMode();
 
         void setSuportBootLoading(bool val);
-        bool suportBootLoading();
+        bool isBootLoading();
 
     protected:
     private:
@@ -161,6 +229,16 @@ class MergNodeIdentification
         byte suportedEvents;
         byte suportedEventsVariables;
         byte suportedNodeVariables;
+		byte transportType;
+		byte betaRelease;
+		byte cpuManufacturer;
+		byte cpuType;
+		byte codeLoad;
+		byte ManufacturerCpuCodeA;
+		byte ManufacturerCpuCodeB;
+		byte ManufacturerCpuCodeC;
+		byte ManufacturerCpuCodeD;
+	
 
 
 };
