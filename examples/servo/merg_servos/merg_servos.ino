@@ -27,19 +27,21 @@ To clear the memory, press pushbutton1 while reseting the arduino
 
 
 //Module definitions
+#define MODULE_ID 110
 #define NUM_SERVOS 6      //number of servos
 //first 2 are to indicate which servo is on. 2 bytes to indicate to togle. 2 for start and end angle
 #define VAR_PER_SERVO 6  //variables per servo
 #define SPEED 50        //servo speed
 #define SERVO_START 0        //servo start angle
 #define SERVO_END 180        //servo end angle
+//#define DEBUG_NODE 1
 
 
 //CBUS definitions
-#define GREEN_LED 8                  //merg green led port
-#define YELLOW_LED 7                 //merg yellow led port
+#define GREEN_LED A0//8                  //merg green led port
+#define YELLOW_LED 0//7                 //merg yellow led port
 #define PUSH_BUTTON 9                //std merg push button
-#define PUSH_BUTTON1 28               //debug push button
+#define PUSH_BUTTON1 10               //debug push button
 #define NODE_VARS 1                  //number o node variables.Servo speed
 #define NODE_EVENTS 30              //max number of events
 #define EVENTS_VARS VAR_PER_SERVO   //number of variables per event
@@ -65,11 +67,14 @@ byte togle_servo[2];
 void setup(){
 
   pinMode(PUSH_BUTTON1,INPUT_PULLUP);//debug push button
-  Serial.begin(115200);
+  #ifdef DEBUG_NODE
+    Serial.begin(115200);
+  #endif // DEBUGDEF
+  
 
   //Configuration data for the node
   cbus.getNodeId()->setNodeName("MODSERV",7);  //node name
-  cbus.getNodeId()->setModuleId(56);            //module number
+  cbus.getNodeId()->setModuleId(MODULE_ID);            //module number
   cbus.getNodeId()->setManufacturerId(0xA5);    //merg code
   cbus.getNodeId()->setMinCodeVersion(1);       //Version 1
   cbus.getNodeId()->setMaxCodeVersion(0);
@@ -78,7 +83,10 @@ void setup(){
   cbus.setStdNN(999); //standard node number
 
   if (digitalRead(PUSH_BUTTON)==LOW){
-    Serial.println(F("Setup new memory"));
+    #ifdef DEBUG_NODE
+      Serial.println(F("Setup new memory"));
+    #endif // DEBUGDEF
+    
     cbus.setUpNewMemory();
     cbus.setSlimMode();
     cbus.saveNodeFlags();
@@ -86,10 +94,14 @@ void setup(){
   cbus.setLeds(GREEN_LED,YELLOW_LED);//set the led ports
   cbus.setPushButton(PUSH_BUTTON);//set the push button ports
   cbus.setUserHandlerFunction(&myUserFunc);//function that implements the node logic
-  cbus.initCanBus(10);  //initiate the transport layer. pin=53, rate=125Kbps,10 tries,200 millis between each try
+  cbus.initCanBus(10, MCP_8MHz);
+  //cbus.initCanBus(10);  //initiate the transport layer. pin=53, rate=125Kbps,10 tries,200 millis between each try
   //create the servos object
   setUpServos();  
-  Serial.println(F("Setup finished"));
+  
+  #ifdef DEBUG_NODE
+      Serial.println(F("Setup finished"));
+  #endif // DEBUGDEF
 }
 
 void loop (){
@@ -113,11 +125,17 @@ void myUserFunc(Message *msg,MergCBUS *mcbus){
   if (mcbus->eventMatch()){
      onEvent=mcbus->isAccOn();
      getServosArray(msg,mcbus);
-     Serial.println(F("event match"));
+     #ifdef DEBUG_NODE
+      Serial.println(F("event match"));
+     #endif // DEBUGDEF
+     
      servo_start=mcbus->getEventVar(msg,START_ANGLE_VAR);
      servo_end=mcbus->getEventVar(msg,END_ANGLE_VAR);
-     Serial.println(servo_start);
-     Serial.println(servo_end);
+     #ifdef DEBUG_NODE
+      Serial.println(servo_start);
+      Serial.println(servo_end);
+     #endif // DEBUGDEF
+     
       //get the events var and control the servos
       for (int i=0;i<NUM_SERVOS;i++){
         if (isServoActive(i)){
@@ -138,7 +156,10 @@ void moveServo(boolean event,byte servoidx,byte servo_start,byte servo_end){
         servos[servoidx].write(servo_start,SPEED);
       }
       else {
-        Serial.println(F("moving servo"));
+        #ifdef DEBUG_NODE
+          Serial.println(F("moving servo"));
+        #endif // DEBUGDEF
+        
         servos[servoidx].write(servo_end,SPEED);
       }
     }

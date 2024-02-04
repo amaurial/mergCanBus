@@ -30,6 +30,7 @@ To clear the memory, press pushbutton1 while reseting the arduino
 /* Module definitions */
 
 #define NUM_SERVOS 13      //number of servos
+#define MODULE_ID 110
 
 /* first 2 are to indicate which servo is on. 2 bytes to indicate to togle. 2 for start and end angle */
 
@@ -115,7 +116,7 @@ void setup(){
 
   /* Configuration data for the node */
   cbus.getNodeId()->setNodeName("MODSERV",7);  //node name
-  cbus.getNodeId()->setModuleId(56);            //module number
+  cbus.getNodeId()->setModuleId(MODULE_ID);            //module number
   cbus.getNodeId()->setManufacturerId(0xA5);    //merg code
   cbus.getNodeId()->setMinCodeVersion(1);       //Version 1
   cbus.getNodeId()->setMaxCodeVersion(0);
@@ -175,7 +176,7 @@ void myUserFunc(Message *msg,MergCBUS *mcbus){
       for (uint8_t i=0;i<NUM_SERVOS;i++){
         if (isServoActive(i)){          
           moveServo(onEvent,i,servo_start,servo_end);
-          delay(200);
+          delay(300);
         }
       }
       /* set time to detach the servos. detach after 2 seconds */
@@ -249,7 +250,8 @@ void detachServos(){
   if (attach_servo) return; //don't dettach
 
   for (uint8_t i=0;i<NUM_SERVOS;i++){  
-     if (servos[i].attached())  servos[i].detach();
+     //if (servos[i].attached())  servos[i].detach();
+     servos[i].detach();
   }
 }
 
