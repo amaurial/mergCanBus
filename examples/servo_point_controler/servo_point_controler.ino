@@ -22,7 +22,8 @@ To clear the memory, press pushbutton1 while reseting the arduino
 #include <MergCBUS.h>
 #include <Message.h>
 #include <EEPROM.h> //required by the library
-#include <VarSpeedServo.h>
+//#include <VarSpeedServo.h>
+#include <Servo.h>
 
 /* uncomment this line to see debug messages */
 //#define DEBUGNODE 1
@@ -80,7 +81,8 @@ To clear the memory, press pushbutton1 while reseting the arduino
 MergCBUS cbus=MergCBUS(NODE_VARS,NODE_EVENTS,EVENTS_VARS,DEVICE_NUMBERS);
 
 /* servo controler */
-VarSpeedServo servos[NUM_SERVOS];
+//VarSpeedServo servos[NUM_SERVOS];
+Servo servos[NUM_SERVOS];
 
  /* 
  * pins where the servos are attached
@@ -100,16 +102,22 @@ byte start_action = 3; //move to last position
 long detachservos_time = 0; //control the time to detach the servo
 
 void setup(){
+  
+  pinMode(PUSH_BUTTON,INPUT);//debug push button
+  #ifdef DEBUGNODE
+  Serial.begin(115200);
+  #endif
 
   /* create the servos object */
   initializeFlags();
   setupServos();  
 
-  pinMode(PUSH_BUTTON,INPUT);//debug push button
   #ifdef DEBUGNODE
-  Serial.begin(115200);
-  delay(300);
   Serial.println(F("start"));
+  Serial.print(F("var2 action: "));
+  Serial.println(start_action);
+  Serial.print(F("var2 attach: "));
+  Serial.println(attach_servo);
   #else
   Serial.end();
   #endif
@@ -209,12 +217,14 @@ void moveServo(boolean event,byte servoidx,byte servo_start,byte servo_end){
      */
     cbus.setInternalNodeVariable(servoidx+1,lastPos);
 
-    servos[servoidx].write(lastPos,SPEED);
+    //servos[servoidx].write(lastPos,SPEED);
+    servos[servoidx].write(lastPos);
     /* servos already attached */
     //if (!attach_servo){
 	  servos[servoidx].attach(servopins[servoidx]);
     //}
-    servos[servoidx].write(lastPos,SPEED);
+    //servos[servoidx].write(lastPos,SPEED);
+    servos[servoidx].write(lastPos);
    
   
 }
@@ -258,10 +268,12 @@ void detachServos(){
 void moveServoToLastPosition(byte idx){
     byte pos=cbus.getInternalNodeVar(idx+1);    
     if (pos < 175){    
-      servos[idx].write(pos,SPEED);//avoid the kick when power on
+      //servos[idx].write(pos,SPEED);//avoid the kick when power on
+      servos[idx].write(pos);//avoid the kick when power on
       delay(300);  //wait the timmer to be ok
       servos[idx].attach(servopins[idx]); 
-      servos[idx].write(pos,SPEED);
+      //servos[idx].write(pos,SPEED);
+      servos[idx].write(pos);//avoid the kick when power on
     }
 }
 
@@ -304,6 +316,10 @@ void getServosArray(Message *msg,MergCBUS *mcbus){
 /* the the flags var and initialize them */
 void initializeFlags(){
     byte flag = cbus.getNodeVar(SERVO_FLAGS_VAR);
-    start_action = flag && 0x03; //first 2 bits    
-    attach_servo = flag && 0x04; //bit 3        
+    #ifdef DEBUGNODE
+  Serial.print(F("flag: "));
+  Serial.println(flag);  
+  #endif
+    start_action = flag & 0x03; //first 2 bits    
+    attach_servo = flag>>2 & 0x01; //bit 3        
 }
